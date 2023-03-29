@@ -13,3 +13,6 @@ cgp/examples/
 
 # Ignore github workflow files
 cgp/.github/
+
+# ignore clangd cache
+.cache/

@@ -1,0 +1,15 @@
+# This file lists the folders and files that must not be tracked by git
+
+# Ignore build directory
+build/
+
+# Just in case these are not compiled in the build directory :
+# Ignore c++ .o files and shader .d files
+*.o
+*.d
+
+# Ignore the examples/ directory of the cgp library
+cgp/examples/
+
+# Ignore github workflow files
+cgp/.github/

@@ -7,6 +7,8 @@ build/
 # Ignore c++ .o files and shader .d files
 *.o
 *.d
+*.exe
+*.pdb
 
 # Ignore the examples/ directory of the cgp library
 cgp/examples/
@@ -16,3 +18,9 @@ cgp/.github/
 
 # ignore clangd cache
 .cache/
+
+# Ignore visual studio cache
+.vs/
+
+# Ignore imgui settings
+imgui.ini

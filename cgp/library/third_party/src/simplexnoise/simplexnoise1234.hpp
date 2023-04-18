@@ -1,5 +1,5 @@
 // SimplexNoise1234
-// Copyright © 2003-2005, Stefan Gustavson
+// Copyright ï¿½ 2003-2005, Stefan Gustavson
 //
 // Contact: stegu@itn.liu.se
 //
@@ -18,8 +18,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 /** \file
-		\brief Header for "simplexnoise1234.c" for producing Perlin simplex noise.
-		\author Stefan Gustavson (stegu@itn.liu.se)
+        \brief Header for "simplexnoise1234.c" for producing Perlin simplex noise.
+        \author Stefan Gustavson (stegu@itn.liu.se)
 */
 
 /*
@@ -38,9 +38,9 @@
 
 /** 1D, 2D, 3D and 4D double Perlin noise
  */
-    double snoise1( double x );
-    double snoise2( double x, double y );
-    double snoise3( double x, double y, double z );
-    double snoise4( double x, double y, double z, double w );
+double snoise1(double x);
+double snoise2(double x, double y);
+double snoise3(double x, double y, double z);
+double snoise4(double x, double y, double z, double w);
 
 #endif

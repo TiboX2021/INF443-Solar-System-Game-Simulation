@@ -8,9 +8,9 @@
 
 namespace cgp
 {
-	void imgui_init(GLFWwindow* window);
+    void imgui_init(GLFWwindow *window);
 
-	void imgui_create_frame();
-	void imgui_render_frame(GLFWwindow* window);
-	void imgui_cleanup();
+    void imgui_create_frame();
+    void imgui_render_frame(GLFWwindow *window);
+    void imgui_cleanup();
 }

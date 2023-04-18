@@ -8,4 +8,3 @@
 // A vec2 struct can be used as
 //   struct vec2 { float x, y; }
 //   (with additional functions handled as a buffer_stack)
-

@@ -1,7 +1,6 @@
-#pragma once 
+#pragma once
 
 namespace cgp_test
 {
-	void test_matrix_stack();
+    void test_matrix_stack();
 }
-

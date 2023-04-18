@@ -6,7 +6,7 @@ namespace cgp
 {
 
     timer_event_periodic::timer_event_periodic(float event_period_arg)
-        :timer_basic(), event(false), t_periodic(t), event_period(event_period_arg)
+        : timer_basic(), event(false), t_periodic(t), event_period(event_period_arg)
     {
     }
 
@@ -16,15 +16,12 @@ namespace cgp
         t_periodic += dt;
         if (t_periodic >= event_period)
         {
-            t_periodic=0;
+            t_periodic = 0;
             event = true;
         }
-        else 
+        else
             event = false;
         return dt;
     }
-
-
-
 
 }

@@ -1,8 +1,6 @@
 #pragma once
 
-
 namespace cgp_test
 {
-	void test_numarray();
+    void test_numarray();
 }
-

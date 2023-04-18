@@ -8,13 +8,11 @@
  *
  * The objective of the library is to be simple as simple as possible to read and use. The majority of cgp structures and functions are aimed to be minimalistic without hidden states. The code remains fully compatible with direct raw OpenGL calls and user-defined shaders. The animation loop itself is entirely defined by the user.
  *
- * 
+ *
  *
  */
-
 
 #include "cgp_parameters.hpp"
 #include "core/core.hpp"
 #include "geometry/geometry.hpp"
 #include "graphics/graphics.hpp"
-

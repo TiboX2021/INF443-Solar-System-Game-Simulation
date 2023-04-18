@@ -4,6 +4,6 @@
 
 #include "buffer/buffer.hpp"
 #include "debug/debug.hpp"
-#include "uniform/uniform.hpp"
 #include "shaders/shaders.hpp"
 #include "texture/texture.hpp"
+#include "uniform/uniform.hpp"

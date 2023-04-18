@@ -5,16 +5,15 @@
 namespace cgp
 {
 
-	class timer_interval
-		: public timer_basic
-	{
-	public:
+    class timer_interval
+        : public timer_basic
+    {
+    public:
+        timer_interval(float t_min = 0.0f, float t_max = 1.0f);
+        float update();
 
-		timer_interval(float t_min=0.0f, float t_max=1.0f);
-		float update();
-
-		float t_min;
-		float t_max;
-	};
+        float t_min;
+        float t_max;
+    };
 
 }

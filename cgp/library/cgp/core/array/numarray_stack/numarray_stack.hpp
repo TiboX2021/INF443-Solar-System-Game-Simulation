@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace cgp
 {
     /** Base class for small fixed-size vectors (vec3, mat3, etc.).
@@ -9,7 +8,6 @@ namespace cgp
      */
     // template <typename T, int N> struct buffer_stack;
 }
-
 
 #include "implementation/numarray_stack.hpp"
 

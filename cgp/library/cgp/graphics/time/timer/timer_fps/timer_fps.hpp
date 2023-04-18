@@ -5,17 +5,17 @@
 namespace cgp
 {
 
-	class timer_fps
-		: public timer_event_periodic
-	{
-	public:
+    class timer_fps
+        : public timer_event_periodic
+    {
+    public:
+        timer_fps(float update_fps_period = 3.0f);
+        float update();
 
-		timer_fps(float update_fps_period=3.0f);
-		float update();
+        int fps;
 
-		int fps;
-	private:
-		int counter;
-	};
+    private:
+        int counter;
+    };
 
 }

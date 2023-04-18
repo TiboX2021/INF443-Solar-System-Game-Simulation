@@ -1,6 +1,5 @@
 #pragma once
 
-
 // *************************************************************** //
 // OpenGL Version
 // *************************************************************** //
@@ -12,8 +11,6 @@
 // To activate OpenGL 4.6, change to
 // #define CGP_OPENGL_VERSION_MAJOR 4
 // #define CGP_OPENGL_VERSION_MINOR 6
-
-
 
 // *************************************************************** //
 // CGP ASSERTION

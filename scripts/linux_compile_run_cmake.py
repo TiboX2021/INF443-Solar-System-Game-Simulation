@@ -11,12 +11,11 @@ executable_name = full_path.split('/')[-2]
 
 def run_cmd(cmd):
     full_cmd = ''
-    if basedir != '':
+    if basedir!='':
         full_cmd = 'cd '+basedir+'; '
     full_cmd += 'cd ..; '+cmd
     print(full_cmd)
     os.system(full_cmd)
-
 
 run_cmd('python3 scripts/linux_clean.py')
 

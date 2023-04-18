@@ -4,32 +4,32 @@
 
 namespace cgp
 {
-    struct quaternion : vec4
-    {
+	struct quaternion : vec4
+	{
         using vec4::vec4;
-    };
+	};
 
-    std::string type_str(quaternion const &);
+	std::string type_str(quaternion const&);
 
-    quaternion conjugate(quaternion const &q);
-    quaternion inverse(quaternion const &q);
+    quaternion conjugate(quaternion const& q);
+    quaternion inverse(quaternion const& q);
 
-    quaternion &operator*=(quaternion &a, quaternion const &b);
-    quaternion operator*(quaternion const &a, quaternion const &b);
-    quaternion operator*(quaternion const &a, float b);
-    quaternion operator*(float a, quaternion const &b);
+    quaternion& operator*=(quaternion& a, quaternion const& b);
+    quaternion  operator*(quaternion const& a, quaternion const& b);
+    quaternion  operator*(quaternion const& a, float b);
+    quaternion  operator*(float a, quaternion const& b);
 
-    quaternion &operator/=(quaternion &a, quaternion const &b);
-    quaternion operator/(quaternion const &a, quaternion const &b);
-    quaternion operator/(quaternion const &a, float b);
-    quaternion operator/(float a, quaternion const &b);
+    quaternion& operator/=(quaternion& a, quaternion const& b);
+    quaternion  operator/(quaternion const& a, quaternion const& b);
+    quaternion  operator/(quaternion const& a, float b);
+    quaternion  operator/(float a, quaternion const& b);
 
-    quaternion &operator+=(quaternion &a, quaternion const &b);
-    quaternion operator+(quaternion const &a, quaternion const &b);
-    quaternion &operator-=(quaternion &a, quaternion const &b);
-    quaternion operator-(quaternion const &a, quaternion const &b);
+    quaternion& operator+=(quaternion& a, quaternion const& b);
+    quaternion operator+(quaternion const& a, quaternion const& b);
+    quaternion& operator-=(quaternion& a, quaternion const& b);
+    quaternion operator-(quaternion const& a, quaternion const& b);
 
-    quaternion normalize(quaternion const &q);
+    quaternion normalize(quaternion const& q);
 
-    std::istream &operator>>(std::istream &stream, quaternion &data);
+	std::istream& operator>>(std::istream& stream, quaternion& data);
 }

@@ -2,5 +2,5 @@
 
 namespace cgp_test
 {
-    void test_rotation();
+	void test_rotation();
 }

@@ -5,16 +5,17 @@
 namespace cgp
 {
 
-    class timer_event_periodic
-        : public timer_basic
-    {
-    public:
-        timer_event_periodic(float event_period = 1.0f);
-        float update();
+	class timer_event_periodic
+		: public timer_basic
+	{
+	public:
 
-        bool event;
-        float t_periodic;
-        float event_period;
-    };
+		timer_event_periodic(float event_period=1.0f);
+		float update();
+
+		bool event;
+		float t_periodic;
+		float event_period;
+	};
 
 }

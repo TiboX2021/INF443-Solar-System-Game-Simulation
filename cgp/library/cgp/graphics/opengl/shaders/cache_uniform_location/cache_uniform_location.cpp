@@ -5,9 +5,10 @@
 
 #include <iostream>
 
+
 namespace cgp
 {
-    GLint cache_uniform_location_structure::query(GLuint shaderID, std::string const &uniformName)
+    GLint cache_uniform_location_structure::query(GLuint shaderID, std::string const& uniformName)
     {
         // Sanity check
         assert_cgp(shaderID != 0, "Try to query uniform " + uniformName + " on unspecified shader (shader index = 0).");
@@ -20,7 +21,7 @@ namespace cgp
             cache_data[shaderID] = std::map<std::string, GLint>();
 
         // Check if uniformName is already recorded
-        std::map<std::string, GLint> &cacheShaderQuery = cache_data[shaderID];
+        std::map<std::string, GLint>& cacheShaderQuery = cache_data[shaderID];
         auto uniformLoc_it = cacheShaderQuery.find(uniformName);
 
         // If found, return the cached value
@@ -29,8 +30,7 @@ namespace cgp
 
         // Else: the name is not found
         // Then we query the location using glGetUniformLocation in the shader
-        GLint const location = glGetUniformLocation(shaderID, uniformName.c_str());
-        opengl_check;
+        GLint const location = glGetUniformLocation(shaderID, uniformName.c_str()); opengl_check;
 
         // Add the location in the cache system
         //  Note: location == -1 if glGetUniformLocation cannot find the variable
@@ -39,13 +39,11 @@ namespace cgp
         return location;
     }
 
-    std::string str(cache_uniform_location_structure const &cache)
+    std::string str(cache_uniform_location_structure const& cache)
     {
         std::string s;
-        for (auto it1 : cache.cache_data)
-        {
-            for (auto it2 : it1.second)
-            {
+        for (auto it1 : cache.cache_data) {
+            for (auto it2 : it1.second) {
                 s += str(it1.first) + " : " + str(it2.first) + " -> " + str(it2.second) + "\n";
             }
             s += "\n";
@@ -53,7 +51,7 @@ namespace cgp
         return s;
     }
 
-    std::ostream &operator<<(std::ostream &s, cache_uniform_location_structure const &cache)
+    std::ostream& operator<<(std::ostream& s, cache_uniform_location_structure const& cache)
     {
         s << str(cache);
         return s;

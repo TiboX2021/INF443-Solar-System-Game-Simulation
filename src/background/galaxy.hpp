@@ -2,10 +2,6 @@
 
 #include "environment.hpp"
 
-// TODO : create a reversed sphere with the same texture as the skybox, and the same position as the camera position
-// TODO : il ne faut pas qu'elle subisse l'illumination de la lumière, mais qu'elle soit toujours éclairée
-// par la même luminosité !
-
 /**
  * Galaxy environment. Sphere that we are inside of.
  It must move along with the player !
@@ -16,11 +12,14 @@ class Galaxy
 public:
     // Constructor
     Galaxy();
-    Galaxy(double radius, cgp::vec3 position);
+    Galaxy(double radius);
 
     // Draw function
     void initialize();
-    void draw(environment_structure const &environment, bool show_wireframe = true) const;
+    void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+
+    // Setters
+    void setPosition(cgp::vec3 position);
 
 private:
     double radius;

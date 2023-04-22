@@ -96,10 +96,9 @@ void scene_structure::display_frame()
     //     // draw_wireframe(tree);
     // }
 
-    // DEBUG : draw sphere
+    // DEBUG : draw planet and galaxy
     planet.draw(environment, gui.display_wireframe);
-    // Drow galaxy (use very big raduis !)
-    galaxy.draw(environment, gui.display_wireframe);
+    galaxy.draw(environment, camera_control, gui.display_wireframe);
 
     // display_semiTransparent();
 }

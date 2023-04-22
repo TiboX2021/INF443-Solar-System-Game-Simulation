@@ -1,7 +1,6 @@
 
 #include "terrain.hpp"
 #include "cgp/core/base/rand/rand.hpp"
-#include "cgp/core/containers/matrix_stack/matrix_stack.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
 #include <cmath>
 

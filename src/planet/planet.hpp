@@ -1,5 +1,8 @@
 #include "environment.hpp"
+#include "utils/noise/perlin.hpp"
 #include <string>
+
+#pragma once
 
 /**
  * Planète avec son apparence visuelle et ses propriétés physiques
@@ -19,6 +22,9 @@ public:
     void set_position(vec3 position);
 
 private:
+    // Perlin noise properties
+    perlin_noise_parameters parameters;
+
     // Planet properties
     float radius;
     vec3 position;

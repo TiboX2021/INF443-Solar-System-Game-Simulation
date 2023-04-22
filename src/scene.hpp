@@ -3,6 +3,7 @@
 #include "cgp/cgp.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
+#include "planet/planet.hpp"
 #include "terrain.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
@@ -70,4 +71,7 @@ struct scene_structure : cgp::scene_inputs_generic
 
     // Display function for semi-transparent shapes
     void display_semiTransparent();
+
+    // DEBUG : to delete later
+    Planet planet; // TODO: use array and initialize later
 };

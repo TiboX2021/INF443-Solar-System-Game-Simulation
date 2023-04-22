@@ -1,5 +1,6 @@
 #include "scene.hpp"
 
+#include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "cgp/graphics/drawable/hierarchy_mesh_drawable/hierarchy_mesh_drawable.hpp"
 #include "cgp/graphics/drawable/triangles_drawable/triangles_drawable.hpp"
 #include "terrain.hpp"
@@ -50,6 +51,9 @@ void scene_structure::initialize()
     // Grass texture
     grass.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/grass.png");
     grass.model.scaling = 0.5; // Reduce size
+
+    // Initialize planet
+    planet.initialize();
 }
 
 void scene_structure::display_frame()
@@ -57,35 +61,39 @@ void scene_structure::display_frame()
     // Set the light to the current position of the camera
     environment.light = camera_control.camera_model.position();
 
-    if (gui.display_frame)
-        draw(global_frame, environment);
+    // if (gui.display_frame)
+    //     draw(global_frame, environment);
 
-    draw(terrain, environment);
-    // draw(test_tree, environment);
-    // draw(test_cone, environment);
+    // draw(terrain, environment);
+    // // draw(test_tree, environment);
+    // // draw(test_cone, environment);
 
-    // Affichage de l'arbre pour toutes les positions
-    for (int i = 0; i < tree_positions.size(); ++i)
-    {
-        tree.model.translation = tree_positions[i];
-        draw(tree, environment);
-    }
+    // // Affichage de l'arbre pour toutes les positions
+    // for (int i = 0; i < tree_positions.size(); ++i)
+    // {
+    //     tree.model.translation = tree_positions[i];
+    //     draw(tree, environment);
+    // }
 
-    // Affichage des champignons
-    for (int i = 0; i < mushroom_positions.size(); ++i)
-    {
-        mushroom.model.translation = mushroom_positions[i];
-        draw(mushroom, environment);
-    }
+    // // Affichage des champignons
+    // for (int i = 0; i < mushroom_positions.size(); ++i)
+    // {
+    //     mushroom.model.translation = mushroom_positions[i];
+    //     draw(mushroom, environment);
+    // }
 
-    if (gui.display_wireframe)
-    {
-        draw_wireframe(terrain, environment);
-        // draw_wireframe(test_tree, environment);
-        // draw_wireframe(test_tree, environment);
-        // draw_wireframe(tree);
-    }
-    display_semiTransparent();
+    // if (gui.display_wireframe)
+    // {
+    //     draw_wireframe(terrain, environment);
+    //     // draw_wireframe(test_tree, environment);
+    //     // draw_wireframe(test_tree, environment);
+    //     // draw_wireframe(tree);
+    // }
+
+    // DEBUG : draw sphere
+    planet.draw(environment, gui.display_wireframe);
+
+    // display_semiTransparent();
 }
 
 void scene_structure::display_gui()

@@ -1,14 +1,15 @@
 #pragma once
 
-#include "cgp/cgp.hpp"
+#include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
+#include "utils/noise/perlin.hpp" // for noise perlin parameters
 
-struct perlin_noise_parameters
-{
-    float persistency = 0.35f;
-    float frequency_gain = 2.0f;
-    int octave = 6;
-    float terrain_height = 0.5f;
-};
+// struct perlin_noise_parameters
+// {
+//     float persistency = 0.35f;
+//     float frequency_gain = 2.0f;
+//     int octave = 6;
+//     float terrain_height = 0.5f;
+// };
 
 float evaluate_terrain_height(float x, float y, perlin_noise_parameters const &parameters, float terrain_length);
 

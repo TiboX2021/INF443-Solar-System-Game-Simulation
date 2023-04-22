@@ -1,16 +1,19 @@
 #include "planet.hpp"
+#include "utils/noise/perlin.hpp"
 #include <cassert>
 #include <iostream>
+
+// TODO : modèle physique ? On pourrait hériter d'une classe qui définit les fonctions
+// Si jamais on fait beaucoup d'objets différents, ça pourrait être intéressant
+// TODO : faire en sorte que la texture se répète plusieurs fois, pour l'adapter à la taille de la planète
+// TODO : génération plus réaliste que juste du bruit ? Genre crevasses, etc à la minecraft
 
 Planet::Planet()
 {
     // Initialize planet data
-    radius = 10.0f;
-    position = {0, 0, 5};
+    radius = 5.0f;
+    position = {0, 0, 0};
     texture_path = "assets/planets/mars.jpg";
-
-    // Initialize CGP elements
-    planet_mesh = cgp::mesh_primitive_sphere(radius, position);
 }
 
 Planet::Planet(float radius, vec3 position, std::string texture_path)
@@ -20,17 +23,16 @@ Planet::Planet(float radius, vec3 position, std::string texture_path)
     this->radius = radius;
     this->position = position;
     this->texture_path = texture_path;
-
-    // Initialize CGP elements
-    planet_mesh = cgp::mesh_primitive_sphere(radius, position);
-    planet_mesh_drawable.initialize_data_on_gpu(planet_mesh);
 }
 
 // Initialize
 void Planet::initialize()
 {
+    // Initialize CGP elements
+    planet_mesh = mesh_primitive_perlin_sphere(radius, position, 200, 100, parameters);
     planet_mesh_drawable.initialize_data_on_gpu(planet_mesh);
-    // planet_mesh_drawable.material.color = {1, 0, 0};
+
+    // Add texture
     planet_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + texture_path,
                                                                        GL_REPEAT,
                                                                        GL_REPEAT);

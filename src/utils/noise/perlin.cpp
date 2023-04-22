@@ -1,26 +1,43 @@
 #include "perlin.hpp"
+#include "cgp/geometry/shape/noise/noise.hpp"
 
-// DEBUG
-struct perlin_noise_parameters
-{
-    float persistency = 0.35f;
-    float frequency_gain = 2.0f;
-    int octave = 6;
-    float terrain_height = 0.5f;
-};
+/*
+RAPPEL SUR L'ORGANISATION DES POINTS
+Direction des axes :
+
+V
+^
+|
+| - - -> U
+
+Ordre des points dans la sphère :
+^  ^  ^
+\  \  \
+\  \  \
+\  \  \
+--------- >
+
+Ie :
+* 1 de plus selon V : c'est le point suivant, +1
+* 1 de plus selon U : c'est la colonne suivante, donc +Nv (la hauteur de la colonne)
+*/
 
 // Pris directement depuis cgp::mesh_primitive.cpp
+// Nu et Nv : nombres de points sur la sphère à connecter
 static cgp::numarray<cgp::uint3> connectivity_grid(size_t Nu, size_t Nv)
 {
     cgp::numarray<cgp::uint3> connectivity;
-    for (size_t ku = 0; ku < Nu - 1; ++ku)
+    int n_points = Nu * Nv;
+
+    // Modif : la boucle for va jusqu'à Nu et Nv au lieu de s'arrêter à -1 : boucler la boucle
+    for (size_t ku = 0; ku < Nu; ++ku)
     {
-        for (size_t kv = 0; kv < Nv - 1; ++kv)
+        for (size_t kv = 0; kv < Nv; ++kv)
         {
-            unsigned int k00 = static_cast<unsigned int>(kv + Nv * ku);
-            unsigned int k10 = static_cast<unsigned int>(kv + 1 + Nv * ku);
-            unsigned int k01 = static_cast<unsigned int>(kv + Nv * (ku + 1));
-            unsigned int k11 = static_cast<unsigned int>(kv + 1 + Nv * (ku + 1));
+            unsigned int k00 = static_cast<unsigned int>((kv + Nv * ku % n_points));
+            unsigned int k10 = static_cast<unsigned int>((kv + 1 + Nv * ku) % n_points);
+            unsigned int k01 = static_cast<unsigned int>((kv + Nv * (ku + 1)) % n_points);
+            unsigned int k11 = static_cast<unsigned int>((kv + 1 + Nv * (ku + 1)) % n_points);
 
             connectivity.push_back(cgp::uint3{k00, k10, k11});
             connectivity.push_back(cgp::uint3{k00, k11, k01});
@@ -32,9 +49,11 @@ static cgp::numarray<cgp::uint3> connectivity_grid(size_t Nu, size_t Nv)
 /**
  * cgp::mesh_primitive_sphere with perlin noise added to the surface
  */
-cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, int Nu, int Nv)
+cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, int Nu, int Nv, perlin_noise_parameters parameters)
 {
+    // TODO : ajouter une fonction qui permettra ensuite de prendre la hauteur du terrain pour les collisions
     // TODO : ajouter un paramètre pour faire scale la résolution du bruit de perlin
+
     assert_cgp(radius > 0, "Sphere radius should be > 0");
     assert_cgp(Nu > 2 && Nv > 2, "Sphere samples should be > 2");
 
@@ -55,7 +74,11 @@ cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, in
                 std::cos(phi) * std::cos(theta),
                 std::cos(phi) * std::sin(theta),
                 std::sin(phi)};
-            cgp::vec3 const p = radius * n + center; // TODO : ici, en plus du radius, ajouter du bruit perlin à la normale n
+
+            // Using 3D perlin noise
+            float perlin_noise_value = cgp::noise_perlin(n * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain);
+
+            cgp::vec3 const p = (radius + perlin_noise_value) * n + center;
             cgp::vec2 const uv = {u, v};
 
             shape.position.push_back(p);

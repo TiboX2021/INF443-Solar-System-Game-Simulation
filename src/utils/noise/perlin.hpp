@@ -1,6 +1,6 @@
-#include "cgp/geometry/shape/mesh/structure/mesh.hpp"
-
 #pragma once
+
+#include "cgp/geometry/shape/mesh/structure/mesh.hpp"
 
 struct perlin_noise_parameters
 {

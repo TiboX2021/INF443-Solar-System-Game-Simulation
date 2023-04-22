@@ -1,4 +1,5 @@
 #pragma once
+
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 
 const double GRAVITAIONAL_CONSTANT = 6.67408e-11;

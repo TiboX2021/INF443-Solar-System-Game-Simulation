@@ -18,7 +18,7 @@ Planet::Planet()
     texture_path = "assets/planets/mars.jpg";
 }
 
-Planet::Planet(float radius, vec3 position, std::string texture_path)
+Planet::Planet(double radius, vec3 position, std::string texture_path)
 {
 
     // Initialize planet data
@@ -54,7 +54,7 @@ void Planet::draw(const environment_structure &environment, bool show_wireframe)
 /**
  * Set the planet radius
  */
-void Planet::set_radius(float radius)
+void Planet::set_radius(double radius)
 {
     assert(radius >= 0 && "Radius must be positive");
     this->radius = radius;

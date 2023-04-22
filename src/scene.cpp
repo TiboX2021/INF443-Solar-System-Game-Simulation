@@ -1,5 +1,6 @@
 #include "scene.hpp"
 
+#include "background/galaxy.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "cgp/graphics/drawable/hierarchy_mesh_drawable/hierarchy_mesh_drawable.hpp"
 #include "cgp/graphics/drawable/triangles_drawable/triangles_drawable.hpp"
@@ -54,6 +55,11 @@ void scene_structure::initialize()
 
     // Initialize planet
     planet.initialize();
+
+    // TODO : essayer de mettre un e image de background pour l'environnement ? Ou mettre un objet qui fasse le tour
+    // + voir comment correctement transformer l'image en qqch de sphérique, qui bouge avec la vue
+    // (un objet, en fait... Sauf qu'on est à l'intérieur, donc il faut inverser la connectivité)
+    galaxy.initialize();
 }
 
 void scene_structure::display_frame()
@@ -92,6 +98,8 @@ void scene_structure::display_frame()
 
     // DEBUG : draw sphere
     planet.draw(environment, gui.display_wireframe);
+    // Drow galaxy (use very big raduis !)
+    galaxy.draw(environment, gui.display_wireframe);
 
     // display_semiTransparent();
 }

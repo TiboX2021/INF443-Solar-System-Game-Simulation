@@ -1,5 +1,6 @@
 #pragma once
 
+#include "background/galaxy.hpp"
 #include "cgp/cgp.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
@@ -74,4 +75,5 @@ struct scene_structure : cgp::scene_inputs_generic
 
     // DEBUG : to delete later
     Planet planet; // TODO: use array and initialize later
+    Galaxy galaxy;
 };

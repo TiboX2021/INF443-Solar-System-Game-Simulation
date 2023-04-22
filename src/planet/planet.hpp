@@ -21,6 +21,9 @@ public:
     void set_radius(float radius);
     void set_position(vec3 position);
 
+    // Utility physics functions
+    double get_height_at(vec3 position) const;
+
 private:
     // Perlin noise properties
     perlin_noise_parameters parameters;

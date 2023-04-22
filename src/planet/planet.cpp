@@ -1,4 +1,6 @@
 #include "planet.hpp"
+#include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
+#include "cgp/geometry/shape/noise/noise.hpp"
 #include "utils/noise/perlin.hpp"
 #include <cassert>
 #include <iostream>
@@ -64,4 +66,13 @@ void Planet::set_radius(float radius)
 void Planet::set_position(vec3 position)
 {
     this->position = position;
+}
+
+/**
+ * Get the height of the planet at the given position
+ */
+double Planet::get_height_at(vec3 position) const
+{
+    // Call noise function with normalized position
+    return cgp::noise_perlin(cgp::normalize(position) * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain);
 }

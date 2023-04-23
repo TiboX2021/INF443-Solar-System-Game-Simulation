@@ -6,7 +6,6 @@
 #include "cgp/graphics/drawable/triangles_drawable/triangles_drawable.hpp"
 #include "terrain.hpp"
 #include "tree.hpp"
-
 using namespace cgp;
 
 void scene_structure::initialize()
@@ -97,9 +96,8 @@ void scene_structure::display_frame()
     // }
 
     // DEBUG : draw planet and galaxy
-    planet.draw(environment, gui.display_wireframe);
     galaxy.draw(environment, camera_control, gui.display_wireframe);
-
+    planet.draw(environment, gui.display_wireframe);
     // display_semiTransparent();
 }
 

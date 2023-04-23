@@ -3,7 +3,6 @@
 #include "environment.hpp"
 
 // TODO : no source lighting. Only uniform lighting (custom shader ?). Not a problem if we are inside ?
-// TODO : the galaxy must be drawn before all, we must disable some the opengl clipping before drawing
 
 Galaxy::Galaxy()
 {
@@ -32,6 +31,8 @@ void Galaxy::initialize()
 
 void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
 {
+    // Remarque : pour la profondeur, jouer sur scene.camera_projection.depth_max = 3000.0f;
+
     // Set position to camera position
     setPosition(camera.camera_model.position());
 
@@ -39,6 +40,7 @@ void Galaxy::draw(environment_structure const &environment, camera_controller_or
 
     if (show_wireframe)
         cgp::draw_wireframe(galaxy_mesh_drawable, environment);
+    glClear(GL_DEPTH_BUFFER_BIT); // Reset depth buffer in order to draw every next object in front of the galaxy
 }
 
 void Galaxy::setPosition(cgp::vec3 position)

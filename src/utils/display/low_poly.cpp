@@ -39,6 +39,15 @@ void LowPolyDrawable::draw(environment_structure const &environment, camera_cont
     }
 }
 
+void LowPolyDrawable::draw_low_poly(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+{
+    // Set disk orientation facing camera
+    low_poly_drawable.model.rotation = camera.camera_model.orientation();
+
+    // Draw low poly
+    cgp::draw(low_poly_drawable, environment);
+}
+
 void LowPolyDrawable::setPosition(cgp::vec3 position)
 {
     low_poly_drawable.model.translation = position;

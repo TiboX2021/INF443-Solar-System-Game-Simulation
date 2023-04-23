@@ -1,13 +1,15 @@
 #pragma once
 
+#include "cgp/geometry/shape/mesh/structure/mesh.hpp"
 #include "environment.hpp"
+#include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
 #include <string>
 
 /**
  * Planète avec son apparence visuelle et ses propriétés physiques
  */
-class Planet
+class Planet : public LowPolyDrawable
 {
 public:
     Planet();
@@ -15,14 +17,14 @@ public:
 
     // Draw function
     void initialize();
-    void draw(environment_structure const &environment, bool show_wireframe = true) const;
+    virtual void draw_real(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
 
     // Setters
-    void set_radius(double radius);
-    void set_position(vec3 position);
+    void setRadius(double radius);
+    void setPosition(vec3 position); // TODO : redefine this setter
 
     // Utility physics functions
-    double get_height_at(vec3 position) const;
+    double getHeightAt(vec3 position) const;
 
 private:
     // Perlin noise properties
@@ -36,4 +38,7 @@ private:
     // CGP elements
     cgp::mesh planet_mesh;
     cgp::mesh_drawable planet_mesh_drawable;
+
+    cgp::mesh low_planet_mesh;
+    cgp::mesh_drawable low_planet_drawable;
 };

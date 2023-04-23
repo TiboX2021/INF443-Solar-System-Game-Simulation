@@ -59,7 +59,7 @@ void scene_structure::initialize()
     galaxy.initialize();
 
     // Change depth of field
-    camera_projection.depth_max = 5000.0f; // Default : 1000.0f
+    camera_projection.depth_max = 10000.0f; // Default : 1000.0f
 }
 
 void scene_structure::display_frame()
@@ -98,7 +98,7 @@ void scene_structure::display_frame()
 
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
-    planet.draw(environment, gui.display_wireframe);
+    planet.draw(environment, camera_control, gui.display_wireframe);
     // display_semiTransparent();
 }
 

@@ -31,7 +31,7 @@ void Galaxy::initialize()
 
 void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
 {
-    // Remarque : pour la profondeur, jouer sur scene.camera_projection.depth_max = 3000.0f;
+    // Remarque : pour la profondeur, jouer sur scene.camera_projection.depth_max = 10_000.0f;
 
     // Set position to camera position
     setPosition(camera.camera_model.position());

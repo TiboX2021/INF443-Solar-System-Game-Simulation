@@ -4,7 +4,7 @@
 #include "drawable.hpp"
 #include "environment.hpp"
 
-const double LOW_POLY_DISTANCE_RATIO = 100;
+const double LOW_POLY_DISTANCE_RATIO = 200;
 const int LOW_POLY_RESOLUTION = 10;
 
 /**

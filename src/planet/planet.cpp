@@ -41,7 +41,8 @@ void Planet::initialize()
                                                                        GL_REPEAT,
                                                                        GL_REPEAT);
 
-    setLowPolyColor({0, 1, 0}); // DEBUG : set visibel color
+    // TODO : set a mean color from the texture
+    setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255}); // DEBUG : set visibel color
 }
 
 /**

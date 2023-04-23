@@ -14,6 +14,7 @@ void LowPolyDrawable::initialize()
     // Initialize low poly mesh
     low_poly_mesh = cgp::mesh_primitive_disc(low_poly_radius, {0, 0, 0}, {0, 0, 1}, LOW_POLY_RESOLUTION);
     low_poly_drawable.initialize_data_on_gpu(low_poly_mesh);
+    low_poly_drawable.material.phong.specular = 0; // No reflection for the low poly display
 }
 
 void LowPolyDrawable::setLowPolyColor(cgp::vec3 color)

@@ -55,10 +55,11 @@ void scene_structure::initialize()
     // Initialize planet
     planet.initialize();
 
-    // TODO : essayer de mettre un e image de background pour l'environnement ? Ou mettre un objet qui fasse le tour
-    // + voir comment correctement transformer l'image en qqch de sphérique, qui bouge avec la vue
-    // (un objet, en fait... Sauf qu'on est à l'intérieur, donc il faut inverser la connectivité)
+    // Initialize background galaxy
     galaxy.initialize();
+
+    // Change depth of field
+    camera_projection.depth_max = 5000.0f; // Default : 1000.0f
 }
 
 void scene_structure::display_frame()

@@ -16,12 +16,12 @@ public:
     Planet(double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg");
 
     // Draw function
-    void initialize();
-    virtual void draw_real(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    virtual void initialize() override;
+    virtual void draw_real(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     // Setters
     void setRadius(double radius);
-    void setPosition(vec3 position); // TODO : redefine this setter
+    virtual void setPosition(vec3 position) override;
 
     // Utility physics functions
     double getHeightAt(vec3 position) const;

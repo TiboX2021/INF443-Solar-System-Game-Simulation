@@ -16,9 +16,9 @@ class LowPolyDrawable : public Drawable
 public:
     LowPolyDrawable(double low_poly_radius);
 
-    void initialize();
+    virtual void initialize() override;
 
-    virtual void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    virtual void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     // Draw the real object
     virtual void draw_real(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) = 0;
@@ -30,10 +30,10 @@ public:
     virtual void setLowPolyColor(cgp::vec3 color);
 
     // Setters
-    virtual void setPosition(cgp::vec3 position);
+    virtual void setPosition(cgp::vec3 position) override;
 
     // Getters
-    cgp::vec3 getPosition() const;
+    cgp::vec3 getPosition() const override;
 
 private:
     // Private : the low poly members do not need to be accessed from children classes

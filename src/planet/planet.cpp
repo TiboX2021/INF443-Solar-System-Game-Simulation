@@ -71,6 +71,7 @@ void Planet::setRadius(double radius)
 void Planet::setPosition(vec3 position)
 {
     LowPolyDrawable::setPosition(position);
+    planet_mesh_drawable.model.translation = position;
     this->position = position;
 }
 

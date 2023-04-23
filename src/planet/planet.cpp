@@ -16,7 +16,8 @@ Planet::Planet() : LowPolyDrawable(5.0f)
     // Initialize planet data
     radius = 5.0f;
     position = {0, 0, 0};
-    texture_path = "assets/planets/mars.jpg";
+    // texture_path = "assets/planets/mars.png";
+    texture_path = "assets/planets/earth.jpg";
 }
 
 Planet::Planet(double radius, vec3 position, std::string texture_path) : LowPolyDrawable(radius)
@@ -43,6 +44,8 @@ void Planet::initialize()
 
     // TODO : set a mean color from the texture
     setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255}); // DEBUG : set visibel color
+
+    planet_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display
 }
 
 /**

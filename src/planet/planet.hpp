@@ -38,7 +38,4 @@ private:
     // CGP elements
     cgp::mesh planet_mesh;
     cgp::mesh_drawable planet_mesh_drawable;
-
-    cgp::mesh low_planet_mesh;
-    cgp::mesh_drawable low_planet_drawable;
 };

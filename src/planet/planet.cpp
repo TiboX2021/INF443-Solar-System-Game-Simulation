@@ -1,6 +1,5 @@
 #include "planet.hpp"
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
-#include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"

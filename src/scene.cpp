@@ -2,11 +2,7 @@
 
 #include "background/galaxy.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
-#include "cgp/graphics/drawable/hierarchy_mesh_drawable/hierarchy_mesh_drawable.hpp"
-#include "cgp/graphics/drawable/triangles_drawable/triangles_drawable.hpp"
 #include "planet/ring_planet.hpp"
-#include "terrain.hpp"
-#include "tree.hpp"
 using namespace cgp;
 
 void scene_structure::initialize()
@@ -19,6 +15,7 @@ void scene_structure::initialize()
     // Initialize planet
     planet.initialize();
     ring_planet.initialize();
+    planet.setPosition({30, 30, 0});
 
     // Initialize background galaxy
     galaxy.initialize();
@@ -34,7 +31,7 @@ void scene_structure::display_frame()
 
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
-    // planet.draw(environment, camera_control, gui.display_wireframe);
+    planet.draw(environment, camera_control, gui.display_wireframe);
     ring_planet.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 }

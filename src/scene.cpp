@@ -66,6 +66,10 @@ void scene_structure::display_frame()
     // asteroid_field_handler.drawObjects(environment, camera_control, false);
 
     display_semiTransparent();
+
+    * /
+
+        un_vaisseau.draw(environment);
 }
 
 void scene_structure::display_gui()

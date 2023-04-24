@@ -15,7 +15,7 @@ public:
     void draw(environment_structure const &environment);
     void set_position(vec3 const &position);
     void set_direction(vec3 const &direction);
-    void set_angle_aile(float const &angle);
+    void set_angle_aile(float const angle);
 
 protected:
 private:

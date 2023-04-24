@@ -34,7 +34,7 @@ void scene_structure::initialize()
     // test_cone.initialize_data_on_gpu(create_cone_mesh(4, 4, 10));
     tree.initialize_data_on_gpu(create_tree());
 
-    // Génération des positions des arbres
+    // GÃ©nÃ©ration des positions des arbres
     tree_positions = generate_positions_on_terrain(100, terrain_length, parameters);
 
     mushroom.initialize_data_on_gpu(create_mushroom());
@@ -103,7 +103,7 @@ void scene_structure::display_frame()
 
     */
 
-
+    un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau*Pi/90);
     un_vaisseau.draw(environment);
 
 }
@@ -112,6 +112,8 @@ void scene_structure::display_gui()
 {
     ImGui::Checkbox("Frame", &gui.display_frame);
     ImGui::Checkbox("Wireframe", &gui.display_wireframe);
+
+    ImGui::SliderAngle("Angle Aile", &gui.angle_aile_vaisseau, 0, 80);
 }
 
 void scene_structure::mouse_move_event()

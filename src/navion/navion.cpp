@@ -80,12 +80,12 @@ void Navion::draw(environment_structure const& environment) {
 
 	// Update position/angle
 
-	/*
-	hierarchie["AileDH"].transform_local.rotation.convert_axis_angle_to_matrix({ 0,1,0 }, nangle_aile);
-	hierarchie["AileGH"].transform_local.rotation.convert_axis_angle_to_matrix({ 0,1,0 }, Pi - nangle_aile);
-	hierarchie["AileDB"].transform_local.rotation.convert_axis_angle_to_matrix({ 0,1,0 }, - nangle_aile);
-	hierarchie["AileGB"].transform_local.rotation.convert_axis_angle_to_matrix({ 0,1,0 }, Pi + nangle_aile);
-	*/
+	
+	hierarchie["AileDH"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, nangle_aile);
+	hierarchie["AileGH"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, Pi- nangle_aile);
+	hierarchie["AileDB"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, - nangle_aile);
+	hierarchie["AileGB"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, Pi + nangle_aile);
+	
 
 
 	// This function must be called before the drawing in order to propagate the deformations through the hierarchy
@@ -105,7 +105,7 @@ void Navion::set_direction(vec3 const& direction) {
 	//******************** A FAIRE ***********************
 }
 
-void Navion::set_angle_aile(float const& angle) {
+void Navion::set_angle_aile(float const angle) {
 	nangle_aile = angle;
 }
 

@@ -25,6 +25,8 @@ void Galaxy::initialize()
     galaxy_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/galaxy/voie_lactee.jpg",
                                                                        GL_CLAMP_TO_EDGE,
                                                                        GL_CLAMP_TO_EDGE);
+    galaxy_mesh_drawable.material.texture_settings.two_sided = true;
+    galaxy_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display
 }
 
 void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)

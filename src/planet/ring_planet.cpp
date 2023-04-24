@@ -1,13 +1,14 @@
 #include "ring_planet.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
+#include "cgp/graphics/opengl/shaders/shaders.hpp"
 #include "utils/display/low_poly.hpp"
 
 RingPlanet::RingPlanet() : Planet(5.0f, {0, 0, 0}, "assets/planets/saturn.jpg")
 {
     // Default ring texture path
     ring_texture_path = "assets/planets/rings/saturn_ring.png";
-    ring_radius = 10.0f; // TODO : manipuler ça
+    ring_radius = 10.0f;
 }
 
 // Non default constructor
@@ -27,7 +28,7 @@ void RingPlanet::initialize()
     setPosition({0, 0, 0}); // Set the position for the ring
     ring_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + ring_texture_path);
     ring_mesh_drawable.material.phong.specular = 0; // No reflection for the planet ring
-
+    ring_mesh_drawable.material.texture_settings.two_sided = true;
     setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
 }
 

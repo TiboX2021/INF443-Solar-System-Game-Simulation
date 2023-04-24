@@ -4,6 +4,7 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "cgp/graphics/drawable/hierarchy_mesh_drawable/hierarchy_mesh_drawable.hpp"
 #include "cgp/graphics/drawable/triangles_drawable/triangles_drawable.hpp"
+#include "planet/ring_planet.hpp"
 #include "terrain.hpp"
 #include "tree.hpp"
 using namespace cgp;

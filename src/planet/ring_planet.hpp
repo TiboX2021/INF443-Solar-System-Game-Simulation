@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cgp/graphics/opengl/shaders/shaders.hpp"
 #include "planet.hpp"
 
 // Planet with a ring image billboard (Saturn, etc)

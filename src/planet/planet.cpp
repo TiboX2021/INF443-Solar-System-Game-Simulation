@@ -6,9 +6,6 @@
 #include <cassert>
 #include <iostream>
 
-// TODO : modèle physique ? On pourrait hériter d'une classe qui définit les fonctions
-// Si jamais on fait beaucoup d'objets différents, ça pourrait être intéressant
-// TODO : faire en sorte que la texture se répète plusieurs fois, pour l'adapter à la taille de la planète
 // TODO : génération plus réaliste que juste du bruit ? Genre crevasses, etc à la minecraft
 
 Planet::Planet() : LowPolyDrawable(5.0f)
@@ -16,8 +13,8 @@ Planet::Planet() : LowPolyDrawable(5.0f)
     // Initialize planet data
     radius = 5.0f;
     position = {0, 0, 0};
-    // texture_path = "assets/planets/mars.png";
-    texture_path = "assets/planets/earth.jpg";
+    texture_path = "assets/planets/mars.png";
+    // texture_path = "assets/planets/earth.jpg";
 }
 
 Planet::Planet(double radius, vec3 position, std::string texture_path) : LowPolyDrawable(radius)
@@ -43,7 +40,7 @@ void Planet::initialize()
                                                                        GL_REPEAT);
 
     // TODO : set a mean color from the texture
-    setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255}); // DEBUG : set visibel color
+    setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255});
 
     planet_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display
 }

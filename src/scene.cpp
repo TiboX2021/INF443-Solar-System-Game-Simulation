@@ -150,7 +150,6 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    // TODO : faire les trucs ici
     // Calculs avec la caméra pour trier les billboards dans leur ordre d'affichage
     auto const &camera = camera_control.camera_model;
 

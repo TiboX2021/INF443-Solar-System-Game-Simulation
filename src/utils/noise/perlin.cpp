@@ -51,9 +51,6 @@ static cgp::numarray<cgp::uint3> connectivity_grid(size_t Nu, size_t Nv)
  */
 cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, int Nu, int Nv, perlin_noise_parameters parameters)
 {
-    // TODO : ajouter une fonction qui permettra ensuite de prendre la hauteur du terrain pour les collisions
-    // TODO : ajouter un paramètre pour faire scale la résolution du bruit de perlin
-
     assert_cgp(radius > 0, "Sphere radius should be > 0");
     assert_cgp(Nu > 2 && Nv > 2, "Sphere samples should be > 2");
 

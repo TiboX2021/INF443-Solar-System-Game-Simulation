@@ -1,5 +1,7 @@
 #include "object.hpp"
 
+double Object::time_scale = 1.0; // Default time scale
+
 Object::Object(double mass, cgp::vec3 position)
 {
     this->mass = mass;
@@ -28,5 +30,12 @@ void Object::update(double dt)
 {
     this->acceleration = this->forces / this->mass;
     this->velocity += this->acceleration * dt;
-    this->position += this->velocity * dt;
+
+    this->setPosition(this->velocity * dt);
+}
+
+// : voir si ça call bien la fonction override dans les sous classes. Ça risque de pas être hyper facile à gérer si je peux update les positions des mesh en même temps
+void Object::setPosition(cgp::vec3 position)
+{
+    this->position = position;
 }

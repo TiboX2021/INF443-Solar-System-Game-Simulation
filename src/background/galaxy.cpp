@@ -17,16 +17,14 @@ Galaxy::Galaxy(double radius)
 void Galaxy::initialize()
 {
 
-    // XXX Remarque : la connectivité n'est pas un problème si on utilise un shader qui ne fait pas de lighting de source
     // Initialize CGP elements
-    // TODO : change parameters
-    galaxy_mesh = cgp::mesh_primitive_sphere(radius, position, 200, 100);
+    galaxy_mesh = cgp::mesh_primitive_sphere(radius, position, 20, 10);
     galaxy_mesh_drawable.initialize_data_on_gpu(galaxy_mesh);
 
     // Add texture
     galaxy_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/galaxy/voie_lactee.jpg",
-                                                                       GL_REPEAT,
-                                                                       GL_REPEAT); // TODO : other flag ? The texture is not repeated
+                                                                       GL_CLAMP_TO_EDGE,
+                                                                       GL_CLAMP_TO_EDGE);
 }
 
 void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)

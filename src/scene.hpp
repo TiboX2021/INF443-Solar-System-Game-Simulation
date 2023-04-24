@@ -5,6 +5,7 @@
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
 #include "planet/planet.hpp"
+#include "planet/ring_planet.hpp"
 #include "terrain.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
@@ -76,4 +77,5 @@ struct scene_structure : cgp::scene_inputs_generic
     // DEBUG : to delete later
     Planet planet; // TODO: use array and initialize later
     Galaxy galaxy;
+    RingPlanet ring_planet;
 };

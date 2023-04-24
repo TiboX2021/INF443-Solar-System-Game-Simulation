@@ -54,6 +54,7 @@ void scene_structure::initialize()
 
     // Initialize planet
     planet.initialize();
+    ring_planet.initialize();
 
     // Initialize background galaxy
     galaxy.initialize();
@@ -98,8 +99,9 @@ void scene_structure::display_frame()
 
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
-    planet.draw(environment, camera_control, gui.display_wireframe);
-    // display_semiTransparent();
+    // planet.draw(environment, camera_control, gui.display_wireframe);
+    ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    display_semiTransparent();
 }
 
 void scene_structure::display_gui()
@@ -137,8 +139,6 @@ void scene_structure::idle_frame()
 
 void scene_structure::display_semiTransparent()
 {
-    // TODO : affichage des billboards
-
     // Enable use of alpha component as color blending for transparent elements
     //  alpha = current_color.alpha
     //  new color = previous_color * alpha + current_color * (1-alpha)
@@ -150,49 +150,8 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    // Calculs avec la caméra pour trier les billboards dans leur ordre d'affichage
-    auto const &camera = camera_control.camera_model;
-
-    // Re-orient the grass shape to always face the camera direction
-    vec3 const right = camera.right();
-    rotation_transform R = rotation_transform::from_frame_transform({1, 0, 0}, {0, 0, 1}, right, {0, 0, 1});
-
-    // Rotate and draw all
-    for (int i = 0; i < grass_positions.size(); ++i)
-    {
-        grass.model.rotation = R;                     // Apliqquer la rotation à l'herbe
-        grass.model.translation = grass_positions[i]; // Translate grass
-
-        // Draw the result?
-        draw(grass, environment);
-    }
-
-    // XXX SKIP THIS STEP
-    // Sort transparent shapes by depth to camera
-    //   This step can be skipped, but it will be associated to visual artifacts
-
-    // Transform matrix (the same matrix which is applied in the vertices in the shader: T = Projection x View)
-    // mat4 T = camera_projection.matrix() * camera.matrix_view();
-    // // Projected vertices (center of quads) in homogeneous coordinates
-    // vec4 p1 = T * vec4{0, -0.5f, 0, 1};
-    // vec4 p2 = T * vec4{0, +0.5f, 0, 1};
-
-    // Depth to camera
-    // float z1 = p1.z / p1.w;
-    // float z2 = p2.z / p2.w;
-
-    // // Affichage des billboards : il faut les avoir instanciés, etc
-    // // Display the quads relative to their depth
-    // if (z1 <= z2)
-    // {
-    //     draw(quad_2, environment);
-    //     draw(quad_1, environment);
-    // }
-    // else
-    // {
-    //     draw(quad_1, environment);
-    //     draw(quad_2, environment);
-    // }
+    // Draw ring planet billboard
+    ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

@@ -17,13 +17,14 @@ Planet::Planet() : LowPolyDrawable(5.0f)
     // texture_path = "assets/planets/earth.jpg";
 }
 
-Planet::Planet(double radius, vec3 position, std::string texture_path) : LowPolyDrawable(radius)
+Planet::Planet(double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(radius)
 {
 
     // Initialize planet data
     this->radius = radius;
     this->position = position;
     this->texture_path = texture_path;
+    this->parameters = parameters;
 }
 
 // Initialize
@@ -36,8 +37,8 @@ void Planet::initialize()
 
     // Add texture
     planet_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + texture_path,
-                                                                       GL_REPEAT,
-                                                                       GL_REPEAT);
+                                                                       GL_CLAMP_TO_EDGE,
+                                                                       GL_CLAMP_TO_EDGE);
 
     // TODO : set a mean color from the texture
     setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255});

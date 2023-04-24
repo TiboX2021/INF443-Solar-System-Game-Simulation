@@ -34,6 +34,7 @@ public:
 
     // Getters
     cgp::vec3 getPosition() const override;
+    bool shouldDrawLowPoly(camera_controller_orbit_euler const &camera) const;
 
 private:
     // Private : the low poly members do not need to be accessed from children classes

@@ -26,9 +26,7 @@ void LowPolyDrawable::setLowPolyColor(cgp::vec3 color)
 void LowPolyDrawable::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
 {
     // Check distance in comparison to radius
-    double distance = cgp::norm(camera.camera_model.position() - getPosition());
-
-    if (distance > LOW_POLY_DISTANCE_RATIO * low_poly_radius)
+    if (shouldDrawLowPoly(camera))
     {
         // Draw low poly
         draw_low_poly(environment, camera, show_wireframe);
@@ -57,4 +55,10 @@ void LowPolyDrawable::setPosition(cgp::vec3 position)
 cgp::vec3 LowPolyDrawable::getPosition() const
 {
     return low_poly_drawable.model.translation;
+}
+bool LowPolyDrawable::shouldDrawLowPoly(camera_controller_orbit_euler const &camera) const
+{
+    double distance = cgp::norm(camera.camera_model.position() - getPosition());
+
+    return distance > LOW_POLY_DISTANCE_RATIO * low_poly_radius;
 }

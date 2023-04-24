@@ -13,7 +13,8 @@ class Planet : public LowPolyDrawable
 {
 public:
     Planet();
-    Planet(double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg");
+    // Default perlin noise is no noise for the detailed constructor
+    Planet(double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f});
 
     // Draw function
     virtual void initialize() override;

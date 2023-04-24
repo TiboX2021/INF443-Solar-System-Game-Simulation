@@ -39,26 +39,6 @@ struct scene_structure : cgp::scene_inputs_generic
     gui_parameters gui;                // Standard GUI element storage
 
     // ****************************** //
-    // Elements and shapes of the scene
-    // ****************************** //
-
-    cgp::mesh_drawable terrain;
-    cgp::mesh terrain_mesh;
-    // cgp::mesh_drawable test_tree;
-    // cgp::mesh_drawable test_cone;
-    cgp::mesh_drawable tree;
-    cgp::mesh_drawable mushroom;
-
-    cgp::mesh_drawable grass; // Grass billboard that will be repeatedly displayed
-
-    // Positions des arbres
-    std::vector<cgp::vec3> tree_positions;
-    std::vector<cgp::vec3> mushroom_positions;
-    std::vector<cgp::vec3> grass_positions;
-
-    perlin_noise_parameters parameters;
-
-    // ****************************** //
     // Functions
     // ****************************** //
 

@@ -16,43 +16,6 @@ void scene_structure::initialize()
     camera_control.look_at({15.0f, 6.0f, 6.0f}, {0, 0, 0});
     global_frame.initialize_data_on_gpu(mesh_primitive_frame());
 
-    int N_terrain_samples = 100;
-    float terrain_length = 20;
-
-    parameters.persistency = 0.55;
-    parameters.frequency_gain = 2.3;
-    parameters.octave = 4;
-    parameters.terrain_height = 0.5; // unused
-
-    terrain_mesh = create_terrain_mesh(N_terrain_samples, terrain_length, parameters);
-    terrain.initialize_data_on_gpu(terrain_mesh);
-    terrain.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/texture_grass.jpg",
-                                                          GL_REPEAT,
-                                                          GL_REPEAT);
-    terrain.material.color = {0.6f, 0.85f, 0.5f};
-    terrain.material.phong.specular = 0.0f; // non-specular terrain material
-
-    // test_tree.initialize_data_on_gpu(create_cylinder_mesh(2, 10));
-    // test_cone.initialize_data_on_gpu(create_cone_mesh(4, 4, 10));
-    tree.initialize_data_on_gpu(create_tree());
-
-    // Génération des positions des arbres
-    tree_positions = generate_positions_on_terrain(100, terrain_length, parameters);
-
-    mushroom.initialize_data_on_gpu(create_mushroom());
-    mushroom_positions = generate_positions_on_terrain(300, terrain_length, parameters);
-
-    // Generate grass position
-    grass_positions = generate_positions_on_terrain(200, terrain_length, parameters);
-
-    // Grass mesh
-    mesh quad_mesh = mesh_primitive_quadrangle({-0.5f, 0, 0}, {0.5f, 0, 0}, {0.5f, 0, 1}, {-0.5f, 0, 1});
-    grass.initialize_data_on_gpu(quad_mesh);
-
-    // Grass texture
-    grass.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/grass.png");
-    grass.model.scaling = 0.5; // Reduce size
-
     // Initialize planet
     planet.initialize();
     ring_planet.initialize();
@@ -69,35 +32,6 @@ void scene_structure::display_frame()
     // Set the light to the current position of the camera
     environment.light = camera_control.camera_model.position();
 
-    // if (gui.display_frame)
-    //     draw(global_frame, environment);
-
-    // draw(terrain, environment);
-    // // draw(test_tree, environment);
-    // // draw(test_cone, environment);
-
-    // // Affichage de l'arbre pour toutes les positions
-    // for (int i = 0; i < tree_positions.size(); ++i)
-    // {
-    //     tree.model.translation = tree_positions[i];
-    //     draw(tree, environment);
-    // }
-
-    // // Affichage des champignons
-    // for (int i = 0; i < mushroom_positions.size(); ++i)
-    // {
-    //     mushroom.model.translation = mushroom_positions[i];
-    //     draw(mushroom, environment);
-    // }
-
-    // if (gui.display_wireframe)
-    // {
-    //     draw_wireframe(terrain, environment);
-    //     // draw_wireframe(test_tree, environment);
-    //     // draw_wireframe(test_tree, environment);
-    //     // draw_wireframe(tree);
-    // }
-
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
     // planet.draw(environment, camera_control, gui.display_wireframe);
@@ -109,15 +43,6 @@ void scene_structure::display_gui()
 {
     ImGui::Checkbox("Frame", &gui.display_frame);
     ImGui::Checkbox("Wireframe", &gui.display_wireframe);
-
-    bool update = false;
-    update |= ImGui::SliderFloat("Persistance", &parameters.persistency, 0.1f, 0.6f);
-    update |= ImGui::SliderFloat("Frequency gain", &parameters.frequency_gain, 1.5f, 2.5f);
-    update |= ImGui::SliderInt("Octave", &parameters.octave, 1, 8);
-    update |= ImGui::SliderFloat("Height", &parameters.terrain_height, 0.1f, 1.5f);
-
-    if (update) // if any slider has been changed - then update the terrain
-        update_terrain(terrain_mesh, terrain, parameters, 20);
 }
 
 void scene_structure::mouse_move_event()

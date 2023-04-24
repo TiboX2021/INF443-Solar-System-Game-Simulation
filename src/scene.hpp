@@ -20,6 +20,7 @@ struct gui_parameters
 
     bool display_frame = false;
     bool display_wireframe = false;
+    float angle_aile_vaisseau;
 };
 
 // The structure of the custom scene

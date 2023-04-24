@@ -30,9 +30,9 @@ static cgp::numarray<cgp::uint3> connectivity_grid(size_t Nu, size_t Nv)
     int n_points = Nu * Nv;
 
     // Modif : la boucle for va jusqu'à Nu et Nv au lieu de s'arrêter à -1 : boucler la boucle
-    for (size_t ku = 0; ku < Nu; ++ku)
+    for (size_t ku = 0; ku < Nu - 1; ++ku)
     {
-        for (size_t kv = 0; kv < Nv; ++kv)
+        for (size_t kv = 0; kv < Nv - 1; ++kv)
         {
             unsigned int k00 = static_cast<unsigned int>((kv + Nv * ku % n_points));
             unsigned int k10 = static_cast<unsigned int>((kv + 1 + Nv * ku) % n_points);

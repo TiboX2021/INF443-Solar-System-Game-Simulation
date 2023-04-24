@@ -8,6 +8,8 @@
 #include "planet/ring_planet.hpp"
 #include "terrain.hpp"
 
+#include "navion/navion.hpp"
+
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
 using cgp::mesh;
 using cgp::mesh_drawable;
@@ -53,6 +55,20 @@ struct scene_structure : cgp::scene_inputs_generic
 
     // Display function for semi-transparent shapes
     void display_semiTransparent();
+
+
+
+
+
+    //***********************************************
+    // Pour le projet 
+    //**********************************************
+    Navion un_vaisseau;
+    
+
+
+
+
 
     // DEBUG : to delete later
     Planet planet;

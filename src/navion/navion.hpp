@@ -1,32 +1,27 @@
 #pragma once
 
 #include "cgp/cgp.hpp"
+#include "environment.hpp"
 
 using cgp::mesh;
 using cgp::mesh_drawable;
-using cgp::vec3;
 using cgp::numarray;
+using cgp::vec3;
 
-
-
-class Navion 
+class Navion
 {
 public:
-	void initialize();
-	void draw(environment_structure const& environment);
-	void set_position(vec3 const& position);
-	void set_direction(vec3 const& direction);
-	void set_angle_aile(float const& angle);
-	
+    void initialize();
+    void draw(environment_structure const &environment);
+    void set_position(vec3 const &position);
+    void set_direction(vec3 const &direction);
+    void set_angle_aile(float const &angle);
 
 protected:
-
 private:
-	float nangle_aile;
-	cgp::hierarchy_mesh_drawable hierarchie;
-
-
+    float nangle_aile;
+    cgp::hierarchy_mesh_drawable hierarchie;
 };
 
-//void initialize_navion();
-//void bouge_navion();
+// void initialize_navion();
+// void bouge_navion();

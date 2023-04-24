@@ -40,7 +40,6 @@ void Planet::initialize()
                                                                        GL_CLAMP_TO_EDGE,
                                                                        GL_CLAMP_TO_EDGE);
 
-    // TODO : set a mean color from the texture
     setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255});
 
     planet_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display

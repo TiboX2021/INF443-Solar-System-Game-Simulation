@@ -1,12 +1,8 @@
 #pragma once
 
-#include "cgp/graphics/opengl/shaders/shaders.hpp"
 #include "planet.hpp"
 
 // Planet with a ring image billboard (Saturn, etc)
-// TODO :  override draw_real & initialize to add the ring
-// In order to avoid multiple state changes : function draw ring will draw the ring and must be called during the billboard draw
-// In draw
 class RingPlanet : public Planet
 {
 public:

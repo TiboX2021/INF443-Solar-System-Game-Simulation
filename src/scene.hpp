@@ -55,7 +55,7 @@ struct scene_structure : cgp::scene_inputs_generic
     void display_semiTransparent();
 
     // DEBUG : to delete later
-    Planet planet; // TODO: use array and initialize later
+    Planet planet;
     Galaxy galaxy;
     RingPlanet ring_planet;
 };

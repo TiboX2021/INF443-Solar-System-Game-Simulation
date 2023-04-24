@@ -43,5 +43,5 @@ void RingPlanet::draw_ring_billboard(const environment_structure &environment, c
 void RingPlanet::setPosition(vec3 position)
 {
     Planet::setPosition(position);
-    ring_mesh_drawable.model.translation = position - cgp::vec3{ring_radius, ring_radius, 0}; // TODO : fix position in order to be centered with the planet
+    ring_mesh_drawable.model.translation = position - cgp::vec3{ring_radius, ring_radius, 0};
 }

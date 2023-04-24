@@ -1,8 +1,11 @@
 #pragma once
 
+#include "background/galaxy.hpp"
 #include "cgp/cgp.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
+#include "planet/planet.hpp"
+#include "planet/ring_planet.hpp"
 #include "terrain.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
@@ -36,26 +39,6 @@ struct scene_structure : cgp::scene_inputs_generic
     gui_parameters gui;                // Standard GUI element storage
 
     // ****************************** //
-    // Elements and shapes of the scene
-    // ****************************** //
-
-    cgp::mesh_drawable terrain;
-    cgp::mesh terrain_mesh;
-    // cgp::mesh_drawable test_tree;
-    // cgp::mesh_drawable test_cone;
-    cgp::mesh_drawable tree;
-    cgp::mesh_drawable mushroom;
-
-    cgp::mesh_drawable grass; // Grass billboard that will be repeatedly displayed
-
-    // Positions des arbres
-    std::vector<cgp::vec3> tree_positions;
-    std::vector<cgp::vec3> mushroom_positions;
-    std::vector<cgp::vec3> grass_positions;
-
-    perlin_noise_parameters parameters;
-
-    // ****************************** //
     // Functions
     // ****************************** //
 
@@ -70,4 +53,9 @@ struct scene_structure : cgp::scene_inputs_generic
 
     // Display function for semi-transparent shapes
     void display_semiTransparent();
+
+    // DEBUG : to delete later
+    Planet planet;
+    Galaxy galaxy;
+    RingPlanet ring_planet;
 };

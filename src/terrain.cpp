@@ -1,7 +1,6 @@
 
 #include "terrain.hpp"
 #include "cgp/core/base/rand/rand.hpp"
-#include "cgp/core/containers/matrix_stack/matrix_stack.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
 #include <cmath>
 
@@ -40,8 +39,6 @@ float evaluate_terrain_height(float x, float y, perlin_noise_parameters const &p
     {
         z += h_i[i] * std::exp(-std::pow(norm(vec2(x, y) - p_i[i]) / sigma_i[i], 2));
     }
-
-    // TODO : ici, u et v ne sont probablement pas bons ! Il faudra les scale
 
     float u = x / terrain_length + 0.5f;
     float v = y / terrain_length + 0.5f;

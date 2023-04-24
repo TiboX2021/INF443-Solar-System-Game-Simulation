@@ -34,3 +34,13 @@ make
 ## Test the project
 
 The executable is named **project** (set in _CMakeLists.txt_).
+
+## Idées pour la suite
+
+-   Planètes avec des orbites réalistes
+-   Atmosphère visible pour les planètes, autour et quand on s'en rapproche (densité du gaz + couleur), faire en sorte que le ciel change de couleur quand on s'approche. Pour la terre, ajouter des nuages qui bougents. Un projet avait fait une sphère transparente par dessus, j'aimerais bien faire un truc un peu plus poussé ?
+-   Ceinture d'astéroïdes : génération aléatoire d'astéroïdes selon les planètes qui ont une ceinture, etc.
+-   Faire une carte pour voir de haut les planètes et les trajectoires
+-   Ajouter des vaisseaux spatiaux / easter eggs de plusieurs films / trucs de scifi connus 9stations spatiales, etc. Récupérer des modèles 3d
+-   Ajouter un moyen de contrôler un vaisseau spatial + armes ? des projectiles à durée de vie finie (comme dans the expanse, le Rocinante)
+-   Ajouter des intelligences artificielles pour faire des batailles spatiales ?

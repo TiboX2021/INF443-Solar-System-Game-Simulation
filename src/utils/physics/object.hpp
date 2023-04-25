@@ -16,6 +16,10 @@ This way, realistic physiscs distances and constants can be directly used in the
 => the masses and forces and positions of the physics engine are real
 => the positions of the meshes are scaled down
 => the radiuses of the meshes too ?
+
+=> the masses and forces and positions of the physics engine are real
+=> the positions of the meshes are scaled down
+=> the radiuses of the meshes too ?
 */
 
 // Pour les collisions, faire une gestion maligne pour limiter le temps de calcul

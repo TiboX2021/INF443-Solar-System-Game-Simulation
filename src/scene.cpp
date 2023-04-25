@@ -2,6 +2,7 @@
 
 #include "background/galaxy.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "planet/planet.hpp"
 #include "planet/ring_planet.hpp"
 using namespace cgp;
 
@@ -15,10 +16,22 @@ void scene_structure::initialize()
     // Initialize planet
     planet.initialize();
     ring_planet.initialize();
-    planet.setPosition({500 * 10e7, 500 * 10e7, 0});
 
     // Initialize background galaxy
     galaxy.initialize();
+
+    double sun_mass = 1988500e24; // In kg
+    double sun_radius = 696340e3; // In meters
+
+    // Initialize sun
+    sun = Planet(sun_mass, sun_radius, {0, 0, 0}, "assets/planets/sun.jpg");
+    sun.initialize();
+
+    // Distance terre soleil : 150.48 million km
+    double terre_soleil = 150.48e9; // en m
+    planet.setPosition({terre_soleil, 0, 0});
+    planet.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
+    planet.setInitialVelocity({0, Object::computeOrbitalSpeed(sun_mass, terre_soleil), 0});
 
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
@@ -30,13 +43,16 @@ void scene_structure::display_frame()
     environment.light = camera_control.camera_model.position();
 
     // Update physics for planet
+    planet.resetForces();
+    planet.computeGravitationnalForce(&sun);
     planet.update(1.0 / 60.0);
     planet.updateModels();
 
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
     planet.draw(environment, camera_control, gui.display_wireframe);
-    ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    // ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    sun.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 }
 
@@ -78,7 +94,7 @@ void scene_structure::display_semiTransparent()
     glDepthMask(false);
 
     // Draw ring planet billboard
-    ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
+    // ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

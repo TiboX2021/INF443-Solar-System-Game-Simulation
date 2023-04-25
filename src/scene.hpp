@@ -56,6 +56,7 @@ struct scene_structure : cgp::scene_inputs_generic
 
     // DEBUG : to delete later
     Planet planet;
+    Planet sun;
     Galaxy galaxy;
     RingPlanet ring_planet;
 };

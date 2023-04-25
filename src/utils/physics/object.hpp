@@ -19,9 +19,9 @@ This way, realistic physiscs distances and constants can be directly used in the
 // Pour les collisions, faire une gestion maligne pour limiter le temps de calcul
 
 // Physics constants
-constexpr double GRAVITAIONAL_CONSTANT = 6.67408e-11;
+constexpr double GRAVITATIONAL_CONSTANT = 6.67408e-11;
 constexpr double PHYSICS_SCALE = 1e-9;
-constexpr double DISPLAY_SCALE = 1000; // Display larger models
+constexpr double DISPLAY_SCALE = 100; // Display larger models
 
 /**
  * Physical Object with position and rotation abstract class
@@ -47,6 +47,7 @@ public:
     void setShouldTranslate(bool should_translate);
     void setShouldRotate(bool should_rotate);
     void setPhysicsPosition(cgp::vec3 position);
+    void setInitialVelocity(cgp::vec3 velocity);
 
     // STATIC MEMBERS
     // Scale a value to the physics scale (distance and mass)
@@ -64,6 +65,8 @@ public:
             time_scale = 1.0;
     }
     static double getTimeScale() { return time_scale; }
+
+    static double computeOrbitalSpeed(double M, double r);
 
 private:
     // Translation

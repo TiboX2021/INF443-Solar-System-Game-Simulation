@@ -1,5 +1,6 @@
 #include "object.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
+#include <cmath>
 
 double Object::time_scale = 1.0; // Default time scale
 
@@ -34,7 +35,7 @@ void Object::resetForces()
 void Object::computeGravitationnalForce(Object *other)
 {
     cgp::vec3 distance = other->physics_position - this->physics_position;
-    forces += GRAVITAIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance);
+    forces += GRAVITATIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance);
 }
 
 /** Update position */
@@ -78,4 +79,14 @@ void Object::setShouldRotate(bool should_rotate)
 void Object::setPhysicsPosition(cgp::vec3 position)
 {
     this->physics_position = position;
+}
+
+double Object::computeOrbitalSpeed(double M, double r)
+{
+    return std::sqrt(GRAVITATIONAL_CONSTANT * M / r);
+}
+
+void Object::setInitialVelocity(cgp::vec3 velocity)
+{
+    this->velocity = velocity;
 }

@@ -103,7 +103,7 @@ void scene_structure::display_frame()
 
     */
 
-    un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau*Pi/90);
+    un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau * Pi / 180) ;
     un_vaisseau.draw(environment);
 
 }
@@ -113,7 +113,7 @@ void scene_structure::display_gui()
     ImGui::Checkbox("Frame", &gui.display_frame);
     ImGui::Checkbox("Wireframe", &gui.display_wireframe);
 
-    ImGui::SliderAngle("Angle Aile", &gui.angle_aile_vaisseau, 0, 80);
+    ImGui::SliderFloat("Angle Aile", &gui.angle_aile_vaisseau, 0, 80);
 }
 
 void scene_structure::mouse_move_event()

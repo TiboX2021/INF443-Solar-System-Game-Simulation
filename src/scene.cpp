@@ -4,6 +4,7 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "planet/planet.hpp"
 #include "planet/ring_planet.hpp"
+#include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
 #include <iostream>
 using namespace cgp;
@@ -34,6 +35,13 @@ void scene_structure::initialize()
     planet.setPosition({terre_soleil, 0, 0});
     planet.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
     planet.setInitialVelocity({0, Object::computeOrbitalSpeed(sun_mass, terre_soleil), 0});
+    planet.setInitialRotationSpeed(2.0 * M_PI / (3600 * 24));
+
+    // Initialize Saturn
+    // Saturne soleil : 1.4652 billion km
+    double saturne_soleil = 1.4652e12; // en m
+    ring_planet.setPosition({saturne_soleil, 0, 0});
+    ring_planet.setInitialVelocity({0, Object::computeOrbitalSpeed(sun_mass, saturne_soleil), 0});
 
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
@@ -50,10 +58,15 @@ void scene_structure::display_frame()
     planet.update(1.0 / 60.0 * Object::getTimeScale());
     planet.updateModels();
 
+    ring_planet.resetForces();
+    ring_planet.computeGravitationnalForce(&sun);
+    ring_planet.update(1.0 / 60.0 * Object::getTimeScale());
+    ring_planet.updateModels();
+
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
     planet.draw(environment, camera_control, gui.display_wireframe);
-    // ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    ring_planet.draw(environment, camera_control, gui.display_wireframe);
     sun.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 }
@@ -96,7 +109,7 @@ void scene_structure::display_semiTransparent()
     glDepthMask(false);
 
     // Draw ring planet billboard
-    // ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
+    ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

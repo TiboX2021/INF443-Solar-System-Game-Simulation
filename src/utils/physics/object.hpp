@@ -50,6 +50,7 @@ public:
     void setShouldRotate(bool should_rotate);
     void setPhysicsPosition(cgp::vec3 position);
     void setInitialVelocity(cgp::vec3 velocity);
+    void setInitialRotationSpeed(double rotation_speed);
 
     // STATIC MEMBERS
     // Scale a value to the physics scale (distance and mass)

@@ -17,9 +17,7 @@ Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool sh
     // Rotations
     this->rotation_angle = 0;
     this->rotation_axis = rotation_axis;
-    // Vitesse de rotation : en radians par seconde.
-    // 1 tour par jour = 2pi radians par jour = 2pi / 3600 / 24 radians par seconde
-    this->rotation_speed = 2.0 * M_PI / (3600 * 24); // DEBUG : test pour la terre
+    this->rotation_speed = 0;
 
     // Movement
     this->should_translate = should_translate;
@@ -106,4 +104,9 @@ bool Object::getShouldTranslate() const
 bool Object::getShouldRotate() const
 {
     return this->should_rotate;
+}
+
+void Object::setInitialRotationSpeed(double rotation_speed)
+{
+    this->rotation_speed = rotation_speed;
 }

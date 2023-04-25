@@ -59,6 +59,7 @@ void scene_structure::initialize()
     //************************************
 
     un_vaisseau.initialize();
+    galaxy.initialize();
 
 
 
@@ -105,6 +106,8 @@ void scene_structure::display_frame()
 
     un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau * Pi / 180) ;
     un_vaisseau.draw(environment);
+
+    //galaxy.draw(environment, camera_control, false);
 
 }
 

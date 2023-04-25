@@ -8,12 +8,25 @@
 void Navion::initialize() {
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	mesh_drawable corps;
-	mesh_drawable cocpit;
-	mesh_drawable vitre_cocpit;
+	
 	mesh_drawable aile_d;
 	mesh_drawable aile_g;
 	mesh_drawable reacteur;
 	mesh_drawable lance_missile;
+
+	// pour faire le cockpit :
+	mesh_drawable cocpit;
+	mesh_drawable vitre_cocpit;
+	mesh_drawable bord1_cocpit;
+	mesh_drawable bord2_cocpit;
+	mesh_drawable bord3_cocpit;
+	mesh_drawable bord4_cocpit;
+	mesh_drawable bord5_cocpit;
+	mesh_drawable milieu1_cocpit;
+	mesh_drawable milieu2_cocpit;
+	mesh_drawable milieu3_cocpit;
+	mesh_drawable milieu4_cocpit;
+
 
 	
 
@@ -24,21 +37,46 @@ void Navion::initialize() {
 	aile_d.initialize_data_on_gpu(cgp::mesh_primitive_quadrangle({ 0.2,0,0 }, { 0.1, 1.5,0 }, { -0.1, 1.5,0 }, { -0.2, 0,0 }));
 	aile_g.initialize_data_on_gpu(cgp::mesh_primitive_quadrangle({ -0.2, 0, 0 }, { -0.1, -1.5,0 }, { 0.1, -1.5,0 }, { 0.2,0,0 }));
 	reacteur.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.05, { -0.2,0,0 }, { 0.1,0,0 }));
-	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
-	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35,0.5));
-	vitre_cocpit.initialize_data_on_gpu(cocpit_vitre(0.35, 0.5));
+	
 	lance_missile.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.05, 0.07, { 0,0,0 }, { 1,0,0 }));
 
-	
+
+	//pour le cocpit :
+	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
+	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35, 0.5));
+	vitre_cocpit.initialize_data_on_gpu(cocpit_vitre(0.35, 0.5));
+	bord1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, {0,0.35, 0}, {0, 0.35* cos(Pi/5),0.35 * sin(Pi / 5) }));
+	bord2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(Pi / 5),0.35 * sin(Pi / 5) }, { 0, 0.35 * cos(2*Pi / 5),0.35 * sin(2 * Pi / 5) }));
+	bord3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2*Pi / 5),0.35 * sin(2 * Pi / 5) }, {0 , 0.35 * cos(3*Pi / 5),0.35 * sin(3 * Pi / 5) }));
+	bord4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(3*Pi / 5),0.35 * sin(3 * Pi / 5) }, { 0 , 0.35 * cos(4*Pi / 5),0.35 * sin(4 * Pi / 5) }));
+	bord5_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(4 * Pi / 5),0.35 * sin(4 * Pi / 5) }, { 0 , -0.35 ,0 }));
+	milieu1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos( Pi / 5) +0.01 , 0.35 * sin( Pi / 5) +0.01}, { 0.5 , 0 ,0 }));
+	milieu2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2 * Pi / 5)+0.01 , 0.35 * sin(2 * Pi / 5) +0.01}, { 0.5 , 0 ,0 }));
+	milieu3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(3 * Pi / 5)+0.01 , 0.35 * sin(3 * Pi / 5) +0.01}, { 0.5 , 0 ,0 }));
+	milieu4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(4 * Pi / 5)+0.01 , 0.35 * sin(4 * Pi / 5) +0.01}, { 0.5 , 0 ,0 }));
+
+
+
 
 	// Set the color of some elements
-	vec3 blanc = { 0.8, 0.8, 0.8 };
-	corps.material.color = blanc;
-	aile_d.material.color = blanc;
-	aile_g.material.color = blanc;
-	reacteur.material.color = blanc;
+	vec3 gris = { 0.5, 0.5, 0.5 };
+	//corps.material.color = gris;
+	//aile_d.material.color = gris;
+	//aile_g.material.color = gris;
+	reacteur.material.color = gris;
 	vitre_cocpit.material.color = { 0.1,0.1,0.1 };
-	lance_missile.material.color = blanc;
+	lance_missile.material.color = gris;
+
+	bord1_cocpit.material.color = gris;
+	bord2_cocpit.material.color = gris;
+	bord3_cocpit.material.color = gris;
+	bord4_cocpit.material.color = gris;
+	bord5_cocpit.material.color = gris;
+	milieu1_cocpit.material.color = gris;
+	milieu2_cocpit.material.color = gris;
+	milieu3_cocpit.material.color = gris;
+	milieu4_cocpit.material.color = gris;
+
 
 	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
 		GL_REPEAT,
@@ -65,8 +103,22 @@ void Navion::initialize() {
 	//     - The first element (without explicit name of its parent) is assumed to be the root.
 
 	hierarchie.add(corps, "Corps");
+
+
 	hierarchie.add(cocpit, "Cocpit", "Corps", { 0.5,0,0 });
 	hierarchie.add(vitre_cocpit, "Cocpit_Vitre", "Corps", { 0.5,0,0 });
+	hierarchie.add(bord1_cocpit, "Bord1", "Cocpit");
+	hierarchie.add(bord2_cocpit, "Bord2", "Cocpit");
+	hierarchie.add(bord3_cocpit, "Bord3", "Cocpit");
+	hierarchie.add(bord4_cocpit, "Bord4", "Cocpit");
+	hierarchie.add(bord5_cocpit, "Bord5", "Cocpit");
+	hierarchie.add(milieu1_cocpit, "Milieu1", "Cocpit");
+	hierarchie.add(milieu2_cocpit, "Milieu2", "Cocpit");
+	hierarchie.add(milieu3_cocpit, "Milieu3", "Cocpit");
+	hierarchie.add(milieu4_cocpit, "Milieu4", "Cocpit");
+
+
+
 	hierarchie.add(aile_d, "AileDH", "Corps", {0,0.3,0.2});
 	hierarchie.add(aile_d, "AileDB", "Corps", { 0,0.3,-0.2 });
 	hierarchie.add(aile_g, "AileGH", "Corps", { 0,-0.3,0.2 });
@@ -149,7 +201,7 @@ mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
 
 mesh Navion::cocpit_vitre(float const& radius, float const& length) {
 	mesh semi_cone;
-	int N = 5;
+	int N = 6;
 
 	for (int k = 0; k < N; ++k)
 	{

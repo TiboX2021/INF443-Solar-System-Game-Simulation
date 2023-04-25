@@ -62,18 +62,12 @@ struct scene_structure : cgp::scene_inputs_generic
     OptimizedSimulationHandler asteroid_field_handler;
 =======
 
-
-
-
     //***********************************************
-    // Pour le projet 
+    // Pour le projet
     //**********************************************
     Navion un_vaisseau;
-    
+
     mesh_drawable truc_test;
-
-
-
 
     // DEBUG : to delete later
     Planet planet;

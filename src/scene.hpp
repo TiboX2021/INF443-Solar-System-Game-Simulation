@@ -77,6 +77,7 @@ struct scene_structure : cgp::scene_inputs_generic
 
     // DEBUG : to delete later
     Planet planet;
+    Planet sun;
     Galaxy galaxy;
     RingPlanet ring_planet;
 >>>>>>> 6009f2c (creation de l'aile du falcon (problèmes de sahder à régler))

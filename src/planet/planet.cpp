@@ -10,7 +10,7 @@
 
 // TODO : génération plus réaliste que juste du bruit ? Genre crevasses, etc à la minecraft
 
-Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(EARTH_MASS, {0, 0, 0})
+Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(EARTH_MASS, {0, 0, 0}, EARTH_ROTATION_AXIS)
 {
     // Initialize planet data
     radius = scaleRadiusForDisplay(EARTH_RADIUS);
@@ -85,10 +85,13 @@ double Planet::getHeightAt(vec3 position) const
 // Update models based on physics members
 void Planet::updateModels()
 {
-    // Update position
-    setPosition(getPhysicsPosition());
-
-    // Update rotation
-    // TODO : voir comment ça marche
-    planet_mesh_drawable.model.rotation = rotation_transform::from_axis_angle({0, 0, 1}, getPhysicsRotationAngle());
+    if (getShouldTranslate())
+    { // Update position
+        setPosition(getPhysicsPosition());
+    }
+    if (getShouldRotate())
+    {
+        // Update rotation
+        planet_mesh_drawable.model.rotation = getPhysicsRotation();
+    }
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 
 /*
@@ -31,17 +32,18 @@ class Object
 public:
     Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1}, bool should_translate = true, bool should_rotate = true);
 
-    // TODO : function to compute force, and to update with dt. speed, acceleration, etc?
     void update(double dt);
 
     void resetForces();
     void computeGravitationnalForce(Object *other);
-    // virtual void setPosition(cgp::vec3 position); // Faire une autre fonction qui set la position physique réelle ?
-    virtual void updateModels() = 0; // TODO : function to update the models based on the physical constants
+    virtual void updateModels() = 0; // Abstract function to update the models based on the physical constants
 
     // Getters
     cgp::vec3 getPhysicsPosition() const;
+    cgp::rotation_transform getPhysicsRotation() const;
     double getPhysicsRotationAngle() const;
+    bool getShouldTranslate() const;
+    bool getShouldRotate() const;
 
     // Setters
     void setShouldTranslate(bool should_translate);
@@ -76,7 +78,7 @@ private:
     cgp::vec3 acceleration;
     cgp::vec3 forces;
 
-    // TODO Rotation
+    // Rotation
     double rotation_speed;
     double rotation_angle;
     cgp::vec3 rotation_axis;

@@ -7,6 +7,11 @@
 #include "utils/physics/object.hpp"
 #include <string>
 
+#define EARTH_ROTATION_AXIS   \
+    {                         \
+        0, 0.397949, 0.917408 \
+    }
+
 // Default planet arguments
 constexpr double EARTH_RADIUS = 6.371e+6 * 10; // In meters DEBUG * 10 to monitor simulation
 constexpr double EARTH_MASS = 5.9742e+24;      // In kg

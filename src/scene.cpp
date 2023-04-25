@@ -5,6 +5,7 @@
 #include "planet/planet.hpp"
 #include "planet/ring_planet.hpp"
 #include "utils/physics/object.hpp"
+#include <iostream>
 using namespace cgp;
 
 void scene_structure::initialize()

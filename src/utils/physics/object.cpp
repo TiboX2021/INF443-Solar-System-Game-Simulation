@@ -1,4 +1,5 @@
 #include "object.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include <cmath>
 
@@ -15,11 +16,10 @@ Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool sh
 
     // Rotations
     this->rotation_angle = 0;
+    this->rotation_axis = rotation_axis;
     // Vitesse de rotation : en radians par seconde.
     // 1 tour par jour = 2pi radians par jour = 2pi / 3600 / 24 radians par seconde
     this->rotation_speed = 2.0 * M_PI / (3600 * 24); // DEBUG : test pour la terre
-
-    // TODO : set rotation axis
 
     // Movement
     this->should_translate = should_translate;
@@ -67,6 +67,11 @@ double Object::getPhysicsRotationAngle() const
     return this->rotation_angle;
 }
 
+cgp::rotation_transform Object::getPhysicsRotation() const
+{
+    return cgp::rotation_transform::from_axis_angle(rotation_axis, rotation_angle);
+}
+
 void Object::setShouldTranslate(bool should_translate)
 {
     this->should_translate = should_translate;
@@ -90,4 +95,14 @@ double Object::computeOrbitalSpeed(double M, double r)
 void Object::setInitialVelocity(cgp::vec3 velocity)
 {
     this->velocity = velocity;
+}
+
+bool Object::getShouldTranslate() const
+{
+    return this->should_translate;
+}
+
+bool Object::getShouldRotate() const
+{
+    return this->should_rotate;
 }

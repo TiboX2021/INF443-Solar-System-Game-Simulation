@@ -2,11 +2,13 @@
 
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "environment.hpp"
+#include "utils/display/base_drawable.hpp"
 
 /**
  * Abstract base drawable class for billboards
  */
-class BillboardDrawable
+class BillboardDrawable : private BaseDrawable
+
 {
     // Initialize member meshs
     virtual void initialize(){};

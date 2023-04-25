@@ -58,7 +58,8 @@ void scene_structure::initialize()
     //     nessais sur le navion
     //************************************
 
-    un_vaisseau.initialize();
+    //un_vaisseau.initialize();
+    un_vaisseau.create_millennium_falcon();
     galaxy.initialize();
 
 
@@ -107,7 +108,7 @@ void scene_structure::display_frame()
     un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau * Pi / 180) ;
     un_vaisseau.draw(environment);
 
-    //galaxy.draw(environment, camera_control, false);
+    galaxy.draw(environment, camera_control, false);
 
 }
 

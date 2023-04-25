@@ -14,8 +14,8 @@ void scene_structure::initialize()
 
     // Initialize planet
     planet.initialize();
-    // ring_planet.initialize();
-    planet.setPosition({30 * 10e8, 30 * 10e8, 0});
+    ring_planet.initialize();
+    planet.setPosition({500 * 10e7, 500 * 10e7, 0});
 
     // Initialize background galaxy
     galaxy.initialize();
@@ -36,7 +36,7 @@ void scene_structure::display_frame()
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
     planet.draw(environment, camera_control, gui.display_wireframe);
-    // ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    ring_planet.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 }
 

@@ -23,7 +23,8 @@ void Navion::initialize() {
 	aile_d.initialize_data_on_gpu(cgp::mesh_primitive_quadrangle({ 0.2,0,0 }, { 0.1, 1.5,0 }, { -0.1, 1.5,0 }, { -0.2, 0,0 }));
 	aile_g.initialize_data_on_gpu(cgp::mesh_primitive_quadrangle({ -0.2, 0, 0 }, { -0.1, -1.5,0 }, { 0.1, -1.5,0 }, { 0.2,0,0 }));
 	reacteur.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.05, { -0.2,0,0 }, { 0.1,0,0 }));
-	cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
+	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
+	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35,0.5));
 	lance_missile.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.05, 0.07, { 0,0,0 }, { 1,0,0 }));
 
 	
@@ -116,7 +117,7 @@ void Navion::set_angle_aile(float const angle) {
 
 
 mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
-	// Number of samples of the terrain is N x N
+	// Number of samples of the terrain is N
 	int N = 20;
 
 	mesh semi_cone; // temporary terrain storage (CPU only)
@@ -133,11 +134,10 @@ mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
 
 		// Compute the local surface function
 		vec3 p = { radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u), 0 };
-		vec2 uv = { u,0 };
 
 		// Store vertex coordinates
 		semi_cone.position[ku] = p;
-		semi_cone.uv[ku] = { u,0 };
+		semi_cone.uv[ku] = { radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u)};
 	}
 
 	// add the head of the cone
@@ -147,12 +147,12 @@ mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
 	for (int ku = 0; ku < N - 1; ++ku)
 	{
 
-		uint3 triangle_1 = { ku, ku + 1 , N };
+		uint3 triangle_1 = { ku + 1 , ku, N };
 
 		semi_cone.connectivity.push_back(triangle_1);
 		
 	}
-
+	semi_cone.fill_empty_field();
 	return semi_cone;
 }
 

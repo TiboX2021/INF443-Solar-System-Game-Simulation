@@ -1,12 +1,13 @@
 #pragma once
 
 #include "environment.hpp"
+#include "utils/display/drawable.hpp"
 
 /**
  * Galaxy environment. Sphere that we are inside of.
  It must move along with the player !
 */
-class Galaxy
+class Galaxy : public Drawable
 {
 
 public:
@@ -15,11 +16,14 @@ public:
     Galaxy(double radius);
 
     // Draw function
-    void initialize();
-    void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    virtual void initialize() override;
+    virtual void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     // Setters
-    void setPosition(cgp::vec3 position);
+    virtual void setPosition(cgp::vec3 position) override;
+
+    // Getter
+    virtual cgp::vec3 getPosition() const override;
 
 private:
     double radius;

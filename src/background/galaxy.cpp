@@ -47,3 +47,8 @@ void Galaxy::setPosition(cgp::vec3 position)
 {
     galaxy_mesh_drawable.model.translation = position;
 }
+
+cgp::vec3 Galaxy::getPosition() const
+{
+    return position;
+}

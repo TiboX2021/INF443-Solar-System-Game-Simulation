@@ -44,7 +44,7 @@ void Navion::initialize() {
 	//pour le cocpit :
 	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
 	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35, 0.5));
-	vitre_cocpit.initialize_data_on_gpu(cocpit_vitre(0.35, 0.5));
+	vitre_cocpit.initialize_data_on_gpu(pseudo_cone(0.35, 0.5, 5));
 	bord1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, {0,0.35, 0}, {0, 0.35* cos(Pi/5),0.35 * sin(Pi / 5) }));
 	bord2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(Pi / 5),0.35 * sin(Pi / 5) }, { 0, 0.35 * cos(2*Pi / 5),0.35 * sin(2 * Pi / 5) }));
 	bord3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2*Pi / 5),0.35 * sin(2 * Pi / 5) }, {0 , 0.35 * cos(3*Pi / 5),0.35 * sin(3 * Pi / 5) }));
@@ -142,12 +142,12 @@ void Navion::draw(environment_structure const& environment) {
 
 	// Update position/angle
 
-	
+	/*
 	hierarchie["AileDH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, nangle_aile);
 	hierarchie["AileGH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, - nangle_aile);
 	hierarchie["AileDB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, - nangle_aile);
 	hierarchie["AileGB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 },  nangle_aile);
-	
+	*/
 
 
 	// This function must be called before the drawing in order to propagate the deformations through the hierarchy
@@ -199,11 +199,12 @@ mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
 	return semi_cone;
 }
 
-mesh Navion::cocpit_vitre(float const& radius, float const& length) {
+mesh Navion::pseudo_cone(float const& radius, float const& length, int const& n=5) {
 	mesh semi_cone;
-	int N = 6;
 
-	for (int k = 0; k < N; ++k)
+	int N = n + 1;
+
+	for (int k = 0; k < 2*N; ++k)
 	{
 		float u = k / (N - 1.0f) / 2;
 		vec3 p = radius * vec3(0.0f, std::cos(2 * Pi * u), std::sin(2 * Pi * u));
@@ -215,11 +216,44 @@ mesh Navion::cocpit_vitre(float const& radius, float const& length) {
 	semi_cone.position.push_back({ length, 0,0 });
 	semi_cone.uv.push_back({ 0.5,0.5 });
 
-	for (int k = 0; k < N - 1; ++k)
-		semi_cone.connectivity.push_back(uint3{ N, k, k + 1 });
+	for (int k = 0; k < 2*N - 1; ++k)
+		semi_cone.connectivity.push_back(uint3{ 2*N, k, k + 1 });
 
 	semi_cone.fill_empty_field();
 	return semi_cone;
 }
 
+void Navion::create_millennium_falcon() {
+	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
+	mesh_drawable haut;
+	mesh_drawable bas;
+	mesh_drawable centre;
+	mesh_drawable contour;
+	mesh_drawable tunnel_interne;
+	mesh_drawable bords;
 
+
+	haut.initialize_data_on_gpu(pseudo_cone(1, 0.3,6));
+	bas.initialize_data_on_gpu(pseudo_cone(1, 0.3,6));
+	centre.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.2, {0,0, -0.4}, {0,0,0.4}));
+
+
+	// Set the color of some elements
+
+
+
+
+	// Add the elements in the hierarchy
+	//   The syntax is hierarchy.add(mesh_drawable, "name of the parent element", [optional: local translation in the hierarchy])
+	//   Notes: 
+	//     - An element must necessarily be added after its parent
+	//     - The first element (without explicit name of its parent) is assumed to be the root.
+
+	hierarchie.add(centre, "Centre");
+	hierarchie.add(haut, "Haut", "Centre", {0,0,0.1});
+	hierarchie.add(bas, "Bas", "Centre", {0,0,-0.1});
+
+	hierarchie["Haut"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
+	hierarchie["Bas"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 },  Pi / 2);
+
+}

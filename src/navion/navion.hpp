@@ -16,14 +16,15 @@ public:
     void set_position(vec3 const &position);
     void set_direction(vec3 const &direction);
     void set_angle_aile(float const angle);
-   
+    void create_millennium_falcon();
 
 protected:
     cgp::hierarchy_mesh_drawable hierarchie;
+
 private:
     float nangle_aile;
     mesh create_cocpit_coque(float const& radius, float const& length);
-    mesh Navion::cocpit_vitre(float const& radius, float const& length);
+    mesh pseudo_cone(float const& radius, float const& length, int const& n);
     
 };
 

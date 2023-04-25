@@ -9,6 +9,7 @@ void Navion::initialize() {
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	mesh_drawable corps;
 	mesh_drawable cocpit;
+	mesh_drawable vitre_cocpit;
 	mesh_drawable aile_d;
 	mesh_drawable aile_g;
 	mesh_drawable reacteur;
@@ -25,6 +26,7 @@ void Navion::initialize() {
 	reacteur.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.05, { -0.2,0,0 }, { 0.1,0,0 }));
 	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
 	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35,0.5));
+	vitre_cocpit.initialize_data_on_gpu(cocpit_vitre(0.35, 0.5));
 	lance_missile.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.05, 0.07, { 0,0,0 }, { 1,0,0 }));
 
 	
@@ -35,10 +37,14 @@ void Navion::initialize() {
 	aile_d.material.color = blanc;
 	aile_g.material.color = blanc;
 	reacteur.material.color = blanc;
-	cocpit.material.color = { 0.1,0.1,0.1 };
+	vitre_cocpit.material.color = { 0.1,0.1,0.1 };
 	lance_missile.material.color = blanc;
 
 	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+
+	cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
 		GL_REPEAT,
 		GL_REPEAT);
 
@@ -60,6 +66,7 @@ void Navion::initialize() {
 
 	hierarchie.add(corps, "Corps");
 	hierarchie.add(cocpit, "Cocpit", "Corps", { 0.5,0,0 });
+	hierarchie.add(vitre_cocpit, "Cocpit_Vitre", "Corps", { 0.5,0,0 });
 	hierarchie.add(aile_d, "AileDH", "Corps", {0,0.3,0.2});
 	hierarchie.add(aile_d, "AileDB", "Corps", { 0,0.3,-0.2 });
 	hierarchie.add(aile_g, "AileGH", "Corps", { 0,-0.3,0.2 });
@@ -117,41 +124,48 @@ void Navion::set_angle_aile(float const angle) {
 
 
 mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
-	// Number of samples of the terrain is N
+	
+	mesh semi_cone;
 	int N = 20;
 
-	mesh semi_cone; // temporary terrain storage (CPU only)
-	semi_cone.position.resize(N+1);
-	semi_cone.uv.resize(N+1);
-
-
-	// fill the terrain
-	for (int ku = 0; ku < N; ++ku)
+	for (int k = 0; k < N; ++k)
 	{
-		// Compute local parametric coordinates (u,v) \in [0,1]
-		float u = ku / 2*(N - 1.0f);
-		
+		float u = k / (N - 1.0f)/2;
+		vec3 p = radius * vec3(0.0f, - std::cos(2 * Pi * u), - std::sin(2 * Pi * u));
+		semi_cone.position.push_back(p);
+		semi_cone.uv.push_back({ 0.5 + std::cos(2 * Pi * u) * 0.43, 0.5 + std::sin(2 * Pi * u) * 0.43 });
 
-		// Compute the local surface function
-		vec3 p = { radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u), 0 };
-
-		// Store vertex coordinates
-		semi_cone.position[ku] = p;
-		semi_cone.uv[ku] = { radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u)};
 	}
+	// middle point
+	semi_cone.position.push_back({ length, 0,0 });
+	semi_cone.uv.push_back({ 0.5,0.5 });
 
-	// add the head of the cone
-	semi_cone.position[N] = { 0,0,length };
+	for (int k = 0; k < N - 1; ++k)
+		semi_cone.connectivity.push_back(uint3{ N, k, k + 1 });
 
-	// Generate triangle organization :
-	for (int ku = 0; ku < N - 1; ++ku)
+	semi_cone.fill_empty_field();
+	return semi_cone;
+}
+
+mesh Navion::cocpit_vitre(float const& radius, float const& length) {
+	mesh semi_cone;
+	int N = 5;
+
+	for (int k = 0; k < N; ++k)
 	{
+		float u = k / (N - 1.0f) / 2;
+		vec3 p = radius * vec3(0.0f, std::cos(2 * Pi * u), std::sin(2 * Pi * u));
+		semi_cone.position.push_back(p);
+		semi_cone.uv.push_back({ 0.5 + std::cos(2 * Pi * u) * 0.43, 0.5 + std::sin(2 * Pi * u) * 0.43 });
 
-		uint3 triangle_1 = { ku + 1 , ku, N };
-
-		semi_cone.connectivity.push_back(triangle_1);
-		
 	}
+	// middle point
+	semi_cone.position.push_back({ length, 0,0 });
+	semi_cone.uv.push_back({ 0.5,0.5 });
+
+	for (int k = 0; k < N - 1; ++k)
+		semi_cone.connectivity.push_back(uint3{ N, k, k + 1 });
+
 	semi_cone.fill_empty_field();
 	return semi_cone;
 }

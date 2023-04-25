@@ -23,6 +23,7 @@ protected:
 private:
     float nangle_aile;
     mesh create_cocpit_coque(float const& radius, float const& length);
+    mesh Navion::cocpit_vitre(float const& radius, float const& length);
     
 };
 

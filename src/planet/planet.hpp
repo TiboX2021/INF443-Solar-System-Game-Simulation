@@ -4,12 +4,13 @@
 #include "environment.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
+#include "utils/physics/object.hpp"
 #include <string>
 
 /**
  * Planète avec son apparence visuelle et ses propriétés physiques
  */
-class Planet : public LowPolyDrawable
+class Planet : public LowPolyDrawable, public Object
 {
 public:
     Planet();
@@ -25,7 +26,8 @@ public:
     virtual void setPosition(vec3 position) override;
 
     // Utility physics functions
-    double getHeightAt(vec3 position) const;
+    double getHeightAt(vec3 position) const; // TODO for collisions
+    virtual void updateModels() override;
 
 private:
     // Perlin noise properties

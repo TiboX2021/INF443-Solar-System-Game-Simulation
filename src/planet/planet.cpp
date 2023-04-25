@@ -1,14 +1,16 @@
 #include "planet.hpp"
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
+#include "utils/physics/object.hpp"
 #include <cassert>
 #include <iostream>
 
 // TODO : génération plus réaliste que juste du bruit ? Genre crevasses, etc à la minecraft
 
-Planet::Planet() : LowPolyDrawable(5.0f)
+Planet::Planet() : LowPolyDrawable(5.0f), Object(1.0f, {0, 0, 0})
 {
     // Initialize planet data
     radius = 5.0f;
@@ -17,7 +19,7 @@ Planet::Planet() : LowPolyDrawable(5.0f)
     // texture_path = "assets/planets/earth.jpg";
 }
 
-Planet::Planet(double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(radius)
+Planet::Planet(double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(radius), Object(1.0f, {0, 0, 0})
 {
 
     // Initialize planet data
@@ -82,4 +84,15 @@ double Planet::getHeightAt(vec3 position) const
 {
     // Call noise function with normalized position
     return cgp::noise_perlin(cgp::normalize(position) * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain);
+}
+
+// Update models based on physics members
+void Planet::updateModels()
+{
+    // Update position
+    // setPosition(Object::scaleDownDistanceForDisplay(getPhysicsPosition()));
+
+    // Update rotation
+    // TODO : voir comment ça marche
+    planet_mesh_drawable.model.rotation = rotation_transform::from_axis_angle({0, 0, 1}, getPhysicsRotationAngle());
 }

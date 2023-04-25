@@ -1,17 +1,25 @@
 #include "object.hpp"
+#include "cgp/geometry/vec/vec3/vec3.hpp"
 
 double Object::time_scale = 1.0; // Default time scale
 
-Object::Object(double mass, cgp::vec3 position)
+Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis)
 {
+    // Translations
     this->mass = mass;
-    this->position = position;
+    this->physics_positions = position;
     this->velocity = {0, 0, 0};
     this->acceleration = {0, 0, 0};
     this->forces = {0, 0, 0};
+
+    // Rotations
+    this->rotation_angle = 0;
+    this->rotation_speed = 1.0; // TODO : adapt this value
+
+    // TODO : set rotation axis
 }
 
-void Object::reset_forces()
+void Object::resetForces()
 {
     this->forces = {0, 0, 0};
 }
@@ -19,9 +27,9 @@ void Object::reset_forces()
 /**
  * Compute gravitational force from another object
  */
-void Object::compute_force(Object *other)
+void Object::computeGravitationnalForce(Object *other)
 {
-    cgp::vec3 distance = other->position - this->position;
+    cgp::vec3 distance = other->physics_positions - this->physics_positions;
     forces += GRAVITAIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance);
 }
 
@@ -30,12 +38,19 @@ void Object::update(double dt)
 {
     this->acceleration = this->forces / this->mass;
     this->velocity += this->acceleration * dt;
+    this->physics_positions += this->velocity * dt;
 
-    this->setPosition(this->velocity * dt);
+    // TODO : rotation. Il faut mettre à jour les modèles
+    this->rotation_angle += this->rotation_speed * dt;
 }
 
-// : voir si ça call bien la fonction override dans les sous classes. Ça risque de pas être hyper facile à gérer si je peux update les positions des mesh en même temps
-void Object::setPosition(cgp::vec3 position)
+// Getters
+cgp::vec3 Object::getPhysicsPosition() const
 {
-    this->position = position;
+    return this->physics_positions;
+}
+
+double Object::getPhysicsRotationAngle() const
+{
+    return this->rotation_angle;
 }

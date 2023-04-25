@@ -29,6 +29,10 @@ void scene_structure::display_frame()
     // Set the light to the current position of the camera
     environment.light = camera_control.camera_model.position();
 
+    // Update physics for planet
+    planet.update(1.0 / 60.0);
+    planet.updateModels();
+
     // DEBUG : draw planet and galaxy
     galaxy.draw(environment, camera_control, gui.display_wireframe);
     planet.draw(environment, camera_control, gui.display_wireframe);

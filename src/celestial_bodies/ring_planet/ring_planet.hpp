@@ -1,12 +1,13 @@
 #pragma once
 
 #include "celestial_bodies/planet/planet.hpp"
+#include "utils/display/billboard_drawable.hpp"
 
 constexpr double SATURN_MASS = 568.32e24; // In kg
 constexpr double SATURN_RADIUS = 58232e3; // In meters
 
 // Planet with a ring image billboard (Saturn, etc)
-class RingPlanet : public Planet
+class RingPlanet : public Planet, public BillboardDrawable
 {
 public:
     RingPlanet();
@@ -14,7 +15,7 @@ public:
 
     // Draw functions
     virtual void initialize() override;
-    void draw_ring_billboard(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    void drawBillboards(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     virtual void setPosition(vec3 position) override;
 

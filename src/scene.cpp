@@ -109,7 +109,7 @@ void scene_structure::display_semiTransparent()
     glDepthMask(false);
 
     // Draw ring planet billboard
-    ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
+    ring_planet.drawBillboards(environment, camera_control, gui.display_wireframe);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

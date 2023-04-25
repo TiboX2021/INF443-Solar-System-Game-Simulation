@@ -32,7 +32,7 @@ void RingPlanet::initialize()
     setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
 }
 
-void RingPlanet::draw_ring_billboard(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void RingPlanet::drawBillboards(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
 {
     if (!shouldDrawLowPoly(camera))
     {

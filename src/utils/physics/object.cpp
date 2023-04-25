@@ -2,7 +2,7 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include <cmath>
 
-double Object::time_scale = 1.0; // Default time scale
+double Object::time_scale = 3600.0 * 24.0; // Default time scale : 1 simulation second = 1 day
 
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {
@@ -15,7 +15,9 @@ Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool sh
 
     // Rotations
     this->rotation_angle = 0;
-    this->rotation_speed = 1.0; // TODO : adapt this value
+    // Vitesse de rotation : en radians par seconde.
+    // 1 tour par jour = 2pi radians par jour = 2pi / 3600 / 24 radians par seconde
+    this->rotation_speed = 2.0 * M_PI / (3600 * 24); // DEBUG : test pour la terre
 
     // TODO : set rotation axis
 
@@ -48,7 +50,6 @@ void Object::update(double dt)
         this->physics_position += this->velocity * dt;
     }
 
-    // TODO : rotation. Il faut mettre à jour les modèles
     if (should_rotate)
     {
         this->rotation_angle += this->rotation_speed * dt;

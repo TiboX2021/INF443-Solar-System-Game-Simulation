@@ -18,7 +18,7 @@ void Galaxy::initialize()
 {
 
     // Initialize CGP elements
-    galaxy_mesh = cgp::mesh_primitive_sphere(radius, position, 20, 10);
+    galaxy_mesh = cgp::mesh_primitive_sphere(radius, position, 60, 30);
     galaxy_mesh_drawable.initialize_data_on_gpu(galaxy_mesh);
 
     // Add texture

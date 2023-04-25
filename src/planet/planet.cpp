@@ -19,7 +19,7 @@ Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(
     texture_path = "assets/planets/earth.jpg";
 
     // Reset perlin parameters for earth
-    parameters = {0, 0, 0, 0, 0};
+    parameters = NO_PERLIN_NOISE;
 }
 
 Planet::Planet(double mass, double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(scaleRadiusForDisplay(radius)), Object(mass, position)
@@ -86,7 +86,7 @@ double Planet::getHeightAt(vec3 position) const
 void Planet::updateModels()
 {
     // Update position
-    // setPosition(Object::scaleDownDistanceForDisplay(getPhysicsPosition()));
+    setPosition(getPhysicsPosition());
 
     // Update rotation
     // TODO : voir comment ça marche

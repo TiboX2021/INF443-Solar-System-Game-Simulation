@@ -4,6 +4,7 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "planet/planet.hpp"
 #include "planet/ring_planet.hpp"
+#include "utils/physics/object.hpp"
 using namespace cgp;
 
 void scene_structure::initialize()
@@ -45,7 +46,7 @@ void scene_structure::display_frame()
     // Update physics for planet
     planet.resetForces();
     planet.computeGravitationnalForce(&sun);
-    planet.update(1.0 / 60.0);
+    planet.update(1.0 / 60.0 * Object::getTimeScale());
     planet.updateModels();
 
     // DEBUG : draw planet and galaxy

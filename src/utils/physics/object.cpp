@@ -69,7 +69,8 @@ double Object::getPhysicsRotationAngle() const
 
 cgp::rotation_transform Object::getPhysicsRotation() const
 {
-    return cgp::rotation_transform::from_axis_angle(rotation_axis, rotation_angle);
+    // Needed to rotate the texture with the object
+    return cgp::rotation_transform::from_vector_transform({0, 0, 1}, rotation_axis) * cgp::rotation_transform::from_axis_angle({0, 0, 1}, rotation_angle);
 }
 
 void Object::setShouldTranslate(bool should_translate)

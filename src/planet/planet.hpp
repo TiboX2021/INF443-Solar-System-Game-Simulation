@@ -13,8 +13,8 @@
     }
 
 // Default planet arguments
-constexpr double EARTH_RADIUS = 6.371e+6 * 10; // In meters DEBUG * 10 to monitor simulation
-constexpr double EARTH_MASS = 5.9742e+24;      // In kg
+constexpr double EARTH_RADIUS = 6.371e+6; // In meters DEBUG * 10 to monitor simulation
+constexpr double EARTH_MASS = 5.9742e+24; // In kg
 
 /**
  * Planète avec son apparence visuelle et ses propriétés physiques

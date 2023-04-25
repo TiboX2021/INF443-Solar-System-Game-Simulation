@@ -1,9 +1,9 @@
 #include "scene.hpp"
 
 #include "background/galaxy.hpp"
+#include "celestial_bodies/planet/planet.hpp"
+#include "celestial_bodies/ring_planet/ring_planet.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
-#include "planet/planet.hpp"
-#include "planet/ring_planet.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
 #include <iostream>

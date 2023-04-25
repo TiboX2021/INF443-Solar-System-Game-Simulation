@@ -1,6 +1,6 @@
 #pragma once
 
-#include "planet.hpp"
+#include "celestial_bodies/planet/planet.hpp"
 
 constexpr double SATURN_MASS = 568.32e24; // In kg
 constexpr double SATURN_RADIUS = 58232e3; // In meters

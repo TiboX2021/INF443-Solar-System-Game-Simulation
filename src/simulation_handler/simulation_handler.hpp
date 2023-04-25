@@ -6,10 +6,22 @@
 #include "utils/display/base_drawable.hpp"
 #include "utils/display/billboard_drawable.hpp"
 #include "utils/display/drawable.hpp"
+#include "utils/physics/object.hpp"
+
+// TODO : create the simulation time step in here
 class SimulationHandler
 {
 
 public:
+    void addObject(BaseDrawable &drawable);
+
+    // Draw Functions
+    void drawObjects(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+
+    // Simulation Functions
+    void simulateStep(float time_step);
+
 private:
     // Drawable objects
     // Store all drawable instances here
@@ -18,4 +30,5 @@ private:
     // Store pointers (references) here for efficient access
     std::vector<Drawable *> drawable_objects;
     std::vector<BillboardDrawable *> billboard_drawable_objects;
+    std::vector<Object *> physical_objects;
 };

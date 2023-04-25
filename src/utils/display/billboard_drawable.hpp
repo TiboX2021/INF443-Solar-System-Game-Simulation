@@ -10,6 +10,7 @@
 class BillboardDrawable : private BaseDrawable
 
 {
+public:
     // Initialize member meshs
     virtual void initialize(){};
 

@@ -16,11 +16,14 @@ public:
     void set_position(vec3 const &position);
     void set_direction(vec3 const &direction);
     void set_angle_aile(float const angle);
+   
 
 protected:
+    cgp::hierarchy_mesh_drawable hierarchie;
 private:
     float nangle_aile;
-    cgp::hierarchy_mesh_drawable hierarchie;
+    mesh create_cocpit_coque(float const& radius, float const& length);
+    
 };
 
 // void initialize_navion();

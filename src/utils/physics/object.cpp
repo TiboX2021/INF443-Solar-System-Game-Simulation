@@ -3,8 +3,6 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include <cmath>
 
-double Object::time_scale = 3600.0 * 24.0; // Default time scale : 1 simulation second = 1 day
-
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {
     // Translations

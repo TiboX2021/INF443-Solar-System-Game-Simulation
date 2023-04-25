@@ -8,10 +8,8 @@
 #include "utils/display/drawable.hpp"
 #include "utils/physics/object.hpp"
 
-// TODO : create the simulation time step in here
 class SimulationHandler
 {
-
 public:
     void addObject(BaseDrawable &drawable);
 
@@ -20,7 +18,10 @@ public:
     void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
 
     // Simulation Functions
-    void simulateStep(float time_step);
+    void simulateStep();
+
+    // For slider use
+    float time_step = 0.1f;
 
 private:
     // Drawable objects

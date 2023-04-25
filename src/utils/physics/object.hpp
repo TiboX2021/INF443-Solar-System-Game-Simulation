@@ -60,15 +60,6 @@ public:
         return distance * PHYSICS_SCALE;
     }
     static double scaleRadiusForDisplay(double value) { return value * DISPLAY_SCALE * PHYSICS_SCALE; }
-    static void setTimeScale(double timescale) // Asset time scale is greater than 1
-    {
-        if (timescale >= 1.0)
-            time_scale = timescale;
-        else
-            time_scale = 1.0;
-    }
-    static double getTimeScale() { return time_scale; }
-
     static double computeOrbitalSpeed(double M, double r);
 
 private:
@@ -87,6 +78,4 @@ private:
     // Immobile object or not
     bool should_translate;
     bool should_rotate;
-
-    static double time_scale;
 };

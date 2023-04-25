@@ -49,18 +49,20 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
+    float time_step = 24 * 3600; // 1 day
+
     // Set the light to the current position of the camera
     environment.light = camera_control.camera_model.position();
 
     // Update physics for planet
     planet.resetForces();
     planet.computeGravitationnalForce(&sun);
-    planet.update(1.0 / 60.0 * Object::getTimeScale());
+    planet.update(1.0 / 60.0 * time_step);
     planet.updateModels();
 
     ring_planet.resetForces();
     ring_planet.computeGravitationnalForce(&sun);
-    ring_planet.update(1.0 / 60.0 * Object::getTimeScale());
+    ring_planet.update(1.0 / 60.0 * time_step);
     ring_planet.updateModels();
 
     // DEBUG : draw planet and galaxy

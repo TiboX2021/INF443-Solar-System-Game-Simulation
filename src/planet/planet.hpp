@@ -7,6 +7,10 @@
 #include "utils/physics/object.hpp"
 #include <string>
 
+// Default planet arguments
+constexpr double EARTH_RADIUS = 6.371e+6; // In meters
+constexpr double EARTH_MASS = 5.9742e+24; // In kg
+
 /**
  * Planète avec son apparence visuelle et ses propriétés physiques
  */
@@ -15,14 +19,13 @@ class Planet : public LowPolyDrawable, public Object
 public:
     Planet();
     // Default perlin noise is no noise for the detailed constructor
-    Planet(double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f});
+    Planet(double mass, double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f});
 
     // Draw function
     virtual void initialize() override;
     virtual void draw_real(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     // Setters
-    void setRadius(double radius);
     virtual void setPosition(vec3 position) override;
 
     // Utility physics functions

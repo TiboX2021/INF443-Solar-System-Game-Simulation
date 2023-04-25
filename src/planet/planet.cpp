@@ -10,21 +10,24 @@
 
 // TODO : génération plus réaliste que juste du bruit ? Genre crevasses, etc à la minecraft
 
-Planet::Planet() : LowPolyDrawable(5.0f), Object(1.0f, {0, 0, 0})
+Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(EARTH_MASS, {0, 0, 0})
 {
     // Initialize planet data
-    radius = 5.0f;
-    position = {0, 0, 0};
-    texture_path = "assets/planets/mars.png";
-    // texture_path = "assets/planets/earth.jpg";
+    radius = scaleRadiusForDisplay(EARTH_RADIUS);
+    position = scaleDownDistanceForDisplay({0, 0, 0});
+    // texture_path = "assets/planets/mars.png";
+    texture_path = "assets/planets/earth.jpg";
+
+    // Reset perlin parameters for earth
+    parameters = {0, 0, 0, 0, 0};
 }
 
-Planet::Planet(double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(radius), Object(1.0f, {0, 0, 0})
+Planet::Planet(double mass, double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(scaleRadiusForDisplay(radius)), Object(mass, position)
 {
 
-    // Initialize planet data
-    this->radius = radius;
-    this->position = position;
+    // Initialize display planet data
+    this->radius = scaleRadiusForDisplay(radius);
+    this->position = scaleDownDistanceForDisplay(position);
     this->texture_path = texture_path;
     this->parameters = parameters;
 }
@@ -59,22 +62,15 @@ void Planet::draw_real(const environment_structure &environment, camera_controll
 }
 
 /**
- * Set the planet radius
- */
-void Planet::setRadius(double radius)
-{
-    assert(radius >= 0 && "Radius must be positive");
-    this->radius = radius;
-}
-
-/**
  * Set the planet position
  */
 void Planet::setPosition(vec3 position)
 {
-    LowPolyDrawable::setPosition(position);
-    planet_mesh_drawable.model.translation = position;
-    this->position = position;
+    cgp::vec3 scaled_position = scaleDownDistanceForDisplay(position);
+    LowPolyDrawable::setPosition(scaled_position);
+    planet_mesh_drawable.model.translation = scaled_position;
+    this->position = scaled_position;
+    setPhysicsPosition(position);
 }
 
 /**

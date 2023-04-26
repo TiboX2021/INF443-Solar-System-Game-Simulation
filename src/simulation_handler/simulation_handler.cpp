@@ -119,7 +119,10 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(saturn);
 
     // Add jupiter
-    Planet jupiter;
-    // TODO;
+    Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);
+    jupiter.setLowPolyColor({161.0 / 255, 150.0 / 255, 132.0 / 255});
+    jupiter.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, JUPITER_SUN_DISTANCE), 0});
+    jupiter.setInitialRotationSpeed(JUPITER_ROTATION_SPEED);
+    jupiter.setRotationAxis(JUPITER_ROTATION_AXIS);
     handler.addObject(jupiter);
 }

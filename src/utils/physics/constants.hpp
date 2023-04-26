@@ -11,6 +11,11 @@
         0.559455, -0.825413, 0.074357 \
     }
 
+#define JUPITER_ROTATION_AXIS         \
+    {                                 \
+        0.489598, -0.871019, 0.037016 \
+    }
+
 constexpr double GRAVITATIONAL_CONSTANT = 6.67408e-11;
 
 // Sun constants
@@ -30,3 +35,7 @@ constexpr double SATURN_SUN_DISTANCE = 1.4652e12;                             //
 constexpr double SATURN_ROTATION_SPEED = (2 * M_PI) / (10.67 * 24 * 60 * 60); // In rad/day
 
 // Jupiter constants
+constexpr double JUPITER_MASS = 1898.13e24;                                    // In kg
+constexpr double JUPITER_RADIUS = 69911e3;                                     // In meters
+constexpr double JUPITER_SUN_DISTANCE = 778.57e9;                              // In meters
+constexpr double JUPITER_ROTATION_SPEED = (2 * M_PI) / (9.925 * 24 * 60 * 60); // In rad/day

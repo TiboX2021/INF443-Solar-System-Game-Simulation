@@ -46,6 +46,7 @@ void scene_structure::initialize()
 
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
+    // BUG : à très longue distance, pour les objets qui ne disparaissent pas, bug d'affichage. Diminuer la scale ?
 
     // Initialize simulation handler
     SimulationHandler::generateSolarSystem(simulation_handler);
@@ -62,7 +63,7 @@ void scene_structure::display_frame()
 
     simulation_handler.simulateStep();
 
-    simulation_handler.drawObjects(environment, camera_control, false);
+    // simulation_handler.drawObjects(environment, camera_control, false);
 
     // Update physics for planet
     // planet.resetForces();
@@ -76,10 +77,10 @@ void scene_structure::display_frame()
     // ring_planet.updateModels();
 
     // // DEBUG : draw planet and galaxy
-    // galaxy.draw(environment, camera_control, gui.display_wireframe);
+    galaxy.draw(environment, camera_control, gui.display_wireframe);
     // planet.draw(environment, camera_control, gui.display_wireframe);
     // ring_planet.draw(environment, camera_control, gui.display_wireframe);
-    // sun.draw(environment, camera_control, gui.display_wireframe);
+    sun.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 }
 

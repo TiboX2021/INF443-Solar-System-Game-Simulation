@@ -1,6 +1,7 @@
 #include "object.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
+#include "utils/physics/constants.hpp"
 #include <cmath>
 
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
@@ -107,4 +108,9 @@ bool Object::getShouldRotate() const
 void Object::setInitialRotationSpeed(double rotation_speed)
 {
     this->rotation_speed = rotation_speed;
+}
+
+void Object::setRotationAxis(cgp::vec3 rotation_axis)
+{
+    this->rotation_axis = rotation_axis;
 }

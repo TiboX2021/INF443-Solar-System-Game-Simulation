@@ -3,9 +3,6 @@
 #include "celestial_bodies/planet/planet.hpp"
 #include "utils/display/billboard_drawable.hpp"
 
-constexpr double SATURN_MASS = 568.32e24; // In kg
-constexpr double SATURN_RADIUS = 58232e3; // In meters
-
 // Planet with a ring image billboard (Saturn, etc)
 class RingPlanet : public Planet, public BillboardDrawable
 {

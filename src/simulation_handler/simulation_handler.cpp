@@ -3,6 +3,7 @@
 #include "celestial_bodies/planet/planet.hpp"
 #include "utils/display/base_drawable.hpp"
 #include "utils/noise/perlin.hpp"
+#include "utils/physics/constants.hpp"
 #include <iostream>
 #include <iterator>
 
@@ -93,7 +94,32 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
 
     // Add sun
     Planet sun(SUN_MASS, SUN_RADIUS, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
+    sun.setShouldRotate(false);
+    sun.setShouldTranslate(false);
     handler.addObject(sun);
-    // Generate planets and add them
-    // TODO
+
+    // Add Earth
+    Planet earth(EARTH_MASS, EARTH_RADIUS, {EARTH_SUN_DISTANCE, 0, 0}, "assets/planets/earth.jpg", NO_PERLIN_NOISE);
+    earth.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
+    earth.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, EARTH_SUN_DISTANCE), 0});
+    earth.setInitialRotationSpeed(EARTH_ROTATION_SPEED);
+    earth.setRotationAxis(EARTH_ROTATION_AXIS);
+    handler.addObject(earth);
+
+    // TODO : vérifier si ça tourne bien dans le bon sens
+    // TODO mars
+    // TODO jupiter
+
+    // Add Saturn
+    Planet saturn(SATURN_MASS, SATURN_RADIUS, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
+    saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
+    saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
+    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
+    saturn.setRotationAxis(SATURN_ROTATION_AXIS);
+    handler.addObject(saturn);
+
+    // Add jupiter
+    Planet jupiter;
+    // TODO;
+    handler.addObject(jupiter);
 }

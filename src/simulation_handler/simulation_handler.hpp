@@ -7,13 +7,9 @@
 #include "utils/physics/object.hpp"
 #include <memory>
 
-constexpr double SUN_MASS = 1988500e24; // In kg
-constexpr double SUN_RADIUS = 696340e3; // In meters
-
 class SimulationHandler
 {
 public:
-    // TODO : accept generic type that extends BaseDrawable instead
     template <typename TExtendsBaseDrawable>
     void addObject(TExtendsBaseDrawable drawable); // Do not use reference, as the object will be copied and moved to a unique_ptr
     void initialize();
@@ -34,7 +30,7 @@ public:
 private:
     // Drawable objects
     // Store all drawable instances here
-    std::vector<std::unique_ptr<BaseDrawable>> drawables; // TODO : store unique ptr instances in order to keep polymorphism
+    std::vector<std::unique_ptr<BaseDrawable>> drawables;
 
     // Store pointers (references) here for efficient access. The deletion is already handled by the unique ptrs
     std::vector<Drawable *> drawable_objects;

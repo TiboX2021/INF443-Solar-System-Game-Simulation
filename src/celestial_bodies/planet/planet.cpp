@@ -4,13 +4,13 @@
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
-#include "utils/physics/object.hpp"
+#include "utils/physics/constants.hpp"
 #include <cassert>
 #include <iostream>
 
 // TODO : génération plus réaliste que juste du bruit ? Genre crevasses, etc à la minecraft
 
-Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(EARTH_MASS, {0, 0, 0}, EARTH_ROTATION_AXIS)
+Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(EARTH_MASS, {0, 0, 0}, {0, 0, 0})
 {
     // Initialize planet data
     radius = scaleRadiusForDisplay(EARTH_RADIUS);

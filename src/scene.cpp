@@ -65,6 +65,11 @@ void scene_structure::display_frame()
     // asteroid_field_handler.simulateStep();
     // asteroid_field_handler.drawObjects(environment, camera_control, false);
 
+    // // DEBUG : draw planet and galaxy
+    galaxy.draw(environment, camera_control, gui.display_wireframe);
+    // planet.draw(environment, camera_control, gui.display_wireframe);
+    // ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    sun.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 
     * /

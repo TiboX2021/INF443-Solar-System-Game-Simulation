@@ -125,4 +125,20 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     jupiter.setInitialRotationSpeed(JUPITER_ROTATION_SPEED);
     jupiter.setRotationAxis(JUPITER_ROTATION_AXIS);
     handler.addObject(jupiter);
+
+    // Add Uranus
+    Planet uranus(URANUS_MASS, URANUS_RADIUS, {URANUS_SUN_DISTANCE, 0, 0}, "assets/planets/uranus.jpg", NO_PERLIN_NOISE);
+    uranus.setLowPolyColor({155.0 / 255, 202.0 / 255, 209.0 / 255});
+    uranus.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, URANUS_SUN_DISTANCE), 0});
+    uranus.setInitialRotationSpeed(URANUS_ROTATION_SPEED);
+    uranus.setRotationAxis(URANUS_ROTATION_AXIS);
+    handler.addObject(uranus);
+
+    // Add Neptune
+    Planet neptune(NEPTUNE_MASS, NEPTUNE_RADIUS, {NEPTUNE_SUN_DISTANCE, 0, 0}, "assets/planets/neptune.jpg", NO_PERLIN_NOISE);
+    neptune.setLowPolyColor({54.0 / 255, 79.0 / 255, 167.0 / 255});
+    neptune.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, NEPTUNE_SUN_DISTANCE), 0});
+    neptune.setInitialRotationSpeed(NEPTUNE_ROTATION_SPEED);
+    neptune.setRotationAxis(NEPTUNE_ROTATION_AXIS);
+    handler.addObject(neptune);
 }

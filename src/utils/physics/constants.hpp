@@ -16,6 +16,16 @@
         0.489598, -0.871019, 0.037016 \
     }
 
+#define URANUS_ROTATION_AXIS           \
+    {                                  \
+        -0.724607, 0.684701, -0.076019 \
+    }
+
+#define NEPTUNE_ROTATION_AXIS        \
+    {                                \
+        0.546861, 0.837389, 0.020444 \
+    }
+
 constexpr double GRAVITATIONAL_CONSTANT = 6.67408e-11;
 
 // Sun constants
@@ -39,3 +49,15 @@ constexpr double JUPITER_MASS = 1898.13e24;                                    /
 constexpr double JUPITER_RADIUS = 69911e3;                                     // In meters
 constexpr double JUPITER_SUN_DISTANCE = 778.57e9;                              // In meters
 constexpr double JUPITER_ROTATION_SPEED = (2 * M_PI) / (9.925 * 24 * 60 * 60); // In rad/day
+
+// Uranus constants
+constexpr double URANUS_MASS = 86.8103e24;                                    // In kg
+constexpr double URANUS_RADIUS = 25362e3;                                     // In meters
+constexpr double URANUS_SUN_DISTANCE = 1.7832e12;                             // In meters
+constexpr double URANUS_ROTATION_SPEED = (2 * M_PI) / (17.24 * 24 * 60 * 60); // In rad/day
+
+// Neptune constants
+constexpr double NEPTUNE_MASS = 102.41e24;                                     // In kg
+constexpr double NEPTUNE_RADIUS = 24622e3;                                     // In meters
+constexpr double NEPTUNE_SUN_DISTANCE = 2.795e12;                              // In meters
+constexpr double NEPTUNE_ROTATION_SPEED = (2 * M_PI) / (16.11 * 24 * 60 * 60); // In rad/day

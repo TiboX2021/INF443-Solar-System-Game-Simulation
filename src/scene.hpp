@@ -6,6 +6,7 @@
 #include "cgp/cgp.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
+#include "simulation_handler/simulation_handler.hpp"
 #include "terrain.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
@@ -59,4 +60,5 @@ struct scene_structure : cgp::scene_inputs_generic
     Planet sun;
     Galaxy galaxy;
     RingPlanet ring_planet;
+    SimulationHandler simulation_handler;
 };

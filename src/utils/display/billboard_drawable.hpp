@@ -7,7 +7,7 @@
 /**
  * Abstract base drawable class for billboards
  */
-class BillboardDrawable : private BaseDrawable
+class BillboardDrawable : public BaseDrawable
 
 {
 public:

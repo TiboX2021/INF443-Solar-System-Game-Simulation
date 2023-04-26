@@ -1,21 +1,35 @@
 #include "simulation_handler.hpp"
+#include "background/galaxy.hpp"
+#include "celestial_bodies/planet/planet.hpp"
+#include "utils/display/base_drawable.hpp"
+#include "utils/noise/perlin.hpp"
+#include <iostream>
+#include <iterator>
 
-void SimulationHandler::addObject(BaseDrawable &drawable)
+template <typename TExtendsBaseDrawable>
+void SimulationHandler::addObject(TExtendsBaseDrawable drawable)
 {
-    drawables.push_back(drawable);
+    // Create unique_ptr
+    std::unique_ptr<BaseDrawable> drawable_unique_ptr = std::make_unique<TExtendsBaseDrawable>(drawable);
+
+    // Move the unique_ptr (its adress changes !)
+    drawables.push_back(std::move(drawable_unique_ptr));
+
+    // Get the memory adress from the vector pointer (while still keeping polymorphism !)
+    BaseDrawable *ptr = drawables.back().get();
 
     // Add reference to the object in the corresponding vectors
-    if (dynamic_cast<Drawable *>(&drawable))
+    if (dynamic_cast<Drawable *>(ptr))
     {
-        drawable_objects.push_back(dynamic_cast<Drawable *>(&drawable));
+        drawable_objects.push_back(dynamic_cast<Drawable *>(ptr));
     }
-    if (dynamic_cast<BillboardDrawable *>(&drawable))
+    if (dynamic_cast<BillboardDrawable *>(ptr))
     {
-        billboard_drawable_objects.push_back(dynamic_cast<BillboardDrawable *>(&drawable));
+        billboard_drawable_objects.push_back(dynamic_cast<BillboardDrawable *>(ptr));
     }
-    if (dynamic_cast<Object *>(&drawable))
+    if (dynamic_cast<Object *>(ptr))
     {
-        physical_objects.push_back(dynamic_cast<Object *>(&drawable));
+        physical_objects.push_back(dynamic_cast<Object *>(ptr));
     }
 }
 
@@ -60,4 +74,26 @@ void SimulationHandler::simulateStep()
         object->update(time_step);
         object->updateModels();
     }
+}
+
+void SimulationHandler::initialize()
+{
+    galaxy.initialize();
+    for (auto &drawable : drawables)
+    {
+        drawable->initialize();
+    }
+}
+
+void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
+{
+    // Add galaxy first (background)
+    Galaxy galaxy;
+    handler.addObject(galaxy);
+
+    // Add sun
+    Planet sun(SUN_MASS, SUN_RADIUS, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
+    handler.addObject(sun);
+    // Generate planets and add them
+    // TODO
 }

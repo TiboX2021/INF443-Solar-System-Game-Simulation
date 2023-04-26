@@ -6,7 +6,7 @@
 /**
  * Abstract base drawable class
  */
-class Drawable : private BaseDrawable
+class Drawable : public BaseDrawable
 {
 public:
     // Initialize member meshs

@@ -4,5 +4,5 @@
 class BaseDrawable
 {
 public:
-    virtual ~BaseDrawable() = default;
+    virtual void initialize(){}; // Bug : ça accepte de compiler si cette méthode n'est pas abstraite (=0)
 };

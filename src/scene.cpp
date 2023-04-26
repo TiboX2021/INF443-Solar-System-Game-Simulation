@@ -4,6 +4,7 @@
 #include "celestial_bodies/planet/planet.hpp"
 #include "celestial_bodies/ring_planet/ring_planet.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
 #include <iostream>
@@ -45,31 +46,40 @@ void scene_structure::initialize()
 
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
+
+    // Initialize simulation handler
+    SimulationHandler::generateSolarSystem(simulation_handler);
+    simulation_handler.initialize();
 }
 
 void scene_structure::display_frame()
 {
-    float time_step = 24 * 3600; // 1 day
+
+    // float time_step = 24 * 3600; // 1 day
 
     // Set the light to the current position of the camera
     environment.light = camera_control.camera_model.position();
 
+    simulation_handler.simulateStep();
+
+    simulation_handler.drawObjects(environment, camera_control, false);
+
     // Update physics for planet
-    planet.resetForces();
-    planet.computeGravitationnalForce(&sun);
-    planet.update(1.0 / 60.0 * time_step);
-    planet.updateModels();
+    // planet.resetForces();
+    // planet.computeGravitationnalForce(&sun);
+    // planet.update(1.0 / 60.0 * time_step);
+    // planet.updateModels();
 
-    ring_planet.resetForces();
-    ring_planet.computeGravitationnalForce(&sun);
-    ring_planet.update(1.0 / 60.0 * time_step);
-    ring_planet.updateModels();
+    // ring_planet.resetForces();
+    // ring_planet.computeGravitationnalForce(&sun);
+    // ring_planet.update(1.0 / 60.0 * time_step);
+    // ring_planet.updateModels();
 
-    // DEBUG : draw planet and galaxy
-    galaxy.draw(environment, camera_control, gui.display_wireframe);
-    planet.draw(environment, camera_control, gui.display_wireframe);
-    ring_planet.draw(environment, camera_control, gui.display_wireframe);
-    sun.draw(environment, camera_control, gui.display_wireframe);
+    // // DEBUG : draw planet and galaxy
+    // galaxy.draw(environment, camera_control, gui.display_wireframe);
+    // planet.draw(environment, camera_control, gui.display_wireframe);
+    // ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    // sun.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
 }
 
@@ -111,7 +121,9 @@ void scene_structure::display_semiTransparent()
     glDepthMask(false);
 
     // Draw ring planet billboard
-    ring_planet.drawBillboards(environment, camera_control, gui.display_wireframe);
+    // ring_planet.drawBillboards(environment, camera_control, gui.display_wireframe);
+
+    simulation_handler.drawBillboards(environment, camera_control, false);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

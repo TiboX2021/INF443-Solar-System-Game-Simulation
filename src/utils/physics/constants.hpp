@@ -6,6 +6,12 @@
     {                         \
         0, 0.397949, 0.917408 \
     }
+
+#define MARS_ROTATION_AXIS            \
+    {                                 \
+        -0.054875, 0.110222, 0.992391 \
+    }
+
 #define SATURN_ROTATION_AXIS          \
     {                                 \
         0.559504, -0.825485, 0.074363 \
@@ -31,6 +37,12 @@ constexpr double GRAVITATIONAL_CONSTANT = 6.67408e-11;
 // Sun constants
 constexpr double SUN_MASS = 1988500e24; // In kg
 constexpr double SUN_RADIUS = 696340e3; // In meters
+
+// Mars constants
+constexpr double MARS_MASS = 0.64185e24;                              // In kg
+constexpr double MARS_RADIUS = 3389.5e3;                              // In meters
+constexpr double MARS_SUN_DISTANCE = 227.9e9;                         // In meters
+constexpr double MARS_ROTATION_SPEED = (2 * M_PI) / (24.6229 * 3600); // In rad/day
 
 // Earth constants
 constexpr double EARTH_RADIUS = 6.371e+6;                         // In meters

@@ -106,9 +106,13 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     earth.setRotationAxis(EARTH_ROTATION_AXIS);
     handler.addObject(earth);
 
-    // TODO : vérifier si ça tourne bien dans le bon sens
-    // TODO mars
-    // TODO jupiter
+    // Add Mars
+    Planet mars(MARS_MASS, MARS_RADIUS, {MARS_SUN_DISTANCE, 0, 0}, "assets/planets/mars.jpg", NO_PERLIN_NOISE);
+    mars.setLowPolyColor({181.0 / 255, 99.0 / 255, 73.0 / 255});
+    mars.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, MARS_SUN_DISTANCE), 0});
+    mars.setInitialRotationSpeed(MARS_ROTATION_SPEED);
+    mars.setRotationAxis(MARS_ROTATION_AXIS);
+    handler.addObject(mars);
 
     // Add Saturn
     Planet saturn(SATURN_MASS, SATURN_RADIUS, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);

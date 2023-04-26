@@ -8,22 +8,22 @@
     }
 #define SATURN_ROTATION_AXIS          \
     {                                 \
-        0.559455, -0.825413, 0.074357 \
+        0.559504, -0.825485, 0.074363 \
     }
 
 #define JUPITER_ROTATION_AXIS         \
     {                                 \
-        0.489598, -0.871019, 0.037016 \
+        0.489659, -0.871128, 0.037021 \
     }
 
-#define URANUS_ROTATION_AXIS           \
-    {                                  \
-        -0.724607, 0.684701, -0.076019 \
-    }
-
-#define NEPTUNE_ROTATION_AXIS        \
+#define URANUS_ROTATION_AXIS         \
     {                                \
-        0.546861, 0.837389, 0.020444 \
+        0.546671, 0.837098, 0.020437 \
+    }
+
+#define NEPTUNE_ROTATION_AXIS          \
+    {                                  \
+        -0.724734, 0.684821, -0.076032 \
     }
 
 constexpr double GRAVITATIONAL_CONSTANT = 6.67408e-11;

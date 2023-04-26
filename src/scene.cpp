@@ -3,9 +3,11 @@
 #include "background/galaxy.hpp"
 #include "celestial_bodies/planet/planet.hpp"
 #include "celestial_bodies/ring_planet/ring_planet.hpp"
+#include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include "utils/physics/constants.hpp"
 #include "utils/physics/object.hpp"
 #include <iostream>
 using namespace cgp;

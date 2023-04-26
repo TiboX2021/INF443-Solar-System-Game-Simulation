@@ -114,6 +114,8 @@ void scene_structure::display_semiTransparent()
     simulation_handler.drawBillboards(environment, camera_control, false);
     // asteroid_field_handler.drawBillboards(environment, camera_control, false);
 
+    simulation_handler.drawBillboards(environment, camera_control, false);
+
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);
     glDisable(GL_BLEND);

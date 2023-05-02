@@ -279,9 +279,9 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 	//On ajoute un à un les triangles : 
 	
 	//ensuite le dessous : 
-	aile.connectivity.push_back(uint3(1, 3, 5));
-	aile.connectivity.push_back(uint3(1, 5, 9));
-	aile.connectivity.push_back(uint3(9, 5, 7));
+	aile.connectivity.push_back(uint3(1, 5, 3));
+	aile.connectivity.push_back(uint3(1, 9, 5));
+	aile.connectivity.push_back(uint3(9, 7, 5));
 
 	//et enfin les côtés :
 	
@@ -324,11 +324,17 @@ void Navion::create_millennium_falcon() {
 	mesh_drawable tunnel_interne;
 	mesh_drawable bords;
 
+	mesh_drawable aile_droite;
+	mesh_drawable aile_gauche;
+
 
 	haut.initialize_data_on_gpu(pseudo_cone(2, 0.6,6));
 	bas.initialize_data_on_gpu(pseudo_cone(2, 0.6,6));
 	centre.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.4, {0,0, -0.8}, {0,0,0.8}, 10, 20, true));
 	contour.initialize_data_on_gpu(create_bande(2, 0.25, 12));
+
+	aile_droite.initialize_data_on_gpu(create_truc_sur_le_falcon(1, true));
+	aile_gauche.initialize_data_on_gpu(create_truc_sur_le_falcon(1, true));
 
 	//pour le cocpit :
 	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
@@ -383,8 +389,12 @@ void Navion::create_millennium_falcon() {
 	hierarchie["Haut"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
 	hierarchie["Bas"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 },  Pi / 2);
 
+	hierarchie.add(aile_droite, "Aile_droite", "Centre", { 1.5, 0.2,0 });
+	hierarchie.add(aile_gauche, "Aile_gauche", "Centre", { 1.5, -0.2,0 });
+	hierarchie["Aile_gauche"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi);
 
-	hierarchie.add(corps_cocpit, "Corps_cocpit", "Centre", { 1.7,1.4,0 });
+
+	hierarchie.add(corps_cocpit, "Corps_cocpit", "Centre", { 1.7,-1.4,0 });
 	hierarchie.add(cocpit, "Cocpit", "Corps_cocpit");
 	hierarchie.add(vitre_cocpit, "Cocpit_Vitre", "Corps_cocpit");
 	hierarchie.add(bord1_cocpit, "Bord1", "Cocpit");

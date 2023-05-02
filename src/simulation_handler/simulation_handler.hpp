@@ -21,8 +21,8 @@ public:
     // Simulation Functions
     void simulateStep();
 
-    // For slider use
-    float time_step = 0.1f;
+    // Default : 1 day / second. For slider use
+    float time_step = 24.0f * 3600;
 
     // Public static generators
     static void generateSolarSystem(SimulationHandler &handler);

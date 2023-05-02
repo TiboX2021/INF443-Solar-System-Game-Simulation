@@ -17,6 +17,7 @@ public:
     void set_direction(vec3 const &direction);
     void set_angle_aile(float const angle);
     void create_millennium_falcon();
+    mesh create_truc_sur_le_falcon(float const& scale, bool const& droite);
 
 protected:
     cgp::hierarchy_mesh_drawable hierarchie;
@@ -26,6 +27,7 @@ private:
     mesh create_cocpit_coque(float const& radius, float const& length);
     mesh pseudo_cone(float const& radius, float const& length, int const& n);
     mesh create_bande(float const& radius, float const& heigh, int const& n);
+    
     
 };
 

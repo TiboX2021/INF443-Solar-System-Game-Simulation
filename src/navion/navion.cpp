@@ -246,6 +246,72 @@ mesh Navion::create_bande(float const& radius, float const& heigh, int const& n)
 
 
 
+mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
+
+	mesh aile;
+
+	// d'abord les point dont on aura besoin :  en haut les numeros impaires, en bas les paires :
+	//      0--------------------------------1
+	//      |                                |
+	//      4                                2
+	//      |                       ---------
+	//      |       ---------------
+	//      3------
+	
+	int d = droite * 2 - 1;
+
+	aile.position.push_back(scale*vec3(0,0,0.2));
+	aile.position.push_back(scale*vec3(0, 0, -0.2));
+
+	aile.position.push_back(scale*vec3(2, 0, 0.2));
+	aile.position.push_back(scale*vec3(2, 0, -0.2));
+	
+	aile.position.push_back(scale*vec3(2, d*0.3, 0.2));
+	aile.position.push_back(scale*vec3(2, d*0.3, -0.2));
+
+	aile.position.push_back(scale*vec3(0, d*1, 0.2));
+	aile.position.push_back(scale*vec3(0, d*1, -0.2));
+	
+	aile.position.push_back(scale*vec3(0, d*0.3, 0.2));
+	aile.position.push_back(scale*vec3(0, d*0.3, -0.2));
+
+	
+	//On ajoute un à un les triangles : 
+	
+	//ensuite le dessous : 
+	aile.connectivity.push_back(uint3(1, 3, 5));
+	aile.connectivity.push_back(uint3(1, 5, 9));
+	aile.connectivity.push_back(uint3(9, 5, 7));
+
+	//et enfin les côtés :
+	
+	aile.connectivity.push_back(uint3(0, 1, 2));
+	aile.connectivity.push_back(uint3(2, 3, 4));
+	aile.connectivity.push_back(uint3(4, 5, 6));
+	aile.connectivity.push_back(uint3(6, 7, 0));
+
+	aile.connectivity.push_back(uint3(3, 2, 1));
+	aile.connectivity.push_back(uint3(5, 4, 3));
+	aile.connectivity.push_back(uint3(7, 6, 5));
+	aile.connectivity.push_back(uint3(1, 0, 7));
+
+	//d'abord le dessus :
+	aile.connectivity.push_back(uint3(8, 4, 6));
+	aile.connectivity.push_back(uint3(0, 2, 4));
+	aile.connectivity.push_back(uint3(0, 4, 8));
+
+	
+
+	
+
+	
+
+	
+
+	aile.fill_empty_field();
+	return aile;
+}
+
 
 
 

@@ -216,8 +216,8 @@ mesh Navion::pseudo_cone(float const& radius, float const& length, int const& n=
 	semi_cone.position.push_back({ length, 0,0 });
 	semi_cone.uv.push_back({ 0.5,0.5 });
 
-	for (int k = 0; k < 2*N - 1; ++k)
-		semi_cone.connectivity.push_back(uint3{ 2*N, k, k + 1 });
+	for (int k = 0; k < N - 1; ++k)
+		semi_cone.connectivity.push_back(uint3{ N, k, k + 1 });
 
 	semi_cone.fill_empty_field();
 	return semi_cone;
@@ -231,10 +231,14 @@ mesh Navion::create_corps_falcon(float const& radius, float const& heigh, int co
 		vec3 p2 = radius * vec3(std::cos(2 * Pi * u), std::sin(2 * Pi * u), -heigh / 2);
 		bande.position.push_back(p1);
 		bande.position.push_back(p2);
+		bande.uv.push_back({ 0.5 + std::cos(2 * Pi * u), 0.5 + std::sin(2 * Pi * u) });
+		bande.uv.push_back({ 0.5 - heigh + std::cos(2 * Pi * u), 0.5 - heigh + std::sin(2 * Pi * u) });
+
 	}
 	bande.position.push_back(vec3(0,0, 2.9*heigh));
+	bande.uv.push_back({ 0.5,0.5 });
 	bande.position.push_back(vec3(0, 0, -2.9 * heigh));
-
+	bande.uv.push_back({ 0.5 - heigh , 0.5 - heigh });
 
 	for (int k = 0; k < n; k++) {
 		bande.connectivity.push_back(uint3(2 * n + 2, 2 * k, 2 * k + 2));
@@ -374,12 +378,14 @@ void Navion::create_millennium_falcon() {
 
 	// *********************************************************************
 
-	
+
+
+
 	// Set the color of some elements
 
-
-
-
+	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 
 
 	// Add the elements in the hierarchy
@@ -389,7 +395,11 @@ void Navion::create_millennium_falcon() {
 	//     - The first element (without explicit name of its parent) is assumed to be the root.
 
 	hierarchie.add(centre, "Centre");
+	
 	hierarchie.add(corps, "Corps", "Centre");
+
+	
+
 	hierarchie.add(aile_droite, "Aile_droite", "Centre", { 1.5, 0.2,0 });
 	hierarchie.add(aile_gauche, "Aile_gauche", "Centre", { 1.5, -0.2,0 });
 	hierarchie["Aile_gauche"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi);

@@ -66,7 +66,7 @@ struct scene_structure : cgp::scene_inputs_generic
     //**********************************************
     Navion un_vaisseau;
     
-
+    mesh_drawable truc_test;
 
 
 

@@ -59,7 +59,8 @@ void scene_structure::initialize()
     //************************************
 
     //un_vaisseau.initialize();
-    un_vaisseau.create_millennium_falcon();
+    //un_vaisseau.create_millennium_falcon();
+    truc_test.initialize_data_on_gpu(un_vaisseau.Navion::create_truc_sur_le_falcon(1, false));
     galaxy.initialize();
 
 
@@ -105,8 +106,10 @@ void scene_structure::display_frame()
 
     */
 
-    un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau * Pi / 180) ;
-    un_vaisseau.draw(environment);
+   // un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau * Pi / 180) ;
+    //un_vaisseau.draw(environment);
+    draw(truc_test, environment);
+
 
     galaxy.draw(environment, camera_control, false);
 

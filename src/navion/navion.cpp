@@ -223,6 +223,32 @@ mesh Navion::pseudo_cone(float const& radius, float const& length, int const& n=
 	return semi_cone;
 }
 
+mesh Navion::create_bande(float const& radius, float const& heigh, int const& n) {
+	mesh bande;
+	for (int k = 0; k < n+1; k++) {
+		float u = k / (n + 0.0f);
+		vec3 p1 = radius * vec3(std::cos(2 * Pi * u), std::sin(2 * Pi * u), heigh / 2);
+		vec3 p2 = radius * vec3(std::cos(2 * Pi * u), std::sin(2 * Pi * u), -heigh / 2);
+		bande.position.push_back(p1);
+		bande.position.push_back(p2);
+	}
+
+	for (int k = 0; k < n; k++) {
+		bande.connectivity.push_back(uint3(2 * k, 2 * k + 1, 2 * k + 2));
+		bande.connectivity.push_back(uint3(2 * k + 2, 2 * k + 1, 2 * k + 3));
+
+	}
+
+	bande.fill_empty_field();
+	return bande;
+
+}
+
+
+
+
+
+
 void Navion::create_millennium_falcon() {
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	mesh_drawable haut;
@@ -233,9 +259,42 @@ void Navion::create_millennium_falcon() {
 	mesh_drawable bords;
 
 
-	haut.initialize_data_on_gpu(pseudo_cone(1, 0.3,6));
-	bas.initialize_data_on_gpu(pseudo_cone(1, 0.3,6));
-	centre.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.2, {0,0, -0.4}, {0,0,0.4}));
+	haut.initialize_data_on_gpu(pseudo_cone(2, 0.6,6));
+	bas.initialize_data_on_gpu(pseudo_cone(2, 0.6,6));
+	centre.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.4, {0,0, -0.8}, {0,0,0.8}, 10, 20, true));
+	contour.initialize_data_on_gpu(create_bande(2, 0.25, 12));
+
+	//pour le cocpit :
+	//cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 0.5,{0,0,0}, {1,0,0}));
+	mesh_drawable corps_cocpit;
+	mesh_drawable cocpit;
+	mesh_drawable vitre_cocpit;
+	mesh_drawable bord1_cocpit;
+	mesh_drawable bord2_cocpit;
+	mesh_drawable bord3_cocpit;
+	mesh_drawable bord4_cocpit;
+	mesh_drawable bord5_cocpit;
+	mesh_drawable milieu1_cocpit;
+	mesh_drawable milieu2_cocpit;
+	mesh_drawable milieu3_cocpit;
+	mesh_drawable milieu4_cocpit;
+
+	corps_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.35, { -1,0,0 }, { 0,0,0 }));
+	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35, 0.5));
+	vitre_cocpit.initialize_data_on_gpu(pseudo_cone(0.35, 0.5, 5));
+	bord1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0,0.35, 0 }, { 0, 0.35 * cos(Pi / 5),0.35 * sin(Pi / 5) }));
+	bord2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(Pi / 5),0.35 * sin(Pi / 5) }, { 0, 0.35 * cos(2 * Pi / 5),0.35 * sin(2 * Pi / 5) }));
+	bord3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2 * Pi / 5),0.35 * sin(2 * Pi / 5) }, { 0 , 0.35 * cos(3 * Pi / 5),0.35 * sin(3 * Pi / 5) }));
+	bord4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(3 * Pi / 5),0.35 * sin(3 * Pi / 5) }, { 0 , 0.35 * cos(4 * Pi / 5),0.35 * sin(4 * Pi / 5) }));
+	bord5_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(4 * Pi / 5),0.35 * sin(4 * Pi / 5) }, { 0 , -0.35 ,0 }));
+	milieu1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(Pi / 5) + 0.01 , 0.35 * sin(Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
+	milieu2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2 * Pi / 5) + 0.01 , 0.35 * sin(2 * Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
+	milieu3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(3 * Pi / 5) + 0.01 , 0.35 * sin(3 * Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
+	milieu4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(4 * Pi / 5) + 0.01 , 0.35 * sin(4 * Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
+
+
+
+
 
 
 	// Set the color of some elements
@@ -250,10 +309,28 @@ void Navion::create_millennium_falcon() {
 	//     - The first element (without explicit name of its parent) is assumed to be the root.
 
 	hierarchie.add(centre, "Centre");
-	hierarchie.add(haut, "Haut", "Centre", {0,0,0.1});
-	hierarchie.add(bas, "Bas", "Centre", {0,0,-0.1});
+	hierarchie.add(haut, "Haut", "Centre", {0,0,0.25});
+	hierarchie.add(bas, "Bas", "Centre", {0,0,-0.25});
+
+	hierarchie.add(contour, "Contour", "Centre");
 
 	hierarchie["Haut"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
 	hierarchie["Bas"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,1,0 },  Pi / 2);
+
+
+	hierarchie.add(corps_cocpit, "Corps_cocpit", "Centre", { 1.7,1.4,0 });
+	hierarchie.add(cocpit, "Cocpit", "Corps_cocpit");
+	hierarchie.add(vitre_cocpit, "Cocpit_Vitre", "Corps_cocpit");
+	hierarchie.add(bord1_cocpit, "Bord1", "Cocpit");
+	hierarchie.add(bord2_cocpit, "Bord2", "Cocpit");
+	hierarchie.add(bord3_cocpit, "Bord3", "Cocpit");
+	hierarchie.add(bord4_cocpit, "Bord4", "Cocpit");
+	hierarchie.add(bord5_cocpit, "Bord5", "Cocpit");
+	hierarchie.add(milieu1_cocpit, "Milieu1", "Cocpit");
+	hierarchie.add(milieu2_cocpit, "Milieu2", "Cocpit");
+	hierarchie.add(milieu3_cocpit, "Milieu3", "Cocpit");
+	hierarchie.add(milieu4_cocpit, "Milieu4", "Cocpit");
+
+
 
 }

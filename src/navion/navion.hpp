@@ -26,7 +26,7 @@ private:
     float nangle_aile;
     mesh create_cocpit_coque(float const& radius, float const& length);
     mesh pseudo_cone(float const& radius, float const& length, int const& n);
-    mesh create_bande(float const& radius, float const& heigh, int const& n);
+    mesh create_corps_falcon(float const& radius, float const& heigh, int const& n);
     mesh create_truc_sur_le_falcon(float const& scale, bool const& droite);
     
     

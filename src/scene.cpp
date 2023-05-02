@@ -63,6 +63,8 @@ void scene_structure::initialize()
    
     galaxy.initialize();
 
+    planet.initialize();
+
 
 
 }
@@ -112,7 +114,6 @@ void scene_structure::display_frame()
 
 
     galaxy.draw(environment, camera_control, false);
-
 }
 
 void scene_structure::display_gui()

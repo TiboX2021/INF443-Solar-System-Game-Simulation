@@ -20,8 +20,8 @@ This way, realistic physiscs distances and constants can be directly used in the
 // Pour les collisions, faire une gestion maligne pour limiter le temps de calcul
 
 // Display constants
-constexpr double PHYSICS_SCALE = 1e-9;
-constexpr double DISPLAY_SCALE = 20; // Display larger models
+constexpr double PHYSICS_SCALE = 1e-10; // Reduce the scale enough so that Opengl does not freak out
+constexpr double DISPLAY_SCALE = 3000;  // Display larger models
 
 /**
  * Physical Object with position and rotation abstract class

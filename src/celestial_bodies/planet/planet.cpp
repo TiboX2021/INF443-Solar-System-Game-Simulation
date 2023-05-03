@@ -37,15 +37,13 @@ void Planet::initialize()
 {
     LowPolyDrawable::initialize(); // Call base class initialize function
     // Initialize CGP elements
-    planet_mesh = mesh_primitive_perlin_sphere(radius, position, 200, 100, parameters);
+    planet_mesh = mesh_primitive_perlin_sphere(radius, {0, 0, 0}, 200, 100, parameters);
     planet_mesh_drawable.initialize_data_on_gpu(planet_mesh);
 
     // Add texture
     planet_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + texture_path,
                                                                        GL_CLAMP_TO_EDGE,
                                                                        GL_CLAMP_TO_EDGE);
-
-    setLowPolyColor({221.0f / 255, 108.0f / 255, 75.0f / 255});
 
     planet_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display
 }

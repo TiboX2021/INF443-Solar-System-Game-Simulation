@@ -3,7 +3,9 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include <cmath>
 #include <iostream>
+#include <math.h>
 using namespace cgp;
 
 void scene_structure::initialize()
@@ -16,6 +18,7 @@ void scene_structure::initialize()
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
     // BUG : à très longue distance, pour les objets qui ne disparaissent pas, bug d'affichage. Diminuer la scale ?
+    // Il faut réduire l'échelle globale du projet, cf object.hpp
 
     // Initialize simulation handler
     SimulationHandler::generateSolarSystem(simulation_handler);

@@ -17,9 +17,10 @@
         0.559504, -0.825485, 0.074363 \
     }
 
-#define JUPITER_ROTATION_AXIS         \
-    {                                 \
-        0.489659, -0.871128, 0.037021 \
+// 3,12° de tilt !
+#define JUPITER_ROTATION_AXIS        \
+    {                                \
+        0.000000, 0.054427, 0.998518 \
     }
 
 #define URANUS_ROTATION_AXIS         \

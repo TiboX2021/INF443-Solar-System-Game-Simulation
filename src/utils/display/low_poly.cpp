@@ -20,7 +20,8 @@ void LowPolyDrawable::initialize()
 
 void LowPolyDrawable::setLowPolyColor(cgp::vec3 color)
 {
-    low_poly_color = color;
+    low_poly_color = color;                            // In case called before initialization
+    low_poly_drawable.material.color = low_poly_color; // In case called after iniitialization
 }
 
 // Main draw function

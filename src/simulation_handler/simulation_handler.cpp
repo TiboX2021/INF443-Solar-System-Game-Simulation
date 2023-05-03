@@ -1,6 +1,7 @@
 #include "simulation_handler.hpp"
 #include "background/galaxy.hpp"
 #include "celestial_bodies/planet/planet.hpp"
+#include "celestial_bodies/ring_planet/ring_planet.hpp"
 #include "utils/display/base_drawable.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
@@ -93,7 +94,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(galaxy);
 
     // Add sun
-    Planet sun(SUN_MASS, SUN_RADIUS, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
+    Planet sun(SUN_MASS, SUN_RADIUS / 20, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
     sun.setShouldRotate(false);
     sun.setShouldTranslate(false);
     handler.addObject(sun);
@@ -115,12 +116,14 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(mars);
 
     // Add Saturn
-    Planet saturn(SATURN_MASS, SATURN_RADIUS, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
+    RingPlanet saturn(SATURN_MASS, SATURN_RADIUS, SATURN_RADIUS * 2, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", "assets/planets/rings/saturn_ring.png", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
     saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
-    handler.addObject(saturn);
+
+    // BUG : erreur si on l'ajoute
+    // handler.addObject(saturn);
 
     // Add jupiter
     Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);

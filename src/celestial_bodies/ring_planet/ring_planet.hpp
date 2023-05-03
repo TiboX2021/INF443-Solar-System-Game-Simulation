@@ -15,6 +15,7 @@ public:
     void drawBillboards(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     virtual void setPosition(vec3 position) override;
+    virtual void updateModels() override;
 
 private:
     // Ring data

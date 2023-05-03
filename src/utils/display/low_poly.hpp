@@ -42,4 +42,5 @@ private:
     double low_poly_radius;
     cgp::mesh low_poly_mesh;
     cgp::mesh_drawable low_poly_drawable;
+    cgp::vec3 low_poly_color;
 };

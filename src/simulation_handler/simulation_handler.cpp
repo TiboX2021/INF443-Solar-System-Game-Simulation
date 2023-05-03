@@ -7,6 +7,7 @@
 #include "utils/physics/constants.hpp"
 #include <iostream>
 #include <iterator>
+#include <memory>
 
 template <typename TExtendsBaseDrawable>
 void SimulationHandler::addObject(TExtendsBaseDrawable drawable)
@@ -121,9 +122,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
-
-    // BUG : erreur si on l'ajoute
-    // handler.addObject(saturn);
+    handler.addObject(saturn);
 
     // Add jupiter
     Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);

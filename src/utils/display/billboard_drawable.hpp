@@ -7,7 +7,7 @@
 /**
  * Abstract base drawable class for billboards
  */
-class BillboardDrawable : public BaseDrawable
+class BillboardDrawable : public virtual BaseDrawable
 
 {
 public:

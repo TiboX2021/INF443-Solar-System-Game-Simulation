@@ -16,7 +16,7 @@ public:
     void set_position(vec3 const &position);
     void set_direction(vec3 const &direction);
     void set_angle_aile(float const angle);
-    void create_millennium_falcon();
+    void create_millennium_falcon(float const& scale);
    
 
 protected:

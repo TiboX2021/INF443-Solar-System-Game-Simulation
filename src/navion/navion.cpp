@@ -227,8 +227,8 @@ mesh Navion::create_corps_falcon(float const& radius, float const& heigh, int co
 	mesh bande;
 	for (int k = 0; k < n+1; k++) {
 		float u = k / (n + 0.0f);
-		vec3 p1 = radius * vec3(std::cos(2 * Pi * u), std::sin(2 * Pi * u), heigh / 2);
-		vec3 p2 = radius * vec3(std::cos(2 * Pi * u), std::sin(2 * Pi * u), -heigh / 2);
+		vec3 p1 =  vec3(radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u), heigh );
+		vec3 p2 =  vec3(radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u), -heigh);
 		bande.position.push_back(p1);
 		bande.position.push_back(p2);
 		bande.uv.push_back({ 0.5 + std::cos(2 * Pi * u), 0.5 + std::sin(2 * Pi * u) });
@@ -324,7 +324,7 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 
 
 
-void Navion::create_millennium_falcon() {
+void Navion::create_millennium_falcon(float const& scale) {
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	
 	mesh_drawable centre;
@@ -337,11 +337,11 @@ void Navion::create_millennium_falcon() {
 
 
 	
-	centre.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.4, {0,0, -0.8}, {0,0,0.8}, 10, 20, true));
-	corps.initialize_data_on_gpu(create_corps_falcon(2, 0.25, 12));
+	centre.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.4, {0,0, -0.8 * scale}, {0,0,0.8* scale}, 10, 20, true));
+	corps.initialize_data_on_gpu(create_corps_falcon(scale * 2, scale * 0.25, 12));
 
-	aile_droite.initialize_data_on_gpu(create_truc_sur_le_falcon(1, true));
-	aile_gauche.initialize_data_on_gpu(create_truc_sur_le_falcon(1, true));
+	aile_droite.initialize_data_on_gpu(create_truc_sur_le_falcon(scale, true));
+	aile_gauche.initialize_data_on_gpu(create_truc_sur_le_falcon(scale, true));
 
 	tunnel_interne.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 2.5, { 0,0,-2.5 }));
 
@@ -363,18 +363,18 @@ void Navion::create_millennium_falcon() {
 	mesh_drawable milieu3_cocpit;
 	mesh_drawable milieu4_cocpit;
 
-	corps_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.35, { -1,0,0 }, { 0,0,0 }));
-	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35, 0.5));
-	vitre_cocpit.initialize_data_on_gpu(pseudo_cone(0.35, 0.5, 5));
-	bord1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0,0.35, 0 }, { 0, 0.35 * cos(Pi / 5),0.35 * sin(Pi / 5) }));
-	bord2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(Pi / 5),0.35 * sin(Pi / 5) }, { 0, 0.35 * cos(2 * Pi / 5),0.35 * sin(2 * Pi / 5) }));
-	bord3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2 * Pi / 5),0.35 * sin(2 * Pi / 5) }, { 0 , 0.35 * cos(3 * Pi / 5),0.35 * sin(3 * Pi / 5) }));
-	bord4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(3 * Pi / 5),0.35 * sin(3 * Pi / 5) }, { 0 , 0.35 * cos(4 * Pi / 5),0.35 * sin(4 * Pi / 5) }));
-	bord5_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(4 * Pi / 5),0.35 * sin(4 * Pi / 5) }, { 0 , -0.35 ,0 }));
-	milieu1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(Pi / 5) + 0.01 , 0.35 * sin(Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
-	milieu2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(2 * Pi / 5) + 0.01 , 0.35 * sin(2 * Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
-	milieu3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(3 * Pi / 5) + 0.01 , 0.35 * sin(3 * Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
-	milieu4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(0.02, { 0, 0.35 * cos(4 * Pi / 5) + 0.01 , 0.35 * sin(4 * Pi / 5) + 0.01 }, { 0.5 , 0 ,0 }));
+	corps_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.35, { -1 * scale,0,0 }, { 0,0,0 }));
+	cocpit.initialize_data_on_gpu(create_cocpit_coque(0.35 * scale, scale * 0.5));
+	vitre_cocpit.initialize_data_on_gpu(pseudo_cone(scale * 0.35, scale * 0.5, 5));
+	bord1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02,  { 0,scale * 0.35, 0 }, { 0, scale * 0.35 * cos(Pi / 5),scale * 0.35 * sin(Pi / 5) }));
+	bord2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(Pi / 5),scale * 0.35 * sin(Pi / 5) }, { 0, scale * 0.35 * cos(2 * Pi / 5),scale * 0.35 * sin(2 * Pi / 5) }));
+	bord3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(2 * Pi / 5),scale * 0.35 * sin(2 * Pi / 5) }, { 0 , scale * 0.35 * cos(3 * Pi / 5),scale * 0.35 * sin(3 * Pi / 5) }));
+	bord4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0,scale * 0.35 * cos(3 * Pi / 5),scale * 0.35 * sin(3 * Pi / 5) }, { 0 , scale * 0.35 * cos(4 * Pi / 5),scale * 0.35 * sin(4 * Pi / 5) }));
+	bord5_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(4 * Pi / 5),scale * 0.35 * sin(4 * Pi / 5) }, { 0 , -0.35 * scale ,0 }));
+	milieu1_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(Pi / 5) + 0.01* scale , scale * 0.35 * sin(Pi / 5) + scale *0.01 }, { scale * 0.5 , 0 ,0 }));
+	milieu2_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(2 * Pi / 5) + scale * 0.01 , scale * 0.35 * sin(2 * Pi / 5) + scale * 0.01 }, { scale * 0.5 , 0 ,0 }));
+	milieu3_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(3 * Pi / 5) + scale * 0.01 , scale * 0.35 * sin(3 * Pi / 5) + scale * 0.01 }, { scale * 0.5 , 0 ,0 }));
+	milieu4_cocpit.initialize_data_on_gpu(cgp::mesh_primitive_cylinder(scale * 0.02, { 0, scale * 0.35 * cos(4 * Pi / 5) + scale * 0.01 , scale * 0.35 * sin(4 * Pi / 5) + scale * 0.01 }, { scale * 0.5 , 0 ,0 }));
 
 	// *********************************************************************
 
@@ -383,6 +383,10 @@ void Navion::create_millennium_falcon() {
 
 	// Set the color of some elements
 
+
+	centre.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
 		GL_REPEAT,
 		GL_REPEAT);
@@ -400,8 +404,8 @@ void Navion::create_millennium_falcon() {
 
 	
 
-	hierarchie.add(aile_droite, "Aile_droite", "Centre", { 1.5, 0.2,0 });
-	hierarchie.add(aile_gauche, "Aile_gauche", "Centre", { 1.5, -0.2,0 });
+	hierarchie.add(aile_droite, "Aile_droite", "Centre", { scale * 1.5, scale * 0.2,0 });
+	hierarchie.add(aile_gauche, "Aile_gauche", "Centre", { scale * 1.5, -0.2 * scale,0 });
 	hierarchie["Aile_gauche"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi);
 
 
@@ -409,8 +413,10 @@ void Navion::create_millennium_falcon() {
 	// **************************************
 	//        re le cocpit 
 	// *************************************
+
+	vitre_cocpit.material.color = { 0,0,0 };
 	
-	hierarchie.add(corps_cocpit, "Corps_cocpit", "Centre", {1.7, -1.4,0});
+	hierarchie.add(corps_cocpit, "Corps_cocpit", "Centre", { scale * 1.7, -1.4 * scale,0});
 	hierarchie.add(cocpit, "Cocpit", "Corps_cocpit");
 	hierarchie.add(vitre_cocpit, "Cocpit_Vitre", "Corps_cocpit");
 	hierarchie.add(bord1_cocpit, "Bord1", "Cocpit");

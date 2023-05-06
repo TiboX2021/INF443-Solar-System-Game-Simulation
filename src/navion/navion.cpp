@@ -231,14 +231,14 @@ mesh Navion::create_corps_falcon(float const& radius, float const& heigh, int co
 		vec3 p2 =  vec3(radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u), -heigh);
 		bande.position.push_back(p1);
 		bande.position.push_back(p2);
-		bande.uv.push_back({ 0.5 + std::cos(2 * Pi * u), 0.5 + std::sin(2 * Pi * u) });
-		bande.uv.push_back({ 0.5 - heigh + std::cos(2 * Pi * u), 0.5 - heigh + std::sin(2 * Pi * u) });
+		bande.uv.push_back(vec2(0.49,0.535) + vec2(std::cos(2 * Pi * u)/4, std::sin(2 * Pi * u)/3 ));
+		bande.uv.push_back(vec2(0.49, 0.535) + vec2(std::cos(2 * Pi * u + Pi) / 4, std::sin(2 * Pi * u + Pi) / 3));
 
 	}
 	bande.position.push_back(vec3(0,0, 2.9*heigh));
-	bande.uv.push_back({ 0.5,0.5 });
+	bande.uv.push_back({ 0.49,0.535 });
 	bande.position.push_back(vec3(0, 0, -2.9 * heigh));
-	bande.uv.push_back({ 0.5 - heigh , 0.5 - heigh });
+	bande.uv.push_back({ 0.49,0.535 });
 
 	for (int k = 0; k < n; k++) {
 		bande.connectivity.push_back(uint3(2 * n + 2, 2 * k, 2 * k + 2));
@@ -292,8 +292,16 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 	aile.connectivity.push_back(uint3(1, 9, 5));
 	aile.connectivity.push_back(uint3(9, 7, 5));
 
-	//et enfin les côtés :
 	
+
+	//d'abord le dessus :
+	aile.connectivity.push_back(uint3(8, 4, 6));
+	aile.connectivity.push_back(uint3(0, 2, 4));
+	aile.connectivity.push_back(uint3(0, 4, 8));
+
+	
+	//et enfin les côtés :
+
 	aile.connectivity.push_back(uint3(0, 1, 2));
 	aile.connectivity.push_back(uint3(2, 3, 4));
 	aile.connectivity.push_back(uint3(4, 5, 6));
@@ -303,14 +311,6 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 	aile.connectivity.push_back(uint3(5, 4, 3));
 	aile.connectivity.push_back(uint3(7, 6, 5));
 	aile.connectivity.push_back(uint3(1, 0, 7));
-
-	//d'abord le dessus :
-	aile.connectivity.push_back(uint3(8, 4, 6));
-	aile.connectivity.push_back(uint3(0, 2, 4));
-	aile.connectivity.push_back(uint3(0, 4, 8));
-
-	
-
 	
 
 	
@@ -387,7 +387,7 @@ void Navion::create_millennium_falcon(float const& scale) {
 	centre.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
 		GL_REPEAT,
 		GL_REPEAT);
-	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/Star_Wars_Millenium_Falcon_FSX_P3D_1.jpg",
 		GL_REPEAT,
 		GL_REPEAT);
 

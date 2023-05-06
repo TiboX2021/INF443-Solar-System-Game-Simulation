@@ -112,7 +112,7 @@ void scene_structure::display_frame()
    un_vaisseau.draw(environment);
    
 
-
+    //planet.draw(environment, camera_control, false);
     galaxy.draw(environment, camera_control, false);
 }
 

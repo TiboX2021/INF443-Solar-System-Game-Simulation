@@ -6,6 +6,8 @@
 #include "environment.hpp"
 
 void Navion::initialize() {
+
+	has_wings = true;
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	mesh_drawable corps;
 	
@@ -325,6 +327,7 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 
 
 void Navion::create_millennium_falcon(float const& scale) {
+	has_wings = false;
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	
 	mesh_drawable centre;
@@ -431,4 +434,77 @@ void Navion::create_millennium_falcon(float const& scale) {
 
 
 
+}
+
+void Navion::create_vaisseau_vador(float const& scale) {
+	mesh_drawable corps;
+	mesh_drawable barre_transversale;
+	mesh_drawable aile_HD;
+	mesh_drawable aile_HG;
+	mesh_drawable aile_BD;
+	mesh_drawable aile_BG;
+
+	// Pour le cocpit : une demi-sphère, 16 tuyaux
+
+	corps.initialize_data_on_gpu(mesh_primitive_cylinder(0.4 * scale, scale * vec3(0.3, 0, 0), scale * vec3(-0.3, 0, 0), 10, 20, true));
+	barre_transversale.initialize_data_on_gpu(transversale_vador(scale));
+
+	hierarchie.add(corps, "Corps");
+	hierarchie.add(barre_transversale, "Barre");
+}
+
+
+mesh Navion::transversale_vador(float const& scale) {
+	mesh truc;
+	// face avant :
+	//                        2 
+	//              ---------- ----------
+	//   -----------                     -----------
+	//  1                     5                     3
+	//   -----------                     -----------
+	//              ---------- ----------
+	//                        4
+
+	truc.position.resize(11);
+
+	truc.position[0] = { 0,0,0 }; // en vrai, inutile mais je me suis chibré dans la numérotation
+	truc.position[1] = scale *vec3( 0.2, -1.5, 0 );
+	truc.position[2] = scale * vec3( 0.3, 0, 0.3 );
+	truc.position[3] = scale * vec3( 0.2, 1.5 , 0 );
+	truc.position[4] = scale * vec3( 0.3, 0, -0.3 );
+	truc.position[5] = scale * vec3( 0.4, 0, 0 );
+
+
+	// Arrière : la même chose +5
+
+	truc.position[6] = scale * vec3( -0.2, -1.5, 0 );
+	truc.position[7] = scale * vec3( -0.3, 0, 0.3 );
+	truc.position[8] = scale * vec3( -0.2,1.5 , 0 );
+	truc.position[9] = scale * vec3( -0.3, 0, -0.3 );
+	truc.position[10] = scale * vec3( -0.4, 0, 0);
+
+	// ensuite la connectivité (aled)
+	truc.connectivity.push_back(uint3(1, 4,5));
+	truc.connectivity.push_back(uint3(1, 5, 2));
+	truc.connectivity.push_back(uint3(3, 2, 5));
+	truc.connectivity.push_back(uint3(3, 5, 4));
+
+	truc.connectivity.push_back(uint3(6, 10, 9));
+	truc.connectivity.push_back(uint3(6, 7, 10));
+	truc.connectivity.push_back(uint3(8, 10, 7));
+	truc.connectivity.push_back(uint3(8, 9, 10));
+
+	truc.connectivity.push_back(uint3(1, 2, 6));
+	truc.connectivity.push_back(uint3(7, 6, 2));
+	truc.connectivity.push_back(uint3(1, 4, 6));
+	truc.connectivity.push_back(uint3(9, 6, 4));
+
+	truc.connectivity.push_back(uint3(2, 3, 8));
+	truc.connectivity.push_back(uint3(8, 7, 2));
+	truc.connectivity.push_back(uint3(4, 3, 8));
+	truc.connectivity.push_back(uint3(8, 9, 4));
+
+	truc.fill_empty_field();
+
+	return truc;
 }

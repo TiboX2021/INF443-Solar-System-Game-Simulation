@@ -17,6 +17,7 @@ public:
     void set_direction(vec3 const &direction);
     void set_angle_aile(float const angle);
     void create_millennium_falcon(float const& scale);
+    void create_vaisseau_vador(float const& scale);
    
 
 protected:
@@ -28,6 +29,8 @@ private:
     mesh pseudo_cone(float const& radius, float const& length, int const& n);
     mesh create_corps_falcon(float const& radius, float const& heigh, int const& n);
     mesh create_truc_sur_le_falcon(float const& scale, bool const& droite);
+    mesh transversale_vador(float const& scale);
+    bool has_wings = false;
     
     
 };

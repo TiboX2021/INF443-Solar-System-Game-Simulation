@@ -144,12 +144,12 @@ void Navion::draw(environment_structure const& environment) {
 
 	// Update position/angle
 
-	/*
-	hierarchie["AileDH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, nangle_aile);
-	hierarchie["AileGH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, - nangle_aile);
-	hierarchie["AileDB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, - nangle_aile);
-	hierarchie["AileGB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 },  nangle_aile);
-	*/
+	if (has_wings) {
+		hierarchie["AileDH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, nangle_aile);
+		hierarchie["AileGH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -nangle_aile);
+		hierarchie["AileDB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -nangle_aile);
+		hierarchie["AileGB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 },  nangle_aile);
+	}
 
 
 	// This function must be called before the drawing in order to propagate the deformations through the hierarchy
@@ -443,14 +443,21 @@ void Navion::create_vaisseau_vador(float const& scale) {
 	mesh_drawable aile_HG;
 	mesh_drawable aile_BD;
 	mesh_drawable aile_BG;
+	mesh_drawable avant;
+	mesh_drawable arriere;
 
 	// Pour le cocpit : une demi-sphère, 16 tuyaux
 
 	corps.initialize_data_on_gpu(mesh_primitive_cylinder(0.4 * scale, scale * vec3(0.3, 0, 0), scale * vec3(-0.3, 0, 0), 10, 20, true));
 	barre_transversale.initialize_data_on_gpu(transversale_vador(scale));
+	avant.initialize_data_on_gpu(mesh_primitive_sphere(0.4));
+	arriere.initialize_data_on_gpu(mesh_primitive_sphere(0.4));
 
 	hierarchie.add(corps, "Corps");
 	hierarchie.add(barre_transversale, "Barre");
+	hierarchie.add(avant, "Avant", "Corps", {0.3,0,0});
+	hierarchie.add(arriere, "Arriere", "Corps", { -0.3,0,0 });
+
 }
 
 
@@ -468,18 +475,18 @@ mesh Navion::transversale_vador(float const& scale) {
 	truc.position.resize(11);
 
 	truc.position[0] = { 0,0,0 }; // en vrai, inutile mais je me suis chibré dans la numérotation
-	truc.position[1] = scale *vec3( 0.2, -1.5, 0 );
+	truc.position[1] = scale *vec3( 0.2, -2, 0 );
 	truc.position[2] = scale * vec3( 0.3, 0, 0.3 );
-	truc.position[3] = scale * vec3( 0.2, 1.5 , 0 );
+	truc.position[3] = scale * vec3( 0.2, 2 , 0 );
 	truc.position[4] = scale * vec3( 0.3, 0, -0.3 );
 	truc.position[5] = scale * vec3( 0.4, 0, 0 );
 
 
 	// Arrière : la même chose +5
 
-	truc.position[6] = scale * vec3( -0.2, -1.5, 0 );
+	truc.position[6] = scale * vec3( -0.2, -2, 0 );
 	truc.position[7] = scale * vec3( -0.3, 0, 0.3 );
-	truc.position[8] = scale * vec3( -0.2,1.5 , 0 );
+	truc.position[8] = scale * vec3( -0.2,2 , 0 );
 	truc.position[9] = scale * vec3( -0.3, 0, -0.3 );
 	truc.position[10] = scale * vec3( -0.4, 0, 0);
 

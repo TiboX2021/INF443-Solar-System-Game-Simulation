@@ -437,8 +437,12 @@ void Navion::create_millennium_falcon(float const& scale) {
 }
 
 void Navion::create_vaisseau_vador(float const& scale) {
+
+
 	mesh_drawable corps;
 	mesh_drawable barre_transversale;
+	mesh_drawable aile_droite;
+	mesh_drawable aile_gauche;
 	mesh_drawable aile_HD;
 	mesh_drawable aile_HG;
 	mesh_drawable aile_BD;
@@ -450,14 +454,31 @@ void Navion::create_vaisseau_vador(float const& scale) {
 
 	corps.initialize_data_on_gpu(mesh_primitive_cylinder(0.4 * scale, scale * vec3(0.3, 0, 0), scale * vec3(-0.3, 0, 0), 10, 20, true));
 	barre_transversale.initialize_data_on_gpu(transversale_vador(scale));
-	avant.initialize_data_on_gpu(mesh_primitive_sphere(0.4));
-	arriere.initialize_data_on_gpu(mesh_primitive_sphere(0.4));
+	avant.initialize_data_on_gpu(mesh_primitive_sphere(scale*0.4));
+	arriere.initialize_data_on_gpu(mesh_primitive_sphere(scale *0.4));
+	aile_droite.initialize_data_on_gpu(mesh_primitive_quadrangle(
+		{-1.6*scale, 0,0.15 * scale }, { -1.6 * scale,0, -0.15 * scale }, { 1.6 * scale,0, -0.15 * scale }, { 1.6 * scale,0,0.15 * scale }));
+	aile_gauche.initialize_data_on_gpu(mesh_primitive_quadrangle(
+		{ 1.6 * scale,0,0.15 * scale }, { 1.6 * scale,0, -0.15 * scale }, { -1.6 * scale,0, -0.15 * scale }, { -1.6 * scale, 0,0.15 * scale }));
+	aile_BD.initialize_data_on_gpu(mesh_primitive_quadrangle(
+		{ 1.6 * scale , 0, 0}, { -1.6 * scale, 0, 0 }, { -0.45 * scale, 0, -1.6 * scale }, { 0.45 * scale, 0, -1.6 * scale }));
+	aile_BG.initialize_data_on_gpu(mesh_primitive_quadrangle(
+		{ 0.45 * scale, 0, -1.6 * scale } , { -0.45 * scale, 0, -1.6 * scale }, { -1.6 * scale, 0, 0 }, { 1.6 * scale , 0, 0 }));
+	aile_HG.initialize_data_on_gpu(mesh_primitive_quadrangle(
+		{ 1.6 * scale , 0, 0 }, { -1.6 * scale, 0, 0 }, { -0.45 * scale, 0, 1.6 * scale }, { 0.45 * scale, 0, 1.6 * scale }));
+	aile_HD.initialize_data_on_gpu(mesh_primitive_quadrangle(
+		{ 0.45 * scale, 0, 1.6 * scale }, { -0.45 * scale, 0, 1.6 * scale }, { -1.6 * scale, 0, 0 }, { 1.6 * scale , 0, 0 }));
 
 	hierarchie.add(corps, "Corps");
 	hierarchie.add(barre_transversale, "Barre");
-	hierarchie.add(avant, "Avant", "Corps", {0.3,0,0});
-	hierarchie.add(arriere, "Arriere", "Corps", { -0.3,0,0 });
-
+	hierarchie.add(avant, "Avant", "Corps", {scale*0.3,0,0});
+	hierarchie.add(arriere, "Arriere", "Corps", {scale* -0.3,0,0 });
+	hierarchie.add(aile_droite, "AileDroite", "Barre", { 0,-2 * scale,0 });
+	hierarchie.add(aile_droite, "AileGauche", "Barre", { 0,2 * scale,0 });
+	hierarchie.add(aile_BD, "AileBD", "AileDroite", { 0,0, -0.15 * scale });
+	hierarchie.add(aile_BG, "AileBG", "AileGauche", { 0,0,-0.15 * scale });
+	hierarchie.add(aile_HD, "AileHD", "AileDroite", { 0,0, 0.15 * scale });
+	hierarchie.add(aile_HG, "AileHG", "AileGauche", { 0,0,0.15 * scale });
 }
 
 

@@ -31,6 +31,8 @@ private:
     mesh create_truc_sur_le_falcon(float const& scale, bool const& droite);
     mesh transversale_vador(float const& scale);
     bool has_wings = false;
+    float angle_aile_min = 0;    
+    float angle_aile_max = 90;
     
     
 };

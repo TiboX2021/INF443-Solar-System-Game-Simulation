@@ -77,7 +77,7 @@ void scene_structure::display_gui()
     ImGui::Checkbox("Frame", &gui.display_frame);
     ImGui::Checkbox("Wireframe", &gui.display_wireframe);
 
-    ImGui::SliderFloat("Angle Aile", &gui.angle_aile_vaisseau, 0, 80);
+    ImGui::SliderFloat("Angle Aile", &gui.angle_aile_vaisseau, 0, 100);
 }
 
 void scene_structure::mouse_move_event()

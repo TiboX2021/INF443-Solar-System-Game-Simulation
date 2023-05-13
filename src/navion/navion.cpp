@@ -8,6 +8,8 @@
 void Navion::initialize() {
 
 	has_wings = true;
+	angle_aile_min = 0;
+	angle_aile_max = 80;
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	mesh_drawable corps;
 	
@@ -145,10 +147,11 @@ void Navion::draw(environment_structure const& environment) {
 	// Update position/angle
 
 	if (has_wings) {
-		hierarchie["AileDH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, nangle_aile);
-		hierarchie["AileGH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -nangle_aile);
-		hierarchie["AileDB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -nangle_aile);
-		hierarchie["AileGB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 },  nangle_aile);
+		float langle = Pi/180 * angle_aile_min + Pi / 180 * nangle_aile * (angle_aile_max - angle_aile_min) / 100;
+		hierarchie["AileDH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, langle);
+		hierarchie["AileGH"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -langle);
+		hierarchie["AileDB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, -langle);
+		hierarchie["AileGB"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 },  langle);
 	}
 
 
@@ -233,8 +236,9 @@ mesh Navion::create_corps_falcon(float const& radius, float const& heigh, int co
 		vec3 p2 =  vec3(radius * std::cos(2 * Pi * u), radius * std::sin(2 * Pi * u), -heigh);
 		bande.position.push_back(p1);
 		bande.position.push_back(p2);
-		bande.uv.push_back(vec2(0.49,0.535) + vec2(std::cos(2 * Pi * u)/4, std::sin(2 * Pi * u)/3 ));
 		bande.uv.push_back(vec2(0.49, 0.535) + vec2(std::cos(2 * Pi * u + Pi) / 4, std::sin(2 * Pi * u + Pi) / 3));
+		bande.uv.push_back(vec2(0.49,0.535) + vec2(std::cos(2 * Pi * u)/4, std::sin(2 * Pi * u)/3 ));
+		
 
 	}
 	bande.position.push_back(vec3(0,0, 2.9*heigh));
@@ -394,6 +398,14 @@ void Navion::create_millennium_falcon(float const& scale) {
 		GL_REPEAT,
 		GL_REPEAT);
 
+	centre.material.phong.specular = 0.0;
+	corps.material.phong.specular = 0.0;
+	aile_droite.material.phong.specular = 0.0;
+	aile_gauche.material.phong.specular = 0.0;
+	corps_cocpit.material.phong.specular = 0.0;
+	cocpit.material.phong.specular = 0.0;
+	vitre_cocpit.material.phong.specular = 0.7;
+
 
 	// Add the elements in the hierarchy
 	//   The syntax is hierarchy.add(mesh_drawable, "name of the parent element", [optional: local translation in the hierarchy])
@@ -437,6 +449,9 @@ void Navion::create_millennium_falcon(float const& scale) {
 }
 
 void Navion::create_vaisseau_vador(float const& scale) {
+	has_wings = true;
+	angle_aile_min = -20;
+	angle_aile_max = -50;
 
 
 	mesh_drawable corps;
@@ -450,7 +465,9 @@ void Navion::create_vaisseau_vador(float const& scale) {
 	mesh_drawable avant;
 	mesh_drawable arriere;
 
-	// Pour le cocpit : une demi-sphère, 16 tuyaux
+	
+
+
 
 	corps.initialize_data_on_gpu(mesh_primitive_cylinder(0.4 * scale, scale * vec3(0.3, 0, 0), scale * vec3(-0.3, 0, 0), 10, 20, true));
 	barre_transversale.initialize_data_on_gpu(transversale_vador(scale));
@@ -469,16 +486,97 @@ void Navion::create_vaisseau_vador(float const& scale) {
 	aile_HD.initialize_data_on_gpu(mesh_primitive_quadrangle(
 		{ 0.45 * scale, 0, 1.6 * scale }, { -0.45 * scale, 0, 1.6 * scale }, { -1.6 * scale, 0, 0 }, { 1.6 * scale , 0, 0 }));
 
+
+	// set the color and texture of the elements :
+	corps.material.phong.specular = 0.0;
+	barre_transversale.material.phong.specular = 0.0;
+	arriere.material.phong.specular = 0.0;
+	aile_droite.material.phong.specular = 0.0;
+	aile_gauche.material.phong.specular = 0.0;
+	aile_BD.material.phong.specular = 0.0;
+	aile_BG.material.phong.specular = 0.0;
+	aile_HD.material.phong.specular = 0.0;
+	aile_HG.material.phong.specular = 0.0;
+
+
+
+
+
+
+
 	hierarchie.add(corps, "Corps");
 	hierarchie.add(barre_transversale, "Barre");
 	hierarchie.add(avant, "Avant", "Corps", {scale*0.3,0,0});
 	hierarchie.add(arriere, "Arriere", "Corps", {scale* -0.3,0,0 });
 	hierarchie.add(aile_droite, "AileDroite", "Barre", { 0,-2 * scale,0 });
 	hierarchie.add(aile_droite, "AileGauche", "Barre", { 0,2 * scale,0 });
-	hierarchie.add(aile_BD, "AileBD", "AileDroite", { 0,0, -0.15 * scale });
-	hierarchie.add(aile_BG, "AileBG", "AileGauche", { 0,0,-0.15 * scale });
-	hierarchie.add(aile_HD, "AileHD", "AileDroite", { 0,0, 0.15 * scale });
-	hierarchie.add(aile_HG, "AileHG", "AileGauche", { 0,0,0.15 * scale });
+	hierarchie.add(aile_BD, "AileDB", "AileDroite", { 0,0, -0.15 * scale });
+	hierarchie.add(aile_BG, "AileGB", "AileGauche", { 0,0,-0.15 * scale });
+	hierarchie.add(aile_HD, "AileDH", "AileDroite", { 0,0, 0.15 * scale });
+	hierarchie.add(aile_HG, "AileGH", "AileGauche", { 0,0,0.15 * scale });
+
+
+	// Pour le cocpit : une demi-sphère, 24 tuyaux
+	float radius = scale * 0.4;
+	mesh_drawable contours_cocpit;
+	mesh_drawable transversal_cocpit;
+	mesh_drawable hublot;
+
+	contours_cocpit.initialize_data_on_gpu(mesh_primitive_cylinder(0.03*scale, {0.01*scale, radius*cos(Pi/8) , -sin(Pi/8)*radius - 0.01 * scale }, {0.01*scale,radius*cos(Pi/8) , radius*sin(Pi/8) + 0.01 * scale }));
+	hublot.initialize_data_on_gpu(mesh_primitive_cylinder(0.02*scale, 
+		{0.01*scale + 0.8*radius, 0.6*radius*cos(Pi/8) , -0.6*radius* sin(Pi/8)}, 
+		{0.01 * scale + 0.8 * radius, 0.6 * radius*cos(Pi/8), 0.6*radius*sin(Pi/8)}));
+	transversal_cocpit.initialize_data_on_gpu(mesh_primitive_cylinder(0.02*scale, 
+		{ 0.01 * scale, radius * cos(Pi / 8) , -sin(Pi / 8) * radius  },
+		{ 0.01 * scale + 0.8 * radius, 0.6 * radius * cos(Pi / 8) , -0.6 * radius * sin(Pi / 8) }));
+
+	hierarchie.add(contours_cocpit, "Contour1", "Avant");
+	hierarchie.add(contours_cocpit, "Contour2", "Avant");
+	hierarchie["Contour2"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi / 4);
+	hierarchie.add(contours_cocpit, "Contour3", "Avant");
+	hierarchie["Contour3"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 2*Pi / 4);
+	hierarchie.add(contours_cocpit, "Contour4", "Avant");
+	hierarchie["Contour4"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 3*Pi / 4);
+	hierarchie.add(contours_cocpit, "Contour5", "Avant");
+	hierarchie["Contour5"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi);
+	hierarchie.add(contours_cocpit, "Contour6", "Avant");
+	hierarchie["Contour6"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 5*Pi / 4);
+	hierarchie.add(contours_cocpit, "Contour7", "Avant");
+	hierarchie["Contour7"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 6*Pi / 4);
+	hierarchie.add(contours_cocpit, "Contour8", "Avant");
+	hierarchie["Contour8"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 7*Pi / 4);
+
+	hierarchie.add(hublot, "Hublot1", "Avant");
+	hierarchie.add(hublot, "Hublot2", "Avant");
+	hierarchie["Hublot2"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi / 4);
+	hierarchie.add(hublot, "Hublot3", "Avant");
+	hierarchie["Hublot3"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 2*Pi / 4);
+	hierarchie.add(hublot, "Hublot4", "Avant");
+	hierarchie["Hublot4"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 3*Pi / 4);
+	hierarchie.add(hublot, "Hublot5", "Avant");
+	hierarchie["Hublot5"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi);
+	hierarchie.add(hublot, "Hublot6", "Avant");
+	hierarchie["Hublot6"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 5*Pi / 4);
+	hierarchie.add(hublot, "Hublot7", "Avant");
+	hierarchie["Hublot7"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 6*Pi / 4);
+	hierarchie.add(hublot, "Hublot8", "Avant");
+	hierarchie["Hublot8"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 7*Pi / 4);
+
+	hierarchie.add(transversal_cocpit, "Trans1", "Avant");
+	hierarchie.add(transversal_cocpit, "Trans2", "Avant");
+	hierarchie["Trans2"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi / 4);
+	hierarchie.add(transversal_cocpit, "Trans3", "Avant");
+	hierarchie["Trans3"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 2*Pi / 4);
+	hierarchie.add(transversal_cocpit, "Trans4", "Avant");
+	hierarchie["Trans4"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 3*Pi / 4);
+	hierarchie.add(transversal_cocpit, "Trans5", "Avant");
+	hierarchie["Trans5"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, Pi);
+	hierarchie.add(transversal_cocpit, "Trans6", "Avant");
+	hierarchie["Trans6"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 5*Pi / 4);
+	hierarchie.add(transversal_cocpit, "Trans7", "Avant");
+	hierarchie["Trans7"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 6*Pi / 4);
+	hierarchie.add(transversal_cocpit, "Trans8", "Avant");
+	hierarchie["Trans8"].transform_local.rotation = rotation_transform::from_axis_angle({ 1,0,0 }, 7*Pi / 4);
 }
 
 

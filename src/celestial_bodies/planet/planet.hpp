@@ -37,6 +37,7 @@ private:
     vec3 position;
     std::string texture_path;
 
+protected:
     // CGP elements
     cgp::mesh planet_mesh;
     cgp::mesh_drawable planet_mesh_drawable;

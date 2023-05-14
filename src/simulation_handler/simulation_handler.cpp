@@ -1,5 +1,6 @@
 #include "simulation_handler.hpp"
 #include "background/galaxy.hpp"
+#include "celestial_bodies/overrides/star.hpp"
 #include "celestial_bodies/planet/planet.hpp"
 #include "celestial_bodies/ring_planet/ring_planet.hpp"
 #include "utils/display/base_drawable.hpp"
@@ -95,9 +96,10 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(galaxy);
 
     // Add sun
-    Planet sun(SUN_MASS, SUN_RADIUS / 20, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
+    Star sun(SUN_MASS, SUN_RADIUS / 20, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
     sun.setShouldRotate(false);
     sun.setShouldTranslate(false);
+    sun.setShader("custom");
     handler.addObject(sun);
 
     // Add Earth

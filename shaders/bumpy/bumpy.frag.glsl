@@ -70,7 +70,7 @@ void main()
     vec3 camera_position = -O * last_col;
 
     // Renormalize normal
-    vec3 N = normalize(fragment.normal); // TODO : ici, le problème c'est le sens du fragment
+    vec3 N = normalize(fragment.normal);
 
     // Inverse the normal if it is viewed from its back (two-sided surface)
     //  (note: gl_FrontFacing doesn't work on Mac)
@@ -127,16 +127,5 @@ void main()
     vec3 color_shading = (Ka + Kd * diffuse_component) * color_object + Ks * specular_component * vec3(1.0, 1.0, 1.0);
 
     // Output color, with the alpha component
-    // TODO : ajouter de l'alpha ne fonctionne qu'avec les billboards !
     FragColor = vec4(color_shading, material.alpha * color_image_texture.a);
-
-    // TODO : uniform lighting, and try to move the texture around periodically (with a timer, for instance) On a per frame basis in order to always look good
-    // TODO : add the sun as the only light source, and find a way to not initialize all planets on the same position axis
-    // TODO : do an asteroid shader in order to have 3D like bumps on the surface
-    // Jouer avec tous ces paramètres via ce shader custom, on verra bien
-
-    // TODO : faire le portail de the expanse pour aller dans d'autres mondes, notamment saturne géante avec le champ d'astéroïdes
-    // Ça permettra de caser d'autres trucs cools
-
-    // Enfin : faire un truc pour contrôler un vaisseau physique, en l'ajoutant au simultion handler tout en gardant une réf dessus. On verra comment faire ça
 }

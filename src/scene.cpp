@@ -23,6 +23,9 @@ void scene_structure::initialize()
 
     // Load shaders
     ShaderLoader::addShader("custom", "custom_shaders/custom");
+    ShaderLoader::addShader("aura", "aura/aura");
+    ShaderLoader::addShader("bumpy", "bumpy/bumpy");
+
     ShaderLoader::initialise();
 
     // Initialize simulation handler

@@ -3,6 +3,7 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include "utils/shaders/shader_loader.hpp"
 #include <cmath>
 #include <iostream>
 #include <math.h>
@@ -19,6 +20,10 @@ void scene_structure::initialize()
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
     // BUG : à très longue distance, pour les objets qui ne disparaissent pas, bug d'affichage. Diminuer la scale ?
     // Il faut réduire l'échelle globale du projet, cf object.hpp
+
+    // Load shaders
+    ShaderLoader::addShader("custom", "custom_shaders/custom");
+    ShaderLoader::initialise();
 
     // Initialize simulation handler
     SimulationHandler::generateSolarSystem(simulation_handler);

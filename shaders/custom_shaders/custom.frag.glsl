@@ -126,8 +126,31 @@ void main()
     float Ks = material.phong.specular;
     vec3 color_shading = (Ka + Kd * diffuse_component) * color_object + Ks * specular_component * vec3(1.0, 1.0, 1.0);
 
-    // TODO : for panel, shade both sides equally
-
     // Output color, with the alpha component
+    // TODO : ajouter de l'alpha ne fonctionne qu'avec les billboards !
     FragColor = vec4(color_shading, material.alpha * color_image_texture.a);
+
+    // TODO : uniform lighting, and try to move the texture around periodically (with a timer, for instance) On a per frame basis in order to always look good
+    // TODO : add the sun as the only light source, and find a way to not initialize all planets on the same position axis
+    // TODO : do an asteroid shader in order to have 3D like bumps on the surface
+    // TODO : faire un shader pour "l'aura" des planètes ? Genre un objets "auraball", et un override PlanetWithAura qui hérite de ça???
+    // Jouer avec tous ces paramètres via ce shader custom, on verra bien
+
+    // TODO : faire le portail de the expanse pour aller dans d'autres mondes, notamment saturne géante avec le champ d'astéroïdes
+    // Ça permettra de caser d'autres trucs cools
+
+    // Enfin : faire un truc pour contrôler un vaisseau physique, en l'ajoutant au simultion handler tout en gardant une réf dessus. On verra comment faire ça
+
+    // EXPERIENCE NUMERO 1 //
+    // Faire un gradient de couleur selon l'angle entre le regard et la normale à la surface du fragment
+    vec3 V = normalize(camera_position - fragment.position); // Angle fragment vers caméra
+    // N : normale du fragment
+    float test_coeff = abs(dot(N, V));
+
+    float max_opacity = 0.5;
+
+    vec3 color = vec3(1.0, 0.0, 0.0) * min(test_coeff, max_opacity); // DEBUG avec du rouge
+    FragColor = vec4(color, 0);
+
+    // TODO : prendre en compte d'où vient la lumière !
 }

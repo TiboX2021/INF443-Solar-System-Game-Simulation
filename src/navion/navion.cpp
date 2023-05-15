@@ -274,22 +274,33 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 	//      3------
 	
 	int d = droite * 2 - 1;
+	vec2 centre_texture = { 0.43,0.4 };
+	float echelle_texture = -0.15;
 
 	aile.position.push_back(scale*vec3(0,0,0.2));
+	aile.uv.push_back(centre_texture);
 	aile.position.push_back(scale*vec3(0, 0, -0.2));
+	aile.uv.push_back(centre_texture+ echelle_texture*vec2(0.3,0.3));
 
 	aile.position.push_back(scale*vec3(2, 0, 0.2));
+	aile.uv.push_back(centre_texture + echelle_texture* vec2(2,0));
 	aile.position.push_back(scale*vec3(2, 0, -0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(2, 0) + echelle_texture * vec2(0.3, 0.3));
 	
 	aile.position.push_back(scale*vec3(2, d*0.3, 0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(2, 0.3));
 	aile.position.push_back(scale*vec3(2, d*0.3, -0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(2, 0.3) + echelle_texture * vec2(0.3, 0.3));
 
 	aile.position.push_back(scale*vec3(0, d*1, 0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(0, 1));
 	aile.position.push_back(scale*vec3(0, d*1, -0.2));
-	
-	aile.position.push_back(scale*vec3(0, d*0.3, 0.2));
-	aile.position.push_back(scale*vec3(0, d*0.3, -0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(0, 1) + echelle_texture * vec2(0.3, 0.3));
 
+	aile.position.push_back(scale*vec3(0, d*0.3, 0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(0, 0.3));
+	aile.position.push_back(scale*vec3(0, d*0.3, -0.2));
+	aile.uv.push_back(centre_texture + echelle_texture * vec2(0, 0.3) + echelle_texture * vec2(0.3, 0.3));
 	
 	//On ajoute un à un les triangles : 
 	
@@ -398,13 +409,22 @@ void Navion::create_millennium_falcon(float const& scale) {
 		GL_REPEAT,
 		GL_REPEAT);
 
+	aile_droite.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/Star_Wars_Millenium_Falcon_FSX_P3D_1.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_gauche.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/Star_Wars_Millenium_Falcon_FSX_P3D_1.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+
+	
+
 	centre.material.phong.specular = 0.0;
 	corps.material.phong.specular = 0.0;
 	aile_droite.material.phong.specular = 0.0;
 	aile_gauche.material.phong.specular = 0.0;
 	corps_cocpit.material.phong.specular = 0.0;
 	cocpit.material.phong.specular = 0.0;
-	vitre_cocpit.material.phong.specular = 0.7;
+	vitre_cocpit.material.phong.specular = 0.9;
 
 
 	// Add the elements in the hierarchy
@@ -428,7 +448,39 @@ void Navion::create_millennium_falcon(float const& scale) {
 	// **************************************
 	//        re le cocpit 
 	// *************************************
-
+	corps_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	bord1_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	bord2_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	bord3_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	bord4_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	bord5_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	milieu1_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	milieu2_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	milieu3_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	milieu4_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 	vitre_cocpit.material.color = { 0,0,0 };
 	
 	hierarchie.add(corps_cocpit, "Corps_cocpit", "Centre", { scale * 1.7, -1.4 * scale,0});

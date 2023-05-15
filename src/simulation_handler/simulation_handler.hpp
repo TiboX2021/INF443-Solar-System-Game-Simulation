@@ -19,7 +19,7 @@ public:
     void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
 
     // Simulation Functions
-    void simulateStep();
+    virtual void simulateStep();
 
     // Default : 1 day / second, with 60 fps. For slider use
     float time_step = 24.0f * 3600 / 60;
@@ -27,7 +27,7 @@ public:
     // Public static generators
     static void generateSolarSystem(SimulationHandler &handler);
 
-private:
+protected:
     // Drawable objects
     // Store all drawable instances here
     std::vector<std::unique_ptr<BaseDrawable>> drawables;

@@ -2,6 +2,7 @@
 
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
+#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
@@ -52,4 +53,5 @@ struct scene_structure : cgp::scene_inputs_generic
     void display_semiTransparent();
 
     SimulationHandler simulation_handler;
+    OptimizedSimulationHandler asteroid_field_handler;
 };

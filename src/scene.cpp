@@ -1,6 +1,7 @@
 #include "scene.hpp"
 
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/shaders/shader_loader.hpp"
@@ -31,17 +32,24 @@ void scene_structure::initialize()
     ShaderLoader::initialise();
 
     // Initialize simulation handler
-    SimulationHandler::generateSolarSystem(simulation_handler);
-    simulation_handler.initialize();
+    // SimulationHandler::generateSolarSystem(simulation_handler);
+    // simulation_handler.initialize();
+
+    // Initialise asteroid field simulation handler
+    OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
+    asteroid_field_handler.initialize();
 }
 
 void scene_structure::display_frame()
 {
     // Set the light to the current position of the camera
-    environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
+    environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
 
-    simulation_handler.simulateStep();
-    simulation_handler.drawObjects(environment, camera_control, false);
+    // simulation_handler.simulateStep();
+    // simulation_handler.drawObjects(environment, camera_control, false);
+
+    asteroid_field_handler.simulateStep();
+    asteroid_field_handler.drawObjects(environment, camera_control, false);
 
     display_semiTransparent();
 }
@@ -83,7 +91,8 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    simulation_handler.drawBillboards(environment, camera_control, false);
+    // simulation_handler.drawBillboards(environment, camera_control, false);
+    asteroid_field_handler.drawBillboards(environment, camera_control, false);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

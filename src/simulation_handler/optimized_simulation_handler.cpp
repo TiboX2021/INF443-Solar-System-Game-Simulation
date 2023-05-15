@@ -1,4 +1,7 @@
 #include "simulation_handler/optimized_simulation_handler.hpp"
+#include "celestial_bodies/planet/planet.hpp"
+#include "utils/physics/constants.hpp"
+#include <iostream>
 
 template <typename TExtendsBaseDrawable>
 void OptimizedSimulationHandler::addObject(TExtendsBaseDrawable drawable, bool attractor)
@@ -44,7 +47,7 @@ void OptimizedSimulationHandler::simulateStep()
     // Iterate through all pairs of objects to compute forces
     for (auto it = physical_objects.begin(); it != physical_objects.end(); ++it)
     {
-        for (auto it2 = it + 1; it2 != physical_attractors.end(); ++it2)
+        for (auto it2 = physical_attractors.begin(); it2 != physical_attractors.end(); ++it2)
         {
             // Compute forces between both objects
             (*it)->computeGravitationnalForce(*it2);
@@ -64,4 +67,17 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
 
     // TODO : add planet saturn without Rings, and some asteroids that gravitate around (big size, rotation, etc)
     // TODO : util functions for generating this
+    // Add galaxy first (background)
+    Galaxy galaxy;
+    handler.addObject(galaxy);
+
+    // Add central immobile Saturn
+    Planet saturn(SATURN_MASS, SATURN_RADIUS * 10, {0, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
+    saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
+    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
+    // saturn.setRotationAxis(SATURN_ROTATION_AXIS);
+    saturn.setShouldTranslate(false); // Immobile
+    handler.addObject(saturn);
+
+    // TODO : add random asteroids gravitating and rotating around
 }

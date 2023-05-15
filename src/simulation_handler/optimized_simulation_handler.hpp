@@ -14,6 +14,9 @@ public:
     // Public static generators
     static void generateAsteroidField(OptimizedSimulationHandler &handler);
 
+    // Default : 1 day / second, with 60 fps. For slider use
+    float time_step = 24.0f * 3600 / 60;
+
 protected:
     std::vector<Object *> physical_attractors;
 };

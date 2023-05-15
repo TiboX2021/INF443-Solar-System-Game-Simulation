@@ -1,6 +1,7 @@
 #include "scene.hpp"
 
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
@@ -57,7 +58,7 @@ void scene_structure::display_frame()
     environment.uniform_generic.uniform_float["time"] = timer.t;
 
     // Set the light to the current position of the camera
-    environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
+    environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
 
     simulation_handler.simulateStep(dt);
     simulation_handler.drawObjects(environment, camera_control, false);

@@ -96,10 +96,10 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(galaxy);
 
     // Add sun
-    Star sun(SUN_MASS, SUN_RADIUS / 20, {0, 0, 0}, "assets/planets/asteroid.jpg", NO_PERLIN_NOISE);
+    Star sun(SUN_MASS, SUN_RADIUS / 10, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE);
     sun.setShouldRotate(false);
     sun.setShouldTranslate(false);
-    sun.setShader("bumpy");
+    sun.setShader("lava");
     handler.addObject(sun);
 
     // Add Earth

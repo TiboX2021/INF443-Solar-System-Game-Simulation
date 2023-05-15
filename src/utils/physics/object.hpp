@@ -21,7 +21,7 @@ This way, realistic physiscs distances and constants can be directly used in the
 
 // Display constants
 constexpr double PHYSICS_SCALE = 1e-10; // Reduce the scale enough so that Opengl does not freak out
-constexpr double DISPLAY_SCALE = 3000;  // Display larger models
+constexpr double DISPLAY_SCALE = 1500;  // Display larger models
 
 /**
  * Physical Object with position and rotation abstract class

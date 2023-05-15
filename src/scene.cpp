@@ -26,6 +26,7 @@ void scene_structure::initialize()
     ShaderLoader::addShader("aura", "aura/aura");
     ShaderLoader::addShader("bumpy", "bumpy/bumpy");
     ShaderLoader::addShader("uniform", "uniform/uniform");
+    ShaderLoader::addShader("lava", "lava/lava");
 
     ShaderLoader::initialise();
 

@@ -25,6 +25,7 @@ void scene_structure::initialize()
     ShaderLoader::addShader("custom", "custom_shaders/custom");
     ShaderLoader::addShader("aura", "aura/aura");
     ShaderLoader::addShader("bumpy", "bumpy/bumpy");
+    ShaderLoader::addShader("uniform", "uniform/uniform");
 
     ShaderLoader::initialise();
 
@@ -36,7 +37,7 @@ void scene_structure::initialize()
 void scene_structure::display_frame()
 {
     // Set the light to the current position of the camera
-    environment.light = camera_control.camera_model.position();
+    environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
     simulation_handler.simulateStep();
     simulation_handler.drawObjects(environment, camera_control, false);

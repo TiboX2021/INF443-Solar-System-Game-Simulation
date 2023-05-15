@@ -1,6 +1,7 @@
 #include "galaxy.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "environment.hpp"
+#include "utils/shaders/shader_loader.hpp"
 
 // TODO : no source lighting. Only uniform lighting (custom shader ?). Not a problem if we are inside ?
 
@@ -27,6 +28,9 @@ void Galaxy::initialize()
                                                                        GL_CLAMP_TO_EDGE);
     galaxy_mesh_drawable.material.texture_settings.two_sided = true;
     galaxy_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display
+
+    // Custom uniform shader
+    galaxy_mesh_drawable.shader = ShaderLoader::getShader("uniform");
 }
 
 void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)

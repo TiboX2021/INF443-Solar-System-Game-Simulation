@@ -521,10 +521,10 @@ void Navion::create_vaisseau_vador(float const& scale) {
 
 
 
-	corps.initialize_data_on_gpu(mesh_primitive_cylinder(0.4 * scale, scale * vec3(0.3, 0, 0), scale * vec3(-0.3, 0, 0), 10, 20, true));
+	corps.initialize_data_on_gpu(mesh_primitive_cylinder(0.5 * scale, scale * vec3(0.3, 0, 0), scale * vec3(-0.3, 0, 0), 10, 20, true));
 	barre_transversale.initialize_data_on_gpu(transversale_vador(scale));
-	avant.initialize_data_on_gpu(mesh_primitive_sphere(scale*0.4));
-	arriere.initialize_data_on_gpu(mesh_primitive_sphere(scale *0.4));
+	avant.initialize_data_on_gpu(mesh_primitive_sphere(scale*0.5));
+	arriere.initialize_data_on_gpu(mesh_primitive_sphere(scale *0.5));
 	aile_droite.initialize_data_on_gpu(mesh_primitive_quadrangle(
 		{-1.6*scale, 0,0.15 * scale }, { -1.6 * scale,0, -0.15 * scale }, { 1.6 * scale,0, -0.15 * scale }, { 1.6 * scale,0,0.15 * scale }));
 	aile_gauche.initialize_data_on_gpu(mesh_primitive_quadrangle(
@@ -550,11 +550,51 @@ void Navion::create_vaisseau_vador(float const& scale) {
 	aile_HD.material.phong.specular = 0.0;
 	aile_HG.material.phong.specular = 0.0;
 
+	corps.material.color = { 0.3,0.3,0.3 };
+	barre_transversale.material.color = { 0.3,0.3,0.3 };
+	arriere.material.color = { 0.3,0.3,0.3 };
+	aile_droite.material.color = { 0.3,0.3,0.3 };
+	aile_gauche.material.color = { 0.3,0.3,0.3 };
+	aile_BD.material.color = { 0.3,0.3,0.3 };
+	aile_BG.material.color = { 0.3,0.3,0.3 };
+	aile_HD.material.color = { 0.3,0.3,0.3 };
+	aile_HG.material.color = { 0.3,0.3,0.3 };
+
+
+	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	barre_transversale.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_droite.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_gauche.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_HD.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_HG.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_BD.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	aile_BG.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	arriere.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	avant.material.color = { 0.1,0.1,0.1 };
+
+	
 
 
 
-
-
+	// add elements to hierarchie
 
 	hierarchie.add(corps, "Corps");
 	hierarchie.add(barre_transversale, "Barre");
@@ -569,18 +609,30 @@ void Navion::create_vaisseau_vador(float const& scale) {
 
 
 	// Pour le cocpit : une demi-sphère, 24 tuyaux
-	float radius = scale * 0.4;
+	float radius = scale * 0.5;
 	mesh_drawable contours_cocpit;
 	mesh_drawable transversal_cocpit;
 	mesh_drawable hublot;
 
-	contours_cocpit.initialize_data_on_gpu(mesh_primitive_cylinder(0.03*scale, {0.01*scale, radius*cos(Pi/8) , -sin(Pi/8)*radius - 0.01 * scale }, {0.01*scale,radius*cos(Pi/8) , radius*sin(Pi/8) + 0.01 * scale }));
+	contours_cocpit.initialize_data_on_gpu(mesh_primitive_cylinder(0.03*scale, 
+		{0.02*scale, radius*cos(Pi/8) +0.02*scale, -sin(Pi/8)*radius - 0.02 * scale }, 
+		{0.02*scale,radius*cos(Pi/8) + 0.02 * scale, radius*sin(Pi/8) + 0.02 * scale }));
 	hublot.initialize_data_on_gpu(mesh_primitive_cylinder(0.02*scale, 
-		{0.01*scale + 0.8*radius, 0.6*radius*cos(Pi/8) , -0.6*radius* sin(Pi/8)}, 
-		{0.01 * scale + 0.8 * radius, 0.6 * radius*cos(Pi/8), 0.6*radius*sin(Pi/8)}));
+		{0.02*scale + 0.8*radius, 0.6*radius*cos(Pi/8) , -0.6*radius* sin(Pi/8)}, 
+		{0.02 * scale + 0.8 * radius, 0.6 * radius*cos(Pi/8), 0.6*radius*sin(Pi/8)}));
 	transversal_cocpit.initialize_data_on_gpu(mesh_primitive_cylinder(0.02*scale, 
-		{ 0.01 * scale, radius * cos(Pi / 8) , -sin(Pi / 8) * radius  },
-		{ 0.01 * scale + 0.8 * radius, 0.6 * radius * cos(Pi / 8) , -0.6 * radius * sin(Pi / 8) }));
+		{ 0.02 * scale, radius * cos(Pi / 8) + 0.02 * scale, -sin(Pi / 8) * radius - 0.02 * scale },
+		{ 0.02 * scale + 0.8 * radius, 0.6 * radius * cos(Pi / 8) , -0.6 * radius * sin(Pi / 8) }));
+
+	contours_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	hublot.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	transversal_cocpit.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture vaisseau.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 
 	hierarchie.add(contours_cocpit, "Contour1", "Avant");
 	hierarchie.add(contours_cocpit, "Contour2", "Avant");

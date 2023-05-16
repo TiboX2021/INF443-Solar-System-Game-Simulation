@@ -69,9 +69,6 @@ void OptimizedSimulationHandler::simulateStep()
 
 void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandler &handler)
 {
-
-    // TODO : add planet saturn without Rings, and some asteroids that gravitate around (big size, rotation, etc)
-    // TODO : util functions for generating this
     // Add galaxy first (background)
     Galaxy galaxy;
     handler.addObject(galaxy);
@@ -90,12 +87,12 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
 
     // Generic perlin noise parameters :
     const float perlin_scale = 0.1;
-    const perlin_noise_parameters noise_params{
-        0.45f * perlin_scale,
-        1.5f * perlin_scale, // Influence of small frequencies
+    const perlin_noise_parameters ASTEROID_NOISE_PARAMS{
+        0.1f * perlin_scale,
+        0.1f * perlin_scale, // Influence of small frequencies
         6,                   // Level of detail
-        3.0f * perlin_scale,
-        0.4f * perlin_scale, // Global noise scale
+        0.4f * perlin_scale,
+        10.0f * perlin_scale, // Global noise scale
     };
 
     // TODO : generate N random asteroids and add them
@@ -119,7 +116,7 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
         const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
         const float size = SATURN_RADIUS / 20 * random_float(0.6, 1.5);
         const int texture = random_int(0, 2);
-        Planet asteroid(ASTEROID_MASS, size, random_position, asteroid_textures[texture], NO_PERLIN_NOISE);
+        Planet asteroid(ASTEROID_MASS, size, random_position, asteroid_textures[texture], ASTEROID_NOISE_PARAMS);
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
         asteroid.setLowPolyColor(asteroid_mean_colors[texture]);
         asteroid.setRotationAxis(random_normalized_axis());
@@ -127,4 +124,7 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
         asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(SATURN_MASS, random_position));
         handler.addObject(asteroid);
     }
+
+    // DEBUG : is always ok
+    std::cout << "Number of drawable objects : " << handler.drawable_objects.size() << std::endl;
 }

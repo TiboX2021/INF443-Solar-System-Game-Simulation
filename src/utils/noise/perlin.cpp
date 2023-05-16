@@ -1,5 +1,6 @@
 #include "perlin.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
+#include <iostream>
 
 /*
 RAPPEL SUR L'ORGANISATION DES POINTS
@@ -74,9 +75,8 @@ cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, in
                 std::sin(phi)};
 
             // Using 3D perlin noise
-            float perlin_noise_value = cgp::noise_perlin(n * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain);
-
-            cgp::vec3 const p = (radius + perlin_noise_value) * n + center;
+            float perlin_noise_value = cgp::noise_perlin(n * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain) - 0.5f;
+            cgp::vec3 const p = (radius * (1 + perlin_noise_value / 3)) * n + center;
             cgp::vec2 const uv = {u, v};
 
             shape.position.push_back(p);

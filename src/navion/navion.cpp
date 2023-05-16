@@ -178,8 +178,6 @@ void Navion::set_angle_aile(float const angle) {
 
 
 
-
-
 mesh Navion::create_cocpit_coque(float const& radius, float const& length) {
 	
 	mesh semi_cone;
@@ -228,6 +226,15 @@ mesh Navion::pseudo_cone(float const& radius, float const& length, int const& n=
 	return semi_cone;
 }
 
+
+
+//*************************************************************************
+//*************************************************************************
+//					Le falcon
+//*************************************************************************
+//*************************************************************************
+
+
 mesh Navion::create_corps_falcon(float const& radius, float const& heigh, int const& n) {
 	mesh bande;
 	for (int k = 0; k < n+1; k++) {
@@ -258,7 +265,6 @@ mesh Navion::create_corps_falcon(float const& radius, float const& heigh, int co
 	return bande;
 
 }
-
 
 
 mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
@@ -340,8 +346,7 @@ mesh Navion::create_truc_sur_le_falcon(float const& scale, bool const& droite) {
 
 
 
-
-void Navion::create_millennium_falcon(float const& scale) {
+void Navion::create_millennium_falcon(float const& scale ) {
 	has_wings = false;
 	// Initialize the temporary mesh_drawable that will be inserted in the hierarchy
 	
@@ -499,6 +504,13 @@ void Navion::create_millennium_falcon(float const& scale) {
 
 
 }
+
+
+
+//***************************************************************************
+//*************************************************************************
+//					Le T-wing chelou 
+
 
 void Navion::create_vaisseau_vador(float const& scale) {
 	has_wings = true;
@@ -737,4 +749,184 @@ mesh Navion::transversale_vador(float const& scale) {
 	truc.fill_empty_field();
 
 	return truc;
+}
+
+
+
+
+//*********************************************************************
+//********************************************************************
+//            le star destroyer
+//********************************************************************
+//********************************************************************
+
+
+
+void Navion::create_star_destroyer(float const& scale) {
+	mesh_drawable corps;
+	mesh_drawable batiment1;
+	mesh_drawable batiment2;
+	mesh_drawable tour;
+
+	corps.initialize_data_on_gpu(corps_destroyer(scale));
+	batiment1.initialize_data_on_gpu(batiment_destroyer(scale));
+	batiment2.initialize_data_on_gpu(batiment_destroyer(0.7*scale));
+	tour.initialize_data_on_gpu(tour_destroyer(scale));
+
+
+
+
+	hierarchie.add(corps, "Corps");
+	hierarchie.add(batiment1, "Bat1", "Corps", scale * vec3(-0.75, 0,0));
+	hierarchie.add(batiment2, "Bat2", "Bat1", scale* vec3( - 0.3, 0, 0.5 ));
+	hierarchie.add(tour, "Tour", "Corps", scale * vec3(-2, 0, 1));
+	
+}
+
+
+mesh Navion::corps_destroyer(float const& scale) {
+	mesh corps;
+
+
+	// le plan est le suivant :
+	//   2-------0-------4
+	//    \             /
+	//     \           /
+	//      \         /
+	//       \       /
+	//        \     /
+	//         \   /
+	//          \ /
+	//           6
+	//pour le dessus
+
+	corps.position.push_back(scale * vec3(-3, 0, 1));
+	corps.position.push_back(scale * vec3(-3, 0, -1.75));
+	corps.position.push_back(scale * vec3(-3, -2.5, 0.2));
+	corps.position.push_back(scale * vec3(-3, -2.5, -0.2));
+	corps.position.push_back(scale * vec3(-3, 2.5, 0.2));
+	corps.position.push_back(scale * vec3(-3, 2.5, -0.2));
+	corps.position.push_back(scale * vec3(4, 0, 0.2));
+	corps.position.push_back(scale * vec3(4, 0, -0.2));
+
+	// la connectivité entre les triangles : 
+	// l'arriere:
+	corps.connectivity.push_back(uint3(0, 4, 2));
+	corps.connectivity.push_back(uint3(1, 5, 3));
+	
+	//le dessus :
+	corps.connectivity.push_back(uint3(0, 6, 4));
+	corps.connectivity.push_back(uint3(0, 2, 6));
+
+	//le dessous: 
+	corps.connectivity.push_back(uint3(1, 7, 5 ));
+	corps.connectivity.push_back(uint3(1, 3, 7));
+
+
+
+	// les côtés :
+	corps.connectivity.push_back(uint3(2, 3, 4));
+	corps.connectivity.push_back(uint3(5, 4, 3));
+
+	corps.connectivity.push_back(uint3(4, 6, 5));
+	corps.connectivity.push_back(uint3(7, 5, 6));
+
+	corps.connectivity.push_back(uint3(2, 3, 6));
+	corps.connectivity.push_back(uint3(7, 6, 3));
+
+	corps.fill_empty_field();
+
+	return corps;
+
+}
+
+mesh Navion::batiment_destroyer(float const& scale) {
+	mesh batiment;
+
+	//
+	//
+	//       _____---0---_____
+	//   2---                 ---8
+	//   |                       |
+	//   |                       |
+	//   |                       | 
+	//   4-----------------------6
+	//
+	batiment.position.push_back(scale* vec3(0, 0, 1.2));
+	batiment.position.push_back(scale * vec3(-2, 0, 1.2));
+	batiment.position.push_back(scale * vec3(0, -1, 0.9));
+	batiment.position.push_back(scale * vec3(-2, -1, 0.9));
+	batiment.position.push_back(scale * vec3(0, -1, 0));
+	batiment.position.push_back(scale * vec3(-2, -1, 0));
+	batiment.position.push_back(scale * vec3(0, 1, 0));
+	batiment.position.push_back(scale * vec3(-2, 1, 0));
+	batiment.position.push_back(scale * vec3(0, 1, 0.9));
+	batiment.position.push_back(scale * vec3(-2, 1, 0.9));
+
+
+	// puis la connectivité :
+
+	//devant:
+	batiment.connectivity.push_back(uint3(0,2,8));
+	batiment.connectivity.push_back(uint3(8,2,4));
+	batiment.connectivity.push_back(uint3(8, 4, 6));
+
+	//derriere: 
+	batiment.connectivity.push_back(uint3(1, 3, 9));
+	batiment.connectivity.push_back(uint3(9, 3, 5));
+	batiment.connectivity.push_back(uint3(9, 5, 7));
+
+	// le toit:
+	batiment.connectivity.push_back(uint3(0, 1, 2));
+	batiment.connectivity.push_back(uint3(2, 1, 3));
+
+	batiment.connectivity.push_back(uint3(1, 9, 0));
+	batiment.connectivity.push_back(uint3(0, 8, 9));
+
+	// les cotes :
+	batiment.connectivity.push_back(uint3(2, 3, 5));
+	batiment.connectivity.push_back(uint3(2, 5, 4));
+
+	batiment.connectivity.push_back(uint3(7, 9, 8));
+	batiment.connectivity.push_back(uint3(8, 6, 7));
+
+	batiment.fill_empty_field();
+
+	return batiment;
+}
+
+
+mesh Navion::tour_destroyer(float const& scale) {
+	mesh tour;
+
+	//  base de la tour:     coté:     face avant: 
+	//   2---------3           4       4----5
+	//   |         |         / |       |    |
+	//   |         |        /  |       |    |
+	//   0---------1       2---0       0----1
+	
+	tour.position.push_back(scale * vec3(0, -0.5, 0));
+	tour.position.push_back(scale * vec3(0, 0.5, 0));
+	tour.position.push_back(scale * vec3(-0.6, -0.5, 0));
+	tour.position.push_back(scale * vec3(-0.6, 0.5, 0));
+	tour.position.push_back(scale * vec3(0, -0.5, 1.3));
+	tour.position.push_back(scale * vec3(0, 0.5, 1.3));
+
+
+	//face avant :
+	tour.connectivity.push_back(uint3(0, 1, 4));
+	tour.connectivity.push_back(uint3(5, 4, 1));
+
+	//face arrière :
+	tour.connectivity.push_back(uint3(2, 4, 5));
+	tour.connectivity.push_back(uint3(5, 2, 3));
+
+	//cotes :
+	tour.connectivity.push_back(uint3(1, 5, 3));
+	tour.connectivity.push_back(uint3(0, 4, 2));
+
+
+
+	tour.fill_empty_field();
+	return tour;
 }

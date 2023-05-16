@@ -7,6 +7,11 @@ float random_float(float min, float max)
     return min + static_cast<float>(rand()) / (static_cast<float>(float(RAND_MAX) / (max - min)));
 }
 
+int random_int(int min, int max)
+{
+    return min + rand() % (max - min + 1);
+}
+
 cgp::vec3 random_normalized_axis()
 {
     float theta = random_float(0, M_PI);

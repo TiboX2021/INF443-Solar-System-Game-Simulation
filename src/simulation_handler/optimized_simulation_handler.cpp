@@ -79,7 +79,7 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     // Add central immobile Saturn
     Planet saturn(SATURN_MASS, SATURN_RADIUS, {0, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
-    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
+    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 300);
     // saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     saturn.setShouldTranslate(false); // Immobile
     handler.addObject(saturn, true);  // Saturn is the only attractor
@@ -99,7 +99,7 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     };
 
     // TODO : generate N random asteroids and add them
-    const int N_ASTEROIDS = 20;
+    const int N_ASTEROIDS = 100;
 
     // Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 20, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
     // asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
@@ -109,14 +109,18 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     // asteroid1.setInitialVelocity({0, Object::computeOrbitalSpeed(SATURN_MASS, DISTANCE), 0});
     // handler.addObject(asteroid1);
 
+    std::string asteroid_textures[] = {"assets/asteroids/grey_asteroid.jpg", "assets/asteroids/grey_asteroid_2.png", "assets/asteroids/rocky_asteroid.jpg"};
+    cgp::vec3 asteroid_mean_colors[] = {{102.0f / 255, 102.0f / 255, 102.0f / 255}, {84.0f / 255, 84.0f / 255, 84.0f / 255}, {132.0f / 255, 124.0f / 255, 116.0f / 255}};
+
     for (int i = 0; i < N_ASTEROIDS; i++)
     {
         const float random_distance = DISTANCE * random_float(0.8, 1.2);
-        const cgp::vec3 random_position = random_orbit_position(random_distance);
+        const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
         const float size = SATURN_RADIUS / 20 * random_float(0.6, 1.5);
-        Planet asteroid(ASTEROID_MASS, size, random_position, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
+        const int texture = random_int(0, 2);
+        Planet asteroid(ASTEROID_MASS, size, random_position, asteroid_textures[texture], NO_PERLIN_NOISE);
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
-        // asteroid.setRotationAxis({0, 1, 0});
+        asteroid.setLowPolyColor(asteroid_mean_colors[texture]);
         asteroid.setRotationAxis(random_normalized_axis());
 
         asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(SATURN_MASS, random_position));

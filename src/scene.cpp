@@ -22,6 +22,9 @@ void scene_structure::initialize()
 
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
+
+    // Start keyboard input handler
+    keyboard_input.start();
 }
 
 void scene_structure::display_frame()

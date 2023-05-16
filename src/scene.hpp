@@ -6,6 +6,7 @@
 #include "environment.hpp"
 #include "planet/planet.hpp"
 #include "planet/ring_planet.hpp"
+#include "player/control/keyboard.hpp"
 #include "terrain.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
@@ -58,4 +59,5 @@ struct scene_structure : cgp::scene_inputs_generic
     Planet planet;
     Galaxy galaxy;
     RingPlanet ring_planet;
+    KeyboardInput keyboard_input;
 };

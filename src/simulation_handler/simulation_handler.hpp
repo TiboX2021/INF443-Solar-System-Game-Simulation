@@ -22,8 +22,7 @@ public:
     virtual void simulateStep();
 
     // Default : 1 day / second, with 60 fps. For slider use
-    float time_step = 24.0f * 3600 / 60;
-
+    float time_step = 24.0f * 3600 / 60; // Accélération x100
     // Public static generators
     static void generateSolarSystem(SimulationHandler &handler);
 

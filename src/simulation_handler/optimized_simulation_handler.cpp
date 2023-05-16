@@ -1,5 +1,6 @@
 #include "simulation_handler/optimized_simulation_handler.hpp"
 #include "celestial_bodies/planet/planet.hpp"
+#include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
 #include <iostream>
 
@@ -49,8 +50,11 @@ void OptimizedSimulationHandler::simulateStep()
     {
         for (auto it2 = physical_attractors.begin(); it2 != physical_attractors.end(); ++it2)
         {
-            // Compute forces between both objects
-            (*it)->computeGravitationnalForce(*it2);
+            if (*it != *it2)
+            {
+                // Compute forces between both objects
+                (*it)->computeGravitationnalForce(*it2);
+            }
         }
     }
 
@@ -72,12 +76,29 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     handler.addObject(galaxy);
 
     // Add central immobile Saturn
-    Planet saturn(SATURN_MASS, SATURN_RADIUS * 10, {0, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
+    Planet saturn(SATURN_MASS, SATURN_RADIUS, {0, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
-    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
+    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
     // saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     saturn.setShouldTranslate(false); // Immobile
-    handler.addObject(saturn);
+    handler.addObject(saturn, true);  // Saturn is the only attractor
 
     // TODO : add random asteroids gravitating and rotating around
+    const float DISTANCE = SATURN_RADIUS * 2000; // Orbit distance : 1 billion meters
+    const float ASTEROID_MASS = 1e22;
+
+    // Generic perlin noise parameters :
+    const perlin_noise_parameters noise_params{
+        0.25f,
+        1.0f,
+        4,
+        0.5f,
+        1.0f,
+    };
+
+    Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 10, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", noise_params);
+    asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
+    asteroid1.setRotationAxis({0, 1, 0});
+    asteroid1.setInitialVelocity({0, Object::computeOrbitalSpeed(SATURN_MASS, DISTANCE), 0});
+    handler.addObject(asteroid1);
 }

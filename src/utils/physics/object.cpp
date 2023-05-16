@@ -3,6 +3,7 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "utils/physics/constants.hpp"
 #include <cmath>
+#include <iostream>
 
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {

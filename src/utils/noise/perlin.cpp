@@ -55,6 +55,7 @@ cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, in
     assert_cgp(Nu > 2 && Nv > 2, "Sphere samples should be > 2");
 
     cgp::mesh shape;
+
     for (size_t ku = 0; ku < size_t(Nu); ++ku)
     {
         for (size_t kv = 0; kv < size_t(Nv); ++kv)

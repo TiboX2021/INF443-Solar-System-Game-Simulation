@@ -10,4 +10,7 @@
 float random_float(float min = 0.0f, float max = 1.0f);
 
 // Generate a random normalized 3d vector
-cgp::vec3 random_axis();
+cgp::vec3 random_normalized_axis();
+
+// Generate a random orbit position
+cgp::vec3 random_orbit_position(float radius, cgp::vec3 rotation_axis = {0, 0, 1});

@@ -61,6 +61,7 @@ public:
     }
     static double scaleRadiusForDisplay(double value) { return value * DISPLAY_SCALE * PHYSICS_SCALE; }
     static double computeOrbitalSpeed(double M, double r);
+    static cgp::vec3 computeOrbitalSpeedForPosition(double M, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1});
 
 private:
     // Translation

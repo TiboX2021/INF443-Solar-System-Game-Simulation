@@ -91,6 +91,13 @@ double Object::computeOrbitalSpeed(double M, double r)
     return std::sqrt(GRAVITATIONAL_CONSTANT * M / r);
 }
 
+cgp::vec3 Object::computeOrbitalSpeedForPosition(double M, cgp::vec3 position, cgp::vec3 rotation_axis)
+{
+    const double orbitalSpeed = Object::computeOrbitalSpeed(M, cgp::norm(position));
+
+    return orbitalSpeed * cgp::normalize(cgp::cross(rotation_axis, position));
+}
+
 void Object::setInitialVelocity(cgp::vec3 velocity)
 {
     this->velocity = velocity;

@@ -89,19 +89,37 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     const float ASTEROID_MASS = 1e22;
 
     // Generic perlin noise parameters :
+    const float perlin_scale = 0.1;
     const perlin_noise_parameters noise_params{
-        0.25f,
-        1.0f,
-        4,
-        0.5f,
-        1.0f,
+        0.45f * perlin_scale,
+        1.5f * perlin_scale, // Influence of small frequencies
+        6,                   // Level of detail
+        3.0f * perlin_scale,
+        0.4f * perlin_scale, // Global noise scale
     };
 
-    Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 10, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", noise_params);
-    asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
-    // asteroid1.setRotationAxis({0, 1, 0});
-    asteroid1.setRotationAxis(random_axis());
+    // TODO : generate N random asteroids and add them
+    const int N_ASTEROIDS = 20;
 
-    asteroid1.setInitialVelocity({0, Object::computeOrbitalSpeed(SATURN_MASS, DISTANCE), 0});
-    handler.addObject(asteroid1);
+    // Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 20, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
+    // asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
+    // // asteroid1.setRotationAxis({0, 1, 0});
+    // asteroid1.setRotationAxis(random_normalized_axis());
+
+    // asteroid1.setInitialVelocity({0, Object::computeOrbitalSpeed(SATURN_MASS, DISTANCE), 0});
+    // handler.addObject(asteroid1);
+
+    for (int i = 0; i < N_ASTEROIDS; i++)
+    {
+        const float random_distance = DISTANCE * random_float(0.8, 1.2);
+        const cgp::vec3 random_position = random_orbit_position(random_distance);
+        const float size = SATURN_RADIUS / 20 * random_float(0.6, 1.5);
+        Planet asteroid(ASTEROID_MASS, size, random_position, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
+        asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
+        // asteroid.setRotationAxis({0, 1, 0});
+        asteroid.setRotationAxis(random_normalized_axis());
+
+        asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(SATURN_MASS, random_position));
+        handler.addObject(asteroid);
+    }
 }

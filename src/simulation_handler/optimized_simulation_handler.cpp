@@ -79,13 +79,13 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     // Add central immobile Saturn
     Planet saturn(SATURN_MASS, SATURN_RADIUS, {0, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
-    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 300);
+    saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 5000);
     // saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     saturn.setShouldTranslate(false); // Immobile
     handler.addObject(saturn, true);  // Saturn is the only attractor
 
     // TODO : add random asteroids gravitating and rotating around
-    const float DISTANCE = SATURN_RADIUS * 2000; // Orbit distance : 1 billion meters
+    const float DISTANCE = SATURN_RADIUS * 4000; // Orbit distance : 1 billion meters
     const float ASTEROID_MASS = 1e22;
 
     // Generic perlin noise parameters :
@@ -99,7 +99,8 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     };
 
     // TODO : generate N random asteroids and add them
-    const int N_ASTEROIDS = 100;
+    // TODO : generate base random asteroids, and then do Instancing for a massive display? Issue with low poly
+    const int N_ASTEROIDS = 400;
 
     // Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 20, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
     // asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);

@@ -2,6 +2,7 @@
 #include "celestial_bodies/planet/planet.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
+#include "utils/random/random.hpp"
 #include <iostream>
 
 template <typename TExtendsBaseDrawable>
@@ -98,7 +99,9 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
 
     Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 10, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", noise_params);
     asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
-    asteroid1.setRotationAxis({0, 1, 0});
+    // asteroid1.setRotationAxis({0, 1, 0});
+    asteroid1.setRotationAxis(random_axis());
+
     asteroid1.setInitialVelocity({0, Object::computeOrbitalSpeed(SATURN_MASS, DISTANCE), 0});
     handler.addObject(asteroid1);
 }

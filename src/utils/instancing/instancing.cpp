@@ -43,6 +43,25 @@ namespace cgp
         // set the material
         drawable.material.send_opengl_uniform(drawable.shader);
 
+        // Final model matrix in the shader is: hierarchy_transform_model * model
+        mat4 const model_shader = drawable.hierarchy_transform_model.matrix() * drawable.model.matrix();
+
+        // The normal matrix is transpose( (hierarchy_transform_model * model)^{-1} )
+        mat4 const model_normal_shader = transpose(inverse(drawable.model).matrix() * inverse(drawable.hierarchy_transform_model).matrix());
+
+        // set the Model matrix
+        // TODO : notamment, ces deux trucs là contiennent les coordonnées. Il faut les envoyer en groupe
+        // TODO: how to do arrays of positions ? Should use matrixes ? TODO : generate directly the correct things
+        opengl_uniform(drawable.shader, "model", model_shader, true);
+        opengl_uniform(drawable.shader, "modelNormal", model_normal_shader, true);
+
+        // set the material
+        // TODO : pareil, le material on en fait quoi ? On l'envoie combien de fois ?
+        // Il suffira de l'envoyer une seule fois pour tous
+        drawable.material.send_opengl_uniform(drawable.shader);
+
+        // TODO : End of opengl sending
+
         // send the uniform values for the environment
         environment.send_opengl_uniform(drawable.shader);
 

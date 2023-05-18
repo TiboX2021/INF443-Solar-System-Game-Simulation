@@ -2,6 +2,7 @@
 
 namespace cgp
 {
+    // TODO : create an updated shader accordingly
 
     void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<rotation_transform> &orientations, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
     {
@@ -26,7 +27,28 @@ namespace cgp
         // ********************************** //
 
         // send the uniform values for the model and material of the mesh_drawable
-        drawable.send_opengl_uniform();
+        // TODO : c'est ici que sont envoyées les valeurs au shader
+        // TODO : il faut trouver où sont envoyées les coordonnées
+        // drawable.send_opengl_uniform();
+
+        // Final model matrix in the shader is: hierarchy_transform_model * model
+        mat4 const model_shader = drawable.hierarchy_transform_model.matrix() * drawable.model.matrix();
+
+        // The normal matrix is transpose( (hierarchy_transform_model * model)^{-1} )
+        mat4 const model_normal_shader = transpose(inverse(drawable.model).matrix() * inverse(drawable.hierarchy_transform_model).matrix());
+
+        // set the Model matrix
+        // TODO : notamment, ces deux trucs là contiennent les coordonnées. Il faut les envoyer en groupe
+        // TODO: how to do arrays of positions ? Should use matrixes ? TODO : generate directly the correct things
+        opengl_uniform(drawable.shader, "model", model_shader, true);
+        opengl_uniform(drawable.shader, "modelNormal", model_normal_shader, true);
+
+        // set the material
+        // TODO : pareil, le material on en fait quoi ? On l'envoie combien de fois ?
+        // Il suffira de l'envoyer une seule fois pour tous
+        drawable.material.send_opengl_uniform(drawable.shader);
+
+        // TODO : End of opengl sending
 
         // send the uniform values for the environment
         environment.send_opengl_uniform(drawable.shader);
@@ -59,6 +81,7 @@ namespace cgp
 
         // Prepare for draw call
         // ********************************** //
+        // TODO : ici, on ajoute tous les trucs des différents machins (etc)
         glBindVertexArray(drawable.vao);
         opengl_check;
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable.ebo_connectivity.id);

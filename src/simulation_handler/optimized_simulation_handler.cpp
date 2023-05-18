@@ -97,7 +97,7 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
 
     // TODO : generate N random asteroids and add them
     // TODO : generate base random asteroids, and then do Instancing for a massive display? Issue with low poly
-    const int N_ASTEROIDS = 400;
+    const int N_ASTEROIDS = 1; // DEBUG
 
     // Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 20, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
     // asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);

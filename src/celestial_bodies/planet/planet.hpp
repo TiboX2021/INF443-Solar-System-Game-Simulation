@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cgp/geometry/shape/mesh/structure/mesh.hpp"
+#include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
@@ -23,6 +24,9 @@ public:
 
     // Setters
     virtual void setPosition(vec3 position) override;
+
+    // Getters
+    virtual cgp::mesh_drawable getMeshDrawable() const { return planet_mesh_drawable; };
 
     // Utility physics functions
     double getHeightAt(vec3 position) const; // TODO for collisions

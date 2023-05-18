@@ -37,7 +37,7 @@ void Planet::initialize()
 {
     LowPolyDrawable::initialize(); // Call base class initialize function
     // Initialize CGP elements
-    planet_mesh = mesh_primitive_perlin_sphere(radius, {0, 0, 0}, 200, 100, parameters);
+    planet_mesh = mesh_primitive_perlin_sphere(radius, {0, 0, 0}, 50, 25, parameters);
     planet_mesh_drawable.initialize_data_on_gpu(planet_mesh);
 
     // Add texture

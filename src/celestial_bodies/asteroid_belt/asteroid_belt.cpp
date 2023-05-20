@@ -63,7 +63,7 @@ void AsteroidBelt::initialize()
         asteroid_instances_data.push_back(mesh_data);
     }
 
-    const int N_ASTEROIDS = 5000;
+    const int N_ASTEROIDS = 1000;
 
     generateRandomAsteroids(N_ASTEROIDS);
 
@@ -95,7 +95,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Assign random mesh index
         int random_mesh_index = random_int(0, asteroid_mesh_drawables.size() - 1);
 
-        Asteroid asteroid_instance = {asteroid, random_mesh_index};
+        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(0.2, 1.8)};
 
         asteroids.push_back(asteroid_instance);
     }
@@ -112,13 +112,15 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
     // Linear scan to build the data
     for (const auto &asteroid : asteroids)
     {
-        asteroid_instances_data[asteroid.mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), asteroid.object.getPhysicsRotation().matrix());
+        // TODO : compute asteroid distance to camera. Compute different steps
+
+        asteroid_instances_data[asteroid.mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), asteroid.object.getPhysicsRotation().matrix(), asteroid.scale);
     }
 
     // Call instanced drawing function for each dataset
     for (const auto &mesh_data : asteroid_instances_data)
     {
-        draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.data_count);
+        draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.scales, mesh_data.data_count);
     }
 }
 

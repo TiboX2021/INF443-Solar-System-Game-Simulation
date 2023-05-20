@@ -10,7 +10,7 @@ namespace cgp
     // https://learnopengl.com/Advanced-OpenGL/Instancing
     // Faire du array instancing. On pourra même y mettre des scale !
 
-    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<mat3> &orientations, int n_instances, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
+    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<mat3> &orientations, const std::vector<float> &scales, int n_instances, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
     {
         opengl_check;
         // Initial clean check
@@ -116,6 +116,16 @@ namespace cgp
         glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
         glVertexAttribDivisor(7, 1);
 
+        glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind buffer (bind to 0 again)
+
+        // Scales
+        GLuint scales_vbo = 0;
+        glGenBuffers(1, &scales_vbo);                                                              // Create VBO buffer for the rotation matrix array
+        glBindBuffer(GL_ARRAY_BUFFER, scales_vbo);                                                 // Bind VBO buffer
+        glBufferData(GL_ARRAY_BUFFER, sizeof(float) * n_instances, scales.data(), GL_STATIC_DRAW); // Define VBO size, data, and type
+        glEnableVertexAttribArray(8);                                                              // Use location 8 for the scale vector
+        glVertexAttribPointer(8, 1, GL_FLOAT, GL_FALSE, sizeof(float), (void *)0);
+        glVertexAttribDivisor(8, 1);
         glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind buffer (bind to 0 again)
 
         // Draw call

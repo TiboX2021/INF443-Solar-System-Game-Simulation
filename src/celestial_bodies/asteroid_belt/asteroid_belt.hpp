@@ -2,11 +2,6 @@
 
 // Handle drawing asteroids using instancing
 // This class does not handle the physics, just the drawing
-// TODO : see how we can combine this ? Simply add it to the simulation handler as a drawable.
-// TODO : change the simulation handler with booleans in order not to add drawables if they are already handled.
-// TODO : this class will only handle planet instances. It would be far more complex to try and generalize
-// TODO : handle low poly drawing
-// TODO : for asteroids, instead of Planet instances, store Objects, and a list of models ? Separate into simple components
 
 #include "celestial_bodies/overrides/star.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
@@ -45,12 +40,14 @@ struct MeshInstancesData
     int data_count;
     std::vector<cgp::vec3> positions;
     std::vector<cgp::mat3> rotations;
+    std::vector<float> scales;
 
     // Initial size allocation
     void allocate(int n)
     {
         positions.resize(n);
         rotations.resize(n);
+        scales.resize(n);
     }
 
     void resetData()
@@ -58,10 +55,11 @@ struct MeshInstancesData
         data_count = 0;
     }
 
-    void addData(const cgp::vec3 &position, const cgp::mat3 &rotation)
+    void addData(const cgp::vec3 &position, const cgp::mat3 &rotation, float scale)
     {
         positions[data_count] = position;
         rotations[data_count] = rotation;
+        scales[data_count] = scale;
         data_count++;
     }
 };
@@ -71,6 +69,15 @@ struct Asteroid
 {
     Object object;
     int mesh_index;
+    float scale = 1.0f;
+};
+
+// TODO mesh handler ?
+struct DistanceMeshHandler
+{
+    // store mesh indexes.
+    // Each asteroid object points to a mesh handler. They execute a function, and the mesh handler returns the correct mesh index.
+    // TODO : where to compose
 };
 
 class AsteroidBelt : public Drawable
@@ -103,7 +110,12 @@ private:
     // Random asteroid models
     std::vector<mesh_drawable> asteroid_mesh_drawables;
     std::vector<mesh_drawable> low_poly_asteroid_mesh_drawables;
-    std::vector<MeshInstancesData> asteroid_instances_data;
+    std::vector<MeshInstancesData> asteroid_instances_data; // For each mesh drawable
+
+    // TODO : add scales for randomized sizes
+    // TODO : how to store which mesh to associate according to distance ?
+    // Base : add mesh in list
+    // TODO : compute which mesh to use ? Use mesh handlers with indexes, who point to the right mesh
 
     // Objects
     std::vector<Asteroid> asteroids; // Asteroid physical objects

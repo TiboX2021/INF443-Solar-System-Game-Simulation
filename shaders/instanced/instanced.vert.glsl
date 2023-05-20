@@ -9,6 +9,7 @@ layout(location = 2) in vec3 vertex_color;             // vertex color      (r,g
 layout(location = 3) in vec2 vertex_uv;                // vertex uv-texture (u,v)
 layout(location = 4) in vec3 instanced_model_position; // instanced model position in world space (x,y,z) TODO translation
 layout(location = 5) in mat3 instanced_model_rotation; // instanced model rotation
+layout(location = 8) in float instanced_model_scale;   // instanced model scale
 
 // Output variables sent to the fragment shader
 out struct fragment_data
@@ -28,10 +29,8 @@ uniform mat4 modelNormal; // Model without scaling used for the normal. modelNor
 
 void main()
 {
-    // BUG : pour que le lighting soit correct, il faut aussi rotate la normale !!!
-
     // The position of the vertex in the world space
-    vec4 position = model * vec4(vertex_position, 1.0);
+    vec4 position = model * vec4(vertex_position * instanced_model_scale, 1.0); // Scale the vertex position
 
     // Apply rotation before translation
     position = position * mat4(instanced_model_rotation);

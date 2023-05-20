@@ -1,4 +1,6 @@
 #include "instancing.hpp"
+#include "cgp/core/containers/matrix_stack/special_types/definition/special_types.hpp"
+#include <iostream>
 
 namespace cgp
 {
@@ -8,7 +10,7 @@ namespace cgp
     // https://learnopengl.com/Advanced-OpenGL/Instancing
     // Faire du array instancing. On pourra même y mettre des scale !
 
-    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<rotation_transform> &orientations, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
+    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<mat3> &orientations, int n_instances, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
     {
         opengl_check;
         // Initial clean check
@@ -53,11 +55,6 @@ namespace cgp
         // [Optionnal] send any additional uniform for this specidic draw call
         additional_uniforms.send_opengl_uniform(drawable.shader);
 
-        // TODO : send positions lists as uniforms to the shader. What type ?
-        // TODO : il faudra recalc les positions pour chaque vertex ?
-        // opengl_uniform(drawable.shader, "instance_positions", positions, true);
-        // opengl_uniform(drawable.shader, "instance_orientations", instance_orientations, true);
-
         // Set textures
         // ********************************** //
         glActiveTexture(GL_TEXTURE0);
@@ -83,8 +80,8 @@ namespace cgp
 
         // Prepare for draw call
         // ********************************** //
-        // TODO : ici, on ajoute tous les trucs des différents machins (etc). C'est là que je rajoute mes trucs à moi
-        glBindVertexArray(drawable.vao); // TODO : mettre les arrays de vao dedans ?
+        // Bind predefined vao
+        glBindVertexArray(drawable.vao);
         opengl_check;
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable.ebo_connectivity.id);
         opengl_check;
@@ -92,29 +89,39 @@ namespace cgp
         // ********************************** //
         //     Custom instancing OpenGL code  //
         // ********************************** //
-        GLuint custom_vao = 0;
-        glGenBuffers(1, &custom_vao);              // Generate buffer
-        glBindBuffer(GL_ARRAY_BUFFER, custom_vao); // Bind buffer
-        // translations : array de glm::vec2 (si on a un vector, get l'array) et donner le ptr en argument
-        // DEBUG : expérience, on veut passer en arg des vec3 qui représentent la position.
-        // TODO : passer directement des matrices ? On peut faire ça dans le shader sinon
-        const int n_instances = positions.size();
-        glBufferData(GL_ARRAY_BUFFER, sizeof(cgp::vec3) * n_instances, positions.data(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind buffer (bind to 0 again)
+        GLuint custom_vbo = 0;                                                                            // vbo (contains vertex information, like a vec3)
+        glGenBuffers(1, &custom_vbo);                                                                     // Generate buffer
+        glBindBuffer(GL_ARRAY_BUFFER, custom_vbo);                                                        // Bind buffer to configure it right now
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cgp::vec3) * n_instances, positions.data(), GL_STATIC_DRAW); // Send data + format to buffer
+        glEnableVertexAttribArray(4);                                                                     // This positions array will be in shader layout position 4
+        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);                    // Buffer of position 4 is composed of 3 non normalized floats (vec3)
+        glVertexAttribDivisor(4, 1);                                                                      // 1 instead of 0 : this position attribute will change for every INSTANCE, not every VERTEX
+        glBindBuffer(GL_ARRAY_BUFFER, 0);                                                                 // Unbind buffer (bind to 0 again)
 
-        glEnableVertexAttribArray(4);                                                  // This positions array will be in shader layout position 4
-        glBindBuffer(GL_ARRAY_BUFFER, custom_vao);                                     // Bind buffer
-        glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0); // Buffer of position 4 is composed of 3 non normalized floats
-        glBindBuffer(GL_ARRAY_BUFFER, 0);                                              // Unbind buffer (bind to 0 again)
-        glVertexAttribDivisor(4, 1);                                                   // 1 instead of 0 : this position attribute will change for every INSTANCE, not every VERTEX
+        GLuint rotations_vbo = 0;
+        glGenBuffers(1, &rotations_vbo);                                                                     // Create VBO buffer for the rotation matrix array
+        glBindBuffer(GL_ARRAY_BUFFER, rotations_vbo);                                                        // Bind VBO buffer
+        glBufferData(GL_ARRAY_BUFFER, sizeof(cgp::mat3) * n_instances, orientations.data(), GL_STATIC_DRAW); // Define VBO size, data, and type
+
+        // Reserve the 3 following locations for the 3 rows of the matrix mat3
+        glEnableVertexAttribArray(5); // Use location 5 for the rotation matrix
+        glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
+        glVertexAttribDivisor(5, 1);
+
+        glEnableVertexAttribArray(6); // Use location 5 for the rotation matrix
+        glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
+        glVertexAttribDivisor(6, 1);
+
+        glEnableVertexAttribArray(7); // Use location 5 for the rotation matrix
+        glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
+        glVertexAttribDivisor(7, 1);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind buffer (bind to 0 again)
 
         // Draw call
         // ********************************** //
         // glDrawElements(draw_mode, GLsizei(drawable.ebo_connectivity.size * 3), GL_UNSIGNED_INT, nullptr);
-        // TODO : glDrawelementsInstanced.
-        // En gros, on passe en dernier paramètre le nombre de fois qu'on veut dessiner le truc (en l'occurence, le nombre de positions qu'on a suffit)
-        // Ça veut dire qu'il faut bind les trucs corrects avant. Objectif : faire en sorte que ça display les 2 soleils, avec de l'instancing !
-        glDrawElementsInstanced(draw_mode, GLsizei(drawable.ebo_connectivity.size * 3), GL_UNSIGNED_INT, nullptr, GLsizei(positions.size()));
+        glDrawElementsInstanced(draw_mode, GLsizei(drawable.ebo_connectivity.size * 3), GL_UNSIGNED_INT, nullptr, GLsizei(n_instances));
 
         opengl_check;
 

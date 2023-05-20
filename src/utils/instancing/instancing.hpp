@@ -8,5 +8,5 @@
 namespace cgp
 {
 
-    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment = environment_generic_structure(), const std::vector<vec3> &positions = {}, const std::vector<rotation_transform> &orientations = {}, uniform_generic_structure const &additional_uniforms = uniform_generic_structure(), GLenum draw_mode = GL_TRIANGLES);
+    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment = environment_generic_structure(), const std::vector<vec3> &positions = {}, const std::vector<mat3> &orientations = {}, int n_instances = 1, uniform_generic_structure const &additional_uniforms = uniform_generic_structure(), GLenum draw_mode = GL_TRIANGLES);
 }

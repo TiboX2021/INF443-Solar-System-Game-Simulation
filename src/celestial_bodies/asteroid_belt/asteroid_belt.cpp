@@ -1,4 +1,5 @@
 #include "asteroid_belt.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "utils/instancing/instancing.hpp"
 #include "utils/physics/constants.hpp"
 
@@ -22,5 +23,8 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
     // debugShadable.draw(environment, camera, show_wireframe);
 
     // TODO : get the model mesh + test random positions
-    draw_instanced(debugShadable.getMeshDrawable(), environment, {{10, 0, 0}, {0, 0, 0}}, {});
+    // TODO : test avec les rotations
+    // Generate rotations
+
+    draw_instanced(debugShadable.getMeshDrawable(), environment, {{10, 0, 0}, {0, 0, 0}}, {cgp::rotation_transform::from_axis_angle({1, 0, 0}, 0).matrix(), cgp::rotation_transform::from_axis_angle({1, 0, 0}, 3.14 / 4).matrix()}, 2);
 }

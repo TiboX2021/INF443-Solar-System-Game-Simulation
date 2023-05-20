@@ -37,7 +37,7 @@ private:
     mesh corps_destroyer(float const& scale);
     mesh batiment_destroyer(float const& scale);
     mesh tour_destroyer(float const& scale);
-    //mesh commande_destroyer(float const& scale);
+    mesh poste_de_commande_destroyer(float const& scale);
 
     
     bool has_wings = false;

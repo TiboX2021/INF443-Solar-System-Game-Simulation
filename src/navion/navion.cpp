@@ -767,11 +767,13 @@ void Navion::create_star_destroyer(float const& scale) {
 	mesh_drawable batiment1;
 	mesh_drawable batiment2;
 	mesh_drawable tour;
+	mesh_drawable command;
 
 	corps.initialize_data_on_gpu(corps_destroyer(scale));
 	batiment1.initialize_data_on_gpu(batiment_destroyer(scale));
 	batiment2.initialize_data_on_gpu(batiment_destroyer(0.7*scale));
 	tour.initialize_data_on_gpu(tour_destroyer(scale));
+	command.initialize_data_on_gpu(poste_de_commande_destroyer(scale));
 
 
 
@@ -780,6 +782,7 @@ void Navion::create_star_destroyer(float const& scale) {
 	hierarchie.add(batiment1, "Bat1", "Corps", scale * vec3(-0.75, 0,0));
 	hierarchie.add(batiment2, "Bat2", "Bat1", scale* vec3( - 0.3, 0, 0.5 ));
 	hierarchie.add(tour, "Tour", "Corps", scale * vec3(-2, 0, 1));
+	hierarchie.add(command, "Command", "Tour", scale * vec3(0,0, 1.05));
 	
 }
 
@@ -800,14 +803,22 @@ mesh Navion::corps_destroyer(float const& scale) {
 	//           6
 	//pour le dessus
 
-	corps.position.push_back(scale * vec3(-3, 0, 1));
-	corps.position.push_back(scale * vec3(-3, 0, -1.75));
-	corps.position.push_back(scale * vec3(-3, -2.5, 0.2));
-	corps.position.push_back(scale * vec3(-3, -2.5, -0.2));
-	corps.position.push_back(scale * vec3(-3, 2.5, 0.2));
-	corps.position.push_back(scale * vec3(-3, 2.5, -0.2));
-	corps.position.push_back(scale * vec3(4, 0, 0.2));
-	corps.position.push_back(scale * vec3(4, 0, -0.2));
+	float length = scale * 8.0;
+	float back_length = scale * -3;
+	float boarder_heigth = scale * 0.2;
+	float heigth = scale * 1;
+	float depth = scale * -1.75;
+	float large = scale * 4.5;
+
+
+	corps.position.push_back({back_length, 0, heigth});
+	corps.position.push_back({back_length, 0, depth});
+	corps.position.push_back({back_length, -large, boarder_heigth});
+	corps.position.push_back({ back_length, -large, -boarder_heigth });
+	corps.position.push_back({back_length, large, boarder_heigth});
+	corps.position.push_back({ back_length, large, -boarder_heigth });
+	corps.position.push_back({length, 0, boarder_heigth});
+	corps.position.push_back({ length, 0, -boarder_heigth });
 
 	// la connectivité entre les triangles : 
 	// l'arriere:
@@ -929,4 +940,77 @@ mesh Navion::tour_destroyer(float const& scale) {
 
 	tour.fill_empty_field();
 	return tour;
+}
+
+
+mesh Navion::poste_de_commande_destroyer(float const& scale) {
+	mesh commande;
+	// TODO : les points et la connectivité
+	//           ____----0----____
+	//    10-----                  -----2
+	//    |                             |
+	//    |                             |
+	//    8------____         ____------4
+	//               ----6----
+	float heigh = scale * 0.6;
+	float length = scale * 2.0;
+	float depth = scale * 0.5;
+	float side_heigh = scale * 0.4;
+
+	commande.position.push_back({ depth / 2, 0,heigh / 2 });
+	commande.position.push_back({ -depth / 2, 0, heigh / 2 });
+	commande.position.push_back({ depth / 2, length/2, side_heigh / 2 });
+	commande.position.push_back({ -depth / 2, length / 2, side_heigh / 2 });
+	commande.position.push_back({ depth / 2, length / 2, -side_heigh / 2 });
+	commande.position.push_back({ -depth / 2, length / 2, -side_heigh / 2 });
+	commande.position.push_back({ depth / 2, 0, -heigh / 2 });
+	commande.position.push_back({ -depth / 2, 0, -heigh / 2 });
+	commande.position.push_back({ depth / 2, -length / 2, -side_heigh / 2 });
+	commande.position.push_back({ -depth / 2, -length / 2, -side_heigh / 2 });
+	commande.position.push_back({ depth / 2, -length / 2, side_heigh / 2 });
+	commande.position.push_back({ -depth / 2, -length / 2, side_heigh / 2 });
+
+
+	// On définit ensuite la connectivité
+
+	//face avant :
+	commande.connectivity.push_back(uint3(10, 2, 0));
+	commande.connectivity.push_back(uint3(8, 6, 4));
+	commande.connectivity.push_back(uint3(10, 4, 2));
+	commande.connectivity.push_back(uint3(8, 4, 10));
+
+
+	//face arriere :
+	commande.connectivity.push_back(uint3(11, 3, 1));
+	commande.connectivity.push_back(uint3(9, 7, 5));
+	commande.connectivity.push_back(uint3(11, 5, 3));
+	commande.connectivity.push_back(uint3(9, 5, 11));
+
+
+	// cotés :
+	commande.connectivity.push_back(uint3(10, 11, 8));
+	commande.connectivity.push_back(uint3(8, 11, 9));
+
+	commande.connectivity.push_back(uint3(3, 4, 2));
+	commande.connectivity.push_back(uint3(4, 3, 5));
+
+	// dessus :
+	commande.connectivity.push_back(uint3(0, 1, 10));
+	commande.connectivity.push_back(uint3(10, 1, 11));
+
+	commande.connectivity.push_back(uint3(0, 1, 2));
+	commande.connectivity.push_back(uint3(2, 1, 3));
+
+	// dessous :
+	commande.connectivity.push_back(uint3(6, 8, 9));
+	commande.connectivity.push_back(uint3(6, 9, 7));
+
+	commande.connectivity.push_back(uint3(6, 4, 5));
+	commande.connectivity.push_back(uint3(5, 4, 7));
+
+
+
+
+	commande.fill_empty_field();
+	return commande;
 }

@@ -1,6 +1,4 @@
 #include "asteroid_belt.hpp"
-#include "cgp/core/containers/matrix_stack/special_types/definition/special_types.hpp"
-#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/instancing/instancing.hpp"
 #include "utils/noise/perlin.hpp"
@@ -57,9 +55,23 @@ void AsteroidBelt::initialize()
         // Add the asteroid mesh to the list
         asteroid_mesh_drawables.push_back(asteroid_mesh_drawable);
         low_poly_asteroid_mesh_drawables.push_back(low_poly_drawable);
+
+        // Add the mesh data
+        MeshInstancesData mesh_data;
+        mesh_data.mesh_index = i;
+
+        asteroid_instances_data.push_back(mesh_data);
     }
 
-    generateRandomAsteroids(2000); // TODO : generate random asteroids to display
+    const int N_ASTEROIDS = 5000;
+
+    generateRandomAsteroids(N_ASTEROIDS);
+
+    // Preallocate memory for the instancing
+    for (auto &mesh_data : asteroid_instances_data)
+    {
+        mesh_data.allocate(N_ASTEROIDS);
+    }
 }
 
 void AsteroidBelt::generateRandomAsteroids(int n)
@@ -80,75 +92,54 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // std::cout << "Generated asteroid at position " << asteroid.getPhysicsPosition() << std::endl;
         // std::cout << Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position) << std::endl;
 
-        // TODO : how to bind the texture in order to reuse instancing??
+        // Assign random mesh index
+        int random_mesh_index = random_int(0, asteroid_mesh_drawables.size() - 1);
 
-        objects.push_back(asteroid);
+        Asteroid asteroid_instance = {asteroid, random_mesh_index};
+
+        asteroids.push_back(asteroid_instance);
     }
 }
 
-// TODO : use the instanced drawing function
 void AsteroidBelt::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
 {
-    // Draw the planet
-    // debugShadable.draw(environment, camera, show_wireframe);
-
-    // TODO : get the model mesh + test random positions
-    // TODO : test avec les rotations
-    // TODO : compute low polys and all
-    // Generate rotations
-
-    // draw_instanced(debugShadable.getMeshDrawable(), environment, {{10, 0, 0}, {0, 0, 0}}, {cgp::rotation_transform::from_axis_angle({1, 0, 0}, 0).matrix(), cgp::rotation_transform::from_axis_angle({1, 0, 0}, 3.14 / 4).matrix()}, 2);
-
-    // TODO : debug draw all asteroids with the first mesh
-
-    // std::cout << "Drawing " << objects.size() << " asteroids at positions" << std::endl;
-    //   BUG : positions are nan???? Why??? Where do they become nan? We are almost there
-
-    std::vector<cgp::vec3> positions;
-    for (const auto &object : objects)
+    // Reset structs data
+    for (auto &mesh_data : asteroid_instances_data)
     {
-        positions.push_back(Object::scaleDownDistanceForDisplay(object.getPhysicsPosition()));
-        // std::cout << object.getPhysicsPosition() << std::endl;
-
-        // std::cout << Object::scaleDownDistanceForDisplay(object.getPhysicsPosition()) << std::endl;
+        mesh_data.resetData();
     }
 
-    // for (auto position : positions)
-    // {
-    //     std::cout << position << std::endl;
-    // }
-
-    std::vector<cgp::mat3> rotations;
-    for (const auto &object : objects)
+    // Linear scan to build the data
+    for (const auto &asteroid : asteroids)
     {
-        rotations.push_back(object.getPhysicsRotation().matrix());
+        asteroid_instances_data[asteroid.mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), asteroid.object.getPhysicsRotation().matrix());
     }
 
-    // TODO : generate arrays for instancing
-    draw_instanced(asteroid_mesh_drawables[0], environment, positions, rotations, objects.size());
+    // Call instanced drawing function for each dataset
+    for (const auto &mesh_data : asteroid_instances_data)
+    {
+        draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.data_count);
+    }
 }
 
 // Simulate gravitationnal attraction to the attractor
 void AsteroidBelt::simulateStep()
 {
     // Clear forces
-    for (auto &object : objects)
+    for (auto &asteroid : asteroids)
     {
-        object.resetForces();
-        // BUG : ici, les positions sont devenues -inf, puis nan
-        // Ça se fait avant la première simulation
-        // std::cout << object.getPhysicsPosition() << std::endl;
+        asteroid.object.resetForces();
     }
 
     // Compute gravitationnal force to the attractor
-    for (auto &object : objects)
+    for (auto &asteroid : asteroids)
     {
-        object.computeGravitationnalForce(attractor);
+        asteroid.object.computeGravitationnalForce(attractor);
     }
 
     // Simulate step
-    for (auto &object : objects)
+    for (auto &asteroid : asteroids)
     {
-        object.update(24.0f * 3600 / 60 * 100); // TODO : set the time step
+        asteroid.object.update(24.0f * 3600 / 60 * 100); // TODO : set the time step
     }
 }

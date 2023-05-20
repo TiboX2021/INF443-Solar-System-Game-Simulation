@@ -30,7 +30,47 @@ constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     0.1f, // Influence of small frequencies
     6,    // Level of detail
     0.4f,
-    1.0f, // Global noise scale
+    2.0f, // Global noise scale
+};
+
+// TODO : add arrays of this for the different meshes ?
+// TODO : how to use different mesh resolutions, taking into account the distance ?
+/**
+Struct to handle the data for mesh instancing (keep it clean and fast)
+Using a linear scan on each frame, the data of the different asteroids is prepared in these instances before instancing call
+*/
+struct MeshInstancesData
+{
+    int mesh_index;
+    int data_count;
+    std::vector<cgp::vec3> positions;
+    std::vector<cgp::mat3> rotations;
+
+    // Initial size allocation
+    void allocate(int n)
+    {
+        positions.resize(n);
+        rotations.resize(n);
+    }
+
+    void resetData()
+    {
+        data_count = 0;
+    }
+
+    void addData(const cgp::vec3 &position, const cgp::mat3 &rotation)
+    {
+        positions[data_count] = position;
+        rotations[data_count] = rotation;
+        data_count++;
+    }
+};
+
+// Data for an asteroid
+struct Asteroid
+{
+    Object object;
+    int mesh_index;
 };
 
 class AsteroidBelt : public Drawable
@@ -45,8 +85,6 @@ public:
 
     // Simulation
     void simulateStep();
-
-    // TODO : function to simulate step
 
     // Setters & getters useless in this case
     virtual void setPosition(cgp::vec3 position) override{};
@@ -65,9 +103,8 @@ private:
     // Random asteroid models
     std::vector<mesh_drawable> asteroid_mesh_drawables;
     std::vector<mesh_drawable> low_poly_asteroid_mesh_drawables;
+    std::vector<MeshInstancesData> asteroid_instances_data;
 
     // Objects
-    std::vector<Object> objects; // Asteroid physical objects
-    // TODO : create a class to associate to meshes ? How to simplify the instanced factorized calls ?
-    // Comment faire pour gérer les low poly ? A chaque frame, selon la distance, on recompose les vecteurs associés à chaque truc ?
+    std::vector<Asteroid> asteroids; // Asteroid physical objects
 };

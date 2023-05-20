@@ -39,7 +39,7 @@ void main()
     position.xyz += instanced_model_position; // Add instanced model position to the vertex position
 
     // The normal of the vertex in the world space
-    vec4 normal = modelNormal * vec4(vertex_normal, 0.0);
+    vec4 normal = modelNormal * vec4(vertex_normal, 0.0) * mat4(instanced_model_rotation);
 
     // The projected position of the vertex in the normalized device coordinates:
     vec4 position_projected = projection * view * position;

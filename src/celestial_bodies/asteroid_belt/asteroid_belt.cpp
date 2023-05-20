@@ -33,7 +33,7 @@ void AsteroidBelt::initialize()
     {
         // Generate mesh
         // TODO : use smaller meshes to improve performance ?
-        cgp::mesh asteroid_mesh = mesh_primitive_perlin_sphere(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, 50, 25, ASTEROID_NOISE_PARAMS);
+        cgp::mesh asteroid_mesh = mesh_primitive_perlin_sphere(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, 10, 5, ASTEROID_NOISE_PARAMS);
 
         // Generate mesh drawable
         cgp::mesh_drawable asteroid_mesh_drawable;
@@ -59,7 +59,7 @@ void AsteroidBelt::initialize()
         low_poly_asteroid_mesh_drawables.push_back(low_poly_drawable);
     }
 
-    generateRandomAsteroids(100); // TODO : generate random asteroids to display
+    generateRandomAsteroids(2000); // TODO : generate random asteroids to display
 }
 
 void AsteroidBelt::generateRandomAsteroids(int n)
@@ -69,7 +69,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     {
         // Use the attractor object
         // Generate random position
-        const float random_distance = DISTANCE * random_float(0.8, 1.2);
+        const float random_distance = DISTANCE * random_float(0.8, 1.5);
         const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?

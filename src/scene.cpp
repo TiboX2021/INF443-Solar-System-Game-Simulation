@@ -39,8 +39,6 @@ void scene_structure::initialize()
     // Initialise asteroid field simulation handler
     OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
     asteroid_field_handler.initialize();
-
-    belt.initialize();
 }
 
 void scene_structure::display_frame()
@@ -53,8 +51,6 @@ void scene_structure::display_frame()
 
     asteroid_field_handler.simulateStep();
     asteroid_field_handler.drawObjects(environment, camera_control, false);
-
-    belt.draw(environment, camera_control, false);
 
     display_semiTransparent();
 }

@@ -43,6 +43,7 @@ public:
     double getPhysicsRotationAngle() const;
     bool getShouldTranslate() const;
     bool getShouldRotate() const;
+    double getMass() const;
 
     // Setters
     void setShouldTranslate(bool should_translate);

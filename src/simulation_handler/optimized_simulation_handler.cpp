@@ -1,4 +1,5 @@
 #include "simulation_handler/optimized_simulation_handler.hpp"
+#include "celestial_bodies/asteroid_belt/asteroid_belt.hpp"
 #include "celestial_bodies/planet/planet.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
@@ -65,6 +66,12 @@ void OptimizedSimulationHandler::simulateStep()
         object->update(time_step);
         object->updateModels();
     }
+
+    // Simulate steps for asteroid belts
+    for (auto &belt : asteroid_belts)
+    {
+        belt.simulateStep();
+    }
 }
 
 void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandler &handler)
@@ -80,6 +87,10 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     // saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     saturn.setShouldTranslate(false); // Immobile
     handler.addObject(saturn, true);  // Saturn is the only attractor
+
+    // Add an asteroid belt
+    AsteroidBelt belt;
+    belt.setAttractor(handler.physical_attractors[0]);
 
     // TODO : add random asteroids gravitating and rotating around
     const float DISTANCE = SATURN_RADIUS * 4000; // Orbit distance : 1 billion meters

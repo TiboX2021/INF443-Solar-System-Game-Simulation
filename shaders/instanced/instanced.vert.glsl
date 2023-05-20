@@ -32,7 +32,7 @@ void main()
     vec4 position = model * vec4(vertex_position, 1.0);
 
     // Apply rotation before translation
-    position = position * mat4(instanced_model_rotation); // TODO : better rotation
+    position = position * mat4(instanced_model_rotation);
 
     position.xyz += instanced_model_position; // Add instanced model position to the vertex position
 

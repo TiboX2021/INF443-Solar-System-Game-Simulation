@@ -78,6 +78,12 @@ void SimulationHandler::simulateStep()
         object->update(time_step);
         object->updateModels();
     }
+
+    // Simulate steps for asteroid belts
+    for (auto &belt : asteroid_belts)
+    {
+        belt.simulateStep();
+    }
 }
 
 void SimulationHandler::initialize()
@@ -86,6 +92,11 @@ void SimulationHandler::initialize()
     for (auto &drawable : drawables)
     {
         drawable->initialize();
+    }
+
+    for (auto &belt : asteroid_belts)
+    {
+        belt.initialize();
     }
 }
 
@@ -149,4 +160,10 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     neptune.setInitialRotationSpeed(NEPTUNE_ROTATION_SPEED);
     neptune.setRotationAxis(NEPTUNE_ROTATION_AXIS);
     handler.addObject(neptune);
+}
+
+void SimulationHandler::addAsteroidBelt(AsteroidBelt asteroid_belt)
+{
+    // BUG : error static assert ???
+    asteroid_belts.push_back(asteroid_belt);
 }

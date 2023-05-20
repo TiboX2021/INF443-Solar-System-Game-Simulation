@@ -122,3 +122,7 @@ void Object::setRotationAxis(cgp::vec3 rotation_axis)
 {
     this->rotation_axis = rotation_axis;
 }
+double Object::getMass() const
+{
+    return this->mass;
+}

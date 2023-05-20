@@ -104,15 +104,15 @@ namespace cgp
         glBufferData(GL_ARRAY_BUFFER, sizeof(cgp::mat3) * n_instances, orientations.data(), GL_STATIC_DRAW); // Define VBO size, data, and type
 
         // Reserve the 3 following locations for the 3 rows of the matrix mat3
-        glEnableVertexAttribArray(5); // Use location 5 for the rotation matrix
+        glEnableVertexAttribArray(5); // Use location 5 for the first row of the rotation matrix
         glVertexAttribPointer(5, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)0);
         glVertexAttribDivisor(5, 1);
 
-        glEnableVertexAttribArray(6); // Use location 5 for the rotation matrix
+        glEnableVertexAttribArray(6); // Use location 6 for the second row of the rotation matrix
         glVertexAttribPointer(6, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(3 * sizeof(float)));
         glVertexAttribDivisor(6, 1);
 
-        glEnableVertexAttribArray(7); // Use location 5 for the rotation matrix
+        glEnableVertexAttribArray(7); // Use location 7 for the third row of the rotation matrix
         glVertexAttribPointer(7, 3, GL_FLOAT, GL_FALSE, 9 * sizeof(float), (void *)(6 * sizeof(float)));
         glVertexAttribDivisor(7, 1);
 

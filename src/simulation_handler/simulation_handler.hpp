@@ -1,6 +1,7 @@
 #pragma once
 
 #include "background/galaxy.hpp"
+#include "celestial_bodies/asteroid_belt/asteroid_belt.hpp"
 #include "utils/display/base_drawable.hpp"
 #include "utils/display/billboard_drawable.hpp"
 #include "utils/display/drawable.hpp"
@@ -12,6 +13,7 @@ class SimulationHandler
 public:
     template <typename TExtendsBaseDrawable>
     void addObject(TExtendsBaseDrawable drawable); // Do not use reference, as the object will be copied and moved to a unique_ptr
+    void addAsteroidBelt(AsteroidBelt asteroid_belt);
     void initialize();
 
     // Draw Functions
@@ -35,6 +37,8 @@ protected:
     std::vector<Drawable *> drawable_objects;
     std::vector<BillboardDrawable *> billboard_drawable_objects;
     std::vector<Object *> physical_objects;
+
+    std::vector<AsteroidBelt> asteroid_belts; // Asteroid belts
 
     Galaxy galaxy;
 };

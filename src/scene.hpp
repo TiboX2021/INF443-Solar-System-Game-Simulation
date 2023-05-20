@@ -1,6 +1,5 @@
 #pragma once
 
-#include "celestial_bodies/asteroid_belt/asteroid_belt.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
 #include "simulation_handler/optimized_simulation_handler.hpp"

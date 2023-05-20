@@ -3,10 +3,11 @@
 // Vertex shader - this code is executed for every vertex of the shape
 
 // Inputs coming from VBOs
-layout(location = 0) in vec3 vertex_position; // vertex position in local space (x,y,z)
-layout(location = 1) in vec3 vertex_normal;   // vertex normal in local space   (nx,ny,nz)
-layout(location = 2) in vec3 vertex_color;    // vertex color      (r,g,b)
-layout(location = 3) in vec2 vertex_uv;       // vertex uv-texture (u,v)
+layout(location = 0) in vec3 vertex_position;          // vertex position in local space (x,y,z)
+layout(location = 1) in vec3 vertex_normal;            // vertex normal in local space   (nx,ny,nz)
+layout(location = 2) in vec3 vertex_color;             // vertex color      (r,g,b)
+layout(location = 3) in vec2 vertex_uv;                // vertex uv-texture (u,v)
+layout(location = 4) in vec3 instanced_model_position; // instanced model position in world space (x,y,z) TODO translation
 
 // Output variables sent to the fragment shader
 out struct fragment_data
@@ -28,6 +29,8 @@ void main()
 {
     // The position of the vertex in the world space
     vec4 position = model * vec4(vertex_position, 1.0);
+
+    position.xyz += instanced_model_position; // Add instanced model position to the vertex position
 
     // The normal of the vertex in the world space
     vec4 normal = modelNormal * vec4(vertex_normal, 0.0);

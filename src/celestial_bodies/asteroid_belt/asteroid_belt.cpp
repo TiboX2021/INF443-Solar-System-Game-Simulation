@@ -22,5 +22,5 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
     // debugShadable.draw(environment, camera, show_wireframe);
 
     // TODO : get the model mesh + test random positions
-    draw_instanced(debugShadable.getMeshDrawable(), environment, {{1000, 0, 0}}, {});
+    draw_instanced(debugShadable.getMeshDrawable(), environment, {{10, 0, 0}, {0, 0, 0}}, {});
 }

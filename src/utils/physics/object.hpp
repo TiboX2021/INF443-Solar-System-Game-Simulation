@@ -35,7 +35,7 @@ public:
 
     void resetForces();
     void computeGravitationnalForce(Object *other);
-    virtual void updateModels() = 0; // Abstract function to update the models based on the physical constants
+    virtual void updateModels(){}; // Abstract function to update the models based on the physical constants
 
     // Getters
     cgp::vec3 getPhysicsPosition() const;

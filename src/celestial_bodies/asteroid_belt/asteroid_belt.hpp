@@ -9,7 +9,11 @@
 // TODO : for asteroids, instead of Planet instances, store Objects, and a list of models ? Separate into simple components
 
 #include "celestial_bodies/overrides/star.hpp"
+#include "cgp/geometry/shape/mesh/structure/mesh.hpp"
+#include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/display/drawable.hpp"
+#include "utils/physics/object.hpp"
+#include <vector>
 class AsteroidBelt : public Drawable
 {
 public:
@@ -26,4 +30,12 @@ public:
 
 private:
     Star debugShadable;
+
+    // Random asteroid models
+    std::vector<mesh> asteroid_meshes;
+    std::vector<mesh_drawable> asteroid_mesh_drawables;
+
+    // Objects
+    std::vector<Object> objects; // Asteroid physical objects
+    // TODO : create a class to associate to meshes ? How to simplify the instanced factorized calls ?
 };

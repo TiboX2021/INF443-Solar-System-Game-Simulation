@@ -28,6 +28,8 @@ uniform mat4 modelNormal; // Model without scaling used for the normal. modelNor
 
 void main()
 {
+    // BUG : pour que le lighting soit correct, il faut aussi rotate la normale !!!
+
     // The position of the vertex in the world space
     vec4 position = model * vec4(vertex_position, 1.0);
 

@@ -30,7 +30,7 @@ constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     0.1f, // Influence of small frequencies
     6,    // Level of detail
     0.4f,
-    10.0f, // Global noise scale
+    1.0f, // Global noise scale
 };
 
 class AsteroidBelt : public Drawable

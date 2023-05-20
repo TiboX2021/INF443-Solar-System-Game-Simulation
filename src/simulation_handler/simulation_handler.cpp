@@ -43,6 +43,12 @@ void SimulationHandler::drawObjects(environment_structure const &environment, ca
     {
         drawable->draw(environment, camera, show_wireframe);
     }
+
+    // std::cout << "Number of belts: " << asteroid_belts.size() << std::endl;
+    for (auto &belt : asteroid_belts)
+    {
+        belt.draw(environment, camera, show_wireframe);
+    }
 }
 
 void SimulationHandler::drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
@@ -164,6 +170,5 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
 
 void SimulationHandler::addAsteroidBelt(AsteroidBelt asteroid_belt)
 {
-    // BUG : error static assert ???
     asteroid_belts.push_back(asteroid_belt);
 }

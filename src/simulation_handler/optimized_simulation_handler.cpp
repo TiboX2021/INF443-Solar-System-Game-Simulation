@@ -3,7 +3,6 @@
 #include "celestial_bodies/planet/planet.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
-#include "utils/random/random.hpp"
 #include <iostream>
 
 template <typename TExtendsBaseDrawable>
@@ -92,51 +91,4 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
     AsteroidBelt belt;
     belt.setAttractor(handler.physical_attractors[0]);
     handler.addAsteroidBelt(belt);
-
-    // TODO : add random asteroids gravitating and rotating around
-    // const float DISTANCE = SATURN_RADIUS * 4000; // Orbit distance : 1 billion meters
-    // const float ASTEROID_MASS = 1e22;
-
-    // Generic perlin noise parameters :
-    // const float perlin_scale = 0.1;
-    // const perlin_noise_parameters ASTEROID_NOISE_PARAMS{
-    //     0.1f * perlin_scale,
-    //     0.1f * perlin_scale, // Influence of small frequencies
-    //     6,                   // Level of detail
-    //     0.4f * perlin_scale,
-    //     10.0f * perlin_scale, // Global noise scale
-    // };
-
-    // TODO : generate N random asteroids and add them
-    // TODO : generate base random asteroids, and then do Instancing for a massive display? Issue with low poly
-    // const int N_ASTEROIDS = 1; // DEBUG
-
-    // Planet asteroid1(ASTEROID_MASS, SATURN_RADIUS / 20, {DISTANCE, 0, 0}, "assets/asteroids/grey_asteroid.jpg", NO_PERLIN_NOISE);
-    // asteroid1.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100);
-    // // asteroid1.setRotationAxis({0, 1, 0});
-    // asteroid1.setRotationAxis(random_normalized_axis());
-
-    // asteroid1.setInitialVelocity({0, Object::computeOrbitalSpeed(SATURN_MASS, DISTANCE), 0});
-    // handler.addObject(asteroid1);
-
-    // std::string asteroid_textures[] = {"assets/asteroids/grey_asteroid.jpg", "assets/asteroids/grey_asteroid_2.png", "assets/asteroids/rocky_asteroid.jpg"};
-    // cgp::vec3 asteroid_mean_colors[] = {{102.0f / 255, 102.0f / 255, 102.0f / 255}, {84.0f / 255, 84.0f / 255, 84.0f / 255}, {132.0f / 255, 124.0f / 255, 116.0f / 255}};
-
-    // for (int i = 0; i < N_ASTEROIDS; i++)
-    // {
-    //     const float random_distance = DISTANCE * random_float(0.8, 1.2);
-    //     const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
-    //     const float size = SATURN_RADIUS / 20 * random_float(0.6, 1.5);
-    //     const int texture = random_int(0, 2);
-    //     Planet asteroid(ASTEROID_MASS, size, random_position, asteroid_textures[texture], ASTEROID_NOISE_PARAMS);
-    //     asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
-    //     asteroid.setLowPolyColor(asteroid_mean_colors[texture]);
-    //     asteroid.setRotationAxis(random_normalized_axis());
-
-    //     asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(SATURN_MASS, random_position));
-    //     handler.addObject(asteroid);
-    // }
-
-    // // DEBUG : is always ok
-    // std::cout << "Number of drawable objects : " << handler.drawable_objects.size() << std::endl;
 }

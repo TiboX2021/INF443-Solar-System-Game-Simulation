@@ -52,6 +52,8 @@ static cgp::numarray<cgp::uint3> connectivity_grid(size_t Nu, size_t Nv)
  */
 cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, int Nu, int Nv, perlin_noise_parameters parameters)
 {
+    bool useNoise = parameters.frequency_gain != 0 || parameters.octave != 0 || parameters.persistency != 0 || parameters.scale != 0;
+
     assert_cgp(radius > 0, "Sphere radius should be > 0");
     assert_cgp(Nu > 2 && Nv > 2, "Sphere samples should be > 2");
 
@@ -75,8 +77,16 @@ cgp::mesh mesh_primitive_perlin_sphere(float radius, cgp::vec3 const &center, in
                 std::sin(phi)};
 
             // Using 3D perlin noise
-            float perlin_noise_value = cgp::noise_perlin(n * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain) - 0.5f;
-            cgp::vec3 const p = (radius * (1 + perlin_noise_value / 3)) * n + center;
+            cgp::vec3 p;
+            if (useNoise)
+            {
+                float perlin_noise_value = cgp::noise_perlin(n * parameters.scale, parameters.octave, parameters.persistency, parameters.frequency_gain) - 0.5f;
+                p = (radius * (1 + perlin_noise_value / 3)) * n + center;
+            }
+            else
+            {
+                p = radius * n + center;
+            }
             cgp::vec2 const uv = {u, v};
 
             shape.position.push_back(p);

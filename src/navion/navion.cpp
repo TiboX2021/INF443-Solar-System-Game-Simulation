@@ -769,12 +769,29 @@ void Navion::create_star_destroyer(float const& scale) {
 	mesh_drawable tour;
 	mesh_drawable command;
 
+	has_wings = false;
+	 
 	corps.initialize_data_on_gpu(corps_destroyer(scale));
 	batiment1.initialize_data_on_gpu(batiment_destroyer(scale));
 	batiment2.initialize_data_on_gpu(batiment_destroyer(0.7*scale));
 	tour.initialize_data_on_gpu(tour_destroyer(scale));
 	command.initialize_data_on_gpu(poste_de_commande_destroyer(scale));
 
+	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+
+	batiment1.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+	
+	batiment2.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
+
+	tour.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 
 
 
@@ -812,13 +829,21 @@ mesh Navion::corps_destroyer(float const& scale) {
 
 
 	corps.position.push_back({back_length, 0, heigth});
+	corps.uv.push_back({ 0,0 });
 	corps.position.push_back({back_length, 0, depth});
+	corps.uv.push_back({ 2, 2});
 	corps.position.push_back({back_length, -large, boarder_heigth});
+	corps.uv.push_back({ 0,-1 });
 	corps.position.push_back({ back_length, -large, -boarder_heigth });
+	corps.uv.push_back({ 2,1 });
 	corps.position.push_back({back_length, large, boarder_heigth});
+	corps.uv.push_back({ 0,1 });
 	corps.position.push_back({ back_length, large, -boarder_heigth });
+	corps.uv.push_back({ 2,3 });
 	corps.position.push_back({length, 0, boarder_heigth});
+	corps.uv.push_back({ 5,0 });
 	corps.position.push_back({ length, 0, -boarder_heigth });
+	corps.uv.push_back({ 7,2 });
 
 	// la connectivité entre les triangles : 
 	// l'arriere:
@@ -854,7 +879,7 @@ mesh Navion::corps_destroyer(float const& scale) {
 mesh Navion::batiment_destroyer(float const& scale) {
 	mesh batiment;
 
-	//
+	// TODO : essayer de corriger la texture qui part dans le mauvais sens 
 	//
 	//       _____---0---_____
 	//   2---                 ---8
@@ -864,15 +889,29 @@ mesh Navion::batiment_destroyer(float const& scale) {
 	//   4-----------------------6
 	//
 	batiment.position.push_back(scale* vec3(0, 0, 1.2));
-	batiment.position.push_back(scale * vec3(-2, 0, 1.2));
-	batiment.position.push_back(scale * vec3(0, -1, 0.9));
+	batiment.uv.push_back({ 0,0 });
+	batiment.position.push_back(scale * vec3(-2, 0, 1.2)); 
+	batiment.uv.push_back({ 0.5,0 });
+
+	batiment.position.push_back(scale * vec3(0, -1, 0.9)); 
+	batiment.uv.push_back({ -0.25,-0.5 });
 	batiment.position.push_back(scale * vec3(-2, -1, 0.9));
-	batiment.position.push_back(scale * vec3(0, -1, 0));
+	batiment.uv.push_back({ 0.75,-0.5 });
+
+	batiment.position.push_back(scale * vec3(0, -1, 0)); 
+	batiment.uv.push_back({ -1, -1 });
 	batiment.position.push_back(scale * vec3(-2, -1, 0));
-	batiment.position.push_back(scale * vec3(0, 1, 0));
+	batiment.uv.push_back({ 1.5 ,-1 });
+
+	batiment.position.push_back(scale * vec3(0, 1, 0)); 
+	batiment.uv.push_back({ -1, 1 });
 	batiment.position.push_back(scale * vec3(-2, 1, 0));
+	batiment.uv.push_back({ 1.5, 1 });
+
 	batiment.position.push_back(scale * vec3(0, 1, 0.9));
+	batiment.uv.push_back({ -0.25, 0.5 });
 	batiment.position.push_back(scale * vec3(-2, 1, 0.9));
+	batiment.uv.push_back({ 0.75, 0.5 });
 
 
 	// puis la connectivité :
@@ -917,12 +956,17 @@ mesh Navion::tour_destroyer(float const& scale) {
 	//   0---------1       2---0       0----1
 	
 	tour.position.push_back(scale * vec3(0, -0.5, 0));
+	tour.uv.push_back({ 0,0 });
 	tour.position.push_back(scale * vec3(0, 0.5, 0));
+	tour.uv.push_back({ 0,1 });
 	tour.position.push_back(scale * vec3(-0.6, -0.5, 0));
+	tour.uv.push_back({ 2,0 }); 
 	tour.position.push_back(scale * vec3(-0.6, 0.5, 0));
+	tour.uv.push_back({ 2,1 });
 	tour.position.push_back(scale * vec3(0, -0.5, 1.3));
+	tour.uv.push_back({ 1,0.25 });
 	tour.position.push_back(scale * vec3(0, 0.5, 1.3));
-
+	tour.uv.push_back({ 1,0.75 });
 
 	//face avant :
 	tour.connectivity.push_back(uint3(0, 1, 4));
@@ -945,7 +989,7 @@ mesh Navion::tour_destroyer(float const& scale) {
 
 mesh Navion::poste_de_commande_destroyer(float const& scale) {
 	mesh commande;
-	// TODO : les points et la connectivité
+	// les points et la connectivité
 	//           ____----0----____
 	//    10-----                  -----2
 	//    |                             |

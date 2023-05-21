@@ -14,7 +14,6 @@
 // ************************************************** //
 //                  ASTEROID CONSTANTS                //
 // ************************************************** //
-// BUG : asteroids are not displayed at all ! This is the usual bug. It does not happen with the other planets...
 constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 40; // TODO : scale this
 const float ASTEROID_DISPLAY_RADIUS = Object::scaleRadiusForDisplay(ASTEROID_RADIUS);
 constexpr float ASTEROID_MASS = 1e22;

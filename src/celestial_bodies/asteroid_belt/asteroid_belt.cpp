@@ -105,7 +105,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Use the attractor object
         // Generate random position
         const float random_distance = DISTANCE * random_float(0.8, 1.2);
-        const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
+        const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * random_distance / 30;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
         Object asteroid(ASTEROID_MASS, saturn_rotation_matrix * random_position + attractor->getPhysicsPosition(), random_normalized_axis());
@@ -176,8 +176,6 @@ void AsteroidBelt::simulateStep(float step)
     {
         asteroid.object.computeGravitationnalForce(attractor);
     }
-
-    std::cout << "asteroid position : " << asteroids[0].object.getPhysicsPosition() << std::endl;
 
     // Simulate step
     for (auto &asteroid : asteroids)

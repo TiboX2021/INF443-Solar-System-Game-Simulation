@@ -7,6 +7,8 @@
 
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {
+    // std::cout << "Generated object with physics position: " << position << std::endl; // BUG : dès le constructeur, c'est nan
+
     // Translations
     this->mass = mass;
     this->physics_position = position;

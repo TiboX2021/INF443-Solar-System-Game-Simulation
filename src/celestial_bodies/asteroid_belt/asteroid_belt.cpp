@@ -1,24 +1,23 @@
 #include "asteroid_belt.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
+#include "utils/display/low_poly.hpp"
 #include "utils/instancing/instancing.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/random/random.hpp"
 #include "utils/shaders/shader_loader.hpp"
+#include <cmath>
 #include <iostream>
 
-AsteroidBelt::AsteroidBelt() : debugShadable(SUN_MASS, SUN_RADIUS / 10, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE)
+AsteroidBelt::AsteroidBelt(BeltPresets preset)
 {
-    debugShadable.setShader("instanced");
+    this->preset = preset;
 }
 
 void AsteroidBelt::initialize()
 {
-    // Initialize the planet
-    debugShadable.initialize();
-
     // ************************************************** //
     //               RANDOM ASTEROID GENERATION           //
     // ************************************************** //
@@ -82,7 +81,7 @@ void AsteroidBelt::initialize()
         distance_mesh_handlers.push_back({3 * i, 3 * i + 1, 3 * i + 2});
     }
 
-    const int N_ASTEROIDS = 2000;
+    const int N_ASTEROIDS = preset == BeltPresets::SATURN ? 2000 : 10000;
 
     generateRandomAsteroids(N_ASTEROIDS);
 
@@ -96,22 +95,41 @@ void AsteroidBelt::initialize()
 
 void AsteroidBelt::generateRandomAsteroids(int n)
 {
-    cgp::mat3 saturn_rotation_matrix = cgp::rotation_transform::from_vector_transform({0, 0, 1}, SATURN_ROTATION_AXIS).matrix();
+    cgp::mat3 rotation_matrix;
+    double distance;
+    double orbit_factor;
+    double radius_min;
+    double radius_max;
+
+    // Load presets
+    if (preset == BeltPresets::SATURN)
+    {
+        rotation_matrix = cgp::rotation_transform::from_vector_transform({0, 0, 1}, SATURN_ROTATION_AXIS).matrix();
+        distance = DISTANCE;
+        orbit_factor = ORBIT_FACTOR;
+        radius_min = 0.8;
+        radius_max = 1.2;
+    }
+    else
+    {
+        rotation_matrix = cgp::mat3::build_identity();
+        distance = 3.0817e+11; // Main asteroid belt distance from the sun
+        orbit_factor = 1;
+        radius_min = 1;
+        radius_max = 2;
+    }
 
     // Generate ateroids with random positions, and bind them to the meshes
     for (int i = 0; i < n; i++)
     {
-        // TODO : use args to do this for saturn & the solar system asteroid belt
-
-        // Use the attractor object
         // Generate random position
-        const float random_distance = DISTANCE * random_float(0.8, 1.2);
+        const float random_distance = distance * random_float(radius_min, radius_max);
         const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * random_distance / 30;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
-        Object asteroid(ASTEROID_MASS, saturn_rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
+        Object asteroid(ASTEROID_MASS, rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED * random_float(0.4, 1.5));
-        asteroid.setInitialVelocity(ASTEROID_ORBIT_FACTOR * saturn_rotation_matrix * Object::computeOrbitalSpeedForPosition(attractors[0]->getMass(), random_position));
+        asteroid.setInitialVelocity(orbit_factor * rotation_matrix * Object::computeOrbitalSpeedForPosition(attractors[0]->getMass(), random_position));
 
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
@@ -181,7 +199,7 @@ void AsteroidBelt::simulateStep(float step)
         bool isMainAttractor = true;
         for (const auto &attractor : attractors)
         {
-            asteroid.object.computeGravitationnalForce(attractor, isMainAttractor ? ASTEROID_ORBIT_FACTOR * ASTEROID_ORBIT_FACTOR : 1);
+            asteroid.object.computeGravitationnalForce(attractor, (isMainAttractor && preset == BeltPresets::SATURN) ? ORBIT_FACTOR * ORBIT_FACTOR : 1);
             isMainAttractor = false;
         }
     }

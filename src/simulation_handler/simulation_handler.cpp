@@ -3,7 +3,6 @@
 #include "celestial_bodies/asteroid_belt/asteroid_belt.hpp"
 #include "celestial_bodies/overrides/star.hpp"
 #include "celestial_bodies/planet/planet.hpp"
-#include "celestial_bodies/ring_planet/ring_planet.hpp"
 #include "utils/display/base_drawable.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
@@ -121,6 +120,12 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     sun.setShader("lava");
     handler.addObject(sun);
 
+    Object *sun_ptr = handler.physical_objects.back();
+
+    AsteroidBelt solar_asteroid_belt(BeltPresets::SUN);
+    solar_asteroid_belt.addAttractor(sun_ptr);
+    handler.addAsteroidBelt(solar_asteroid_belt);
+
     // Add Earth
     Planet earth(EARTH_MASS, EARTH_RADIUS, {EARTH_SUN_DISTANCE, 0, 0}, "assets/planets/earth.jpg", NO_PERLIN_NOISE);
     earth.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
@@ -148,7 +153,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     Object *saturn_ptr = handler.physical_objects.back();
 
     // Add asteroid belt around saturn
-    AsteroidBelt saturnBelt;
+    AsteroidBelt saturnBelt(BeltPresets::SATURN);
     saturnBelt.addAttractor(saturn_ptr); // Add main attractor first
     handler.addAsteroidBelt(saturnBelt);
 

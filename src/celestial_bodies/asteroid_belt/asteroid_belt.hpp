@@ -3,9 +3,8 @@
 // Handle drawing asteroids using instancing
 // This class does not handle the physics, just the drawing
 
-#include "celestial_bodies/overrides/star.hpp"
-#include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/display/drawable.hpp"
+#include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
 #include "utils/physics/object.hpp"
 #include <memory>
@@ -14,7 +13,7 @@
 // ************************************************** //
 //                  ASTEROID CONSTANTS                //
 // ************************************************** //
-constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 40; // TODO : scale this
+constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 40;
 const float ASTEROID_DISPLAY_RADIUS = Object::scaleRadiusForDisplay(ASTEROID_RADIUS);
 constexpr float ASTEROID_MASS = 1e22;
 constexpr float DISTANCE = SATURN_RADIUS * 2500; // Orbit distance : 1 billion meters, for saturn. TODO : update this for generic use
@@ -26,6 +25,12 @@ constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     6,    // Level of detail
     0.4f,
     1.0f, // Global noise scale
+};
+
+enum BeltPresets
+{
+    SATURN,
+    SUN,
 };
 
 /**
@@ -70,7 +75,6 @@ struct Asteroid
     float scale = 1.0f;
 };
 
-// TODO mesh handler ?
 struct DistanceMeshHandler
 {
     int high_poly;
@@ -81,7 +85,7 @@ struct DistanceMeshHandler
 class AsteroidBelt : public Drawable
 {
 public:
-    AsteroidBelt();
+    AsteroidBelt(BeltPresets preset = BeltPresets::SATURN);
     // Initialize member meshs
     virtual void initialize() override;
 
@@ -105,18 +109,13 @@ private:
     std::vector<Object *> attractors; // Pointer to the attractor object of the simulation
     cgp::vec3 last_attractor_position;
 
-    Star debugShadable;
-
     // Random asteroid models
     std::vector<mesh_drawable> asteroid_mesh_drawables;
     std::vector<MeshInstancesData> asteroid_instances_data; // For each mesh drawable
     std::vector<DistanceMeshHandler> distance_mesh_handlers;
 
-    // TODO : add scales for randomized sizes
-    // TODO : how to store which mesh to associate according to distance ?
-    // Base : add mesh in list
-    // TODO : compute which mesh to use ? Use mesh handlers with indexes, who point to the right mesh
-
     // Objects
     std::vector<Asteroid> asteroids; // Asteroid physical objects
+
+    BeltPresets preset;
 };

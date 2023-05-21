@@ -4,7 +4,7 @@
 #include "drawable.hpp"
 #include "environment.hpp"
 
-const double LOW_POLY_DISTANCE_RATIO = 200;
+const double LOW_POLY_DISTANCE_RATIO = 300;
 const int LOW_POLY_RESOLUTION = 10;
 
 /**
@@ -42,4 +42,5 @@ private:
     double low_poly_radius;
     cgp::mesh low_poly_mesh;
     cgp::mesh_drawable low_poly_drawable;
+    cgp::vec3 low_poly_color;
 };

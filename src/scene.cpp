@@ -1,8 +1,13 @@
 #include "scene.hpp"
 
-#include "background/galaxy.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
-#include "planet/ring_planet.hpp"
+#include "simulation_handler/optimized_simulation_handler.hpp"
+#include "simulation_handler/simulation_handler.hpp"
+#include "third_party/src/imgui/imgui.h"
+#include "utils/shaders/shader_loader.hpp"
+#include <cmath>
+#include <iostream>
+#include <math.h>
 using namespace cgp;
 
 void scene_structure::initialize()
@@ -12,27 +17,41 @@ void scene_structure::initialize()
     camera_control.look_at({15.0f, 6.0f, 6.0f}, {0, 0, 0});
     global_frame.initialize_data_on_gpu(mesh_primitive_frame());
 
-    // Initialize planet
-    planet.initialize();
-    ring_planet.initialize();
-    planet.setPosition({30, 30, 0});
-
-    // Initialize background galaxy
-    galaxy.initialize();
-
     // Change depth of field
     camera_projection.depth_max = 10000.0f; // Default : 1000.0f
+    // BUG : à très longue distance, pour les objets qui ne disparaissent pas, bug d'affichage. Diminuer la scale ?
+    // Il faut réduire l'échelle globale du projet, cf object.hpp
+
+    // Load shaders
+    ShaderLoader::addShader("custom", "custom_shaders/custom");
+    ShaderLoader::addShader("aura", "aura/aura");
+    ShaderLoader::addShader("bumpy", "bumpy/bumpy");
+    ShaderLoader::addShader("uniform", "uniform/uniform");
+    ShaderLoader::addShader("lava", "lava/lava");
+    ShaderLoader::addShader("instanced", "instanced/instanced");
+
+    ShaderLoader::initialise();
+
+    // Initialize simulation handler
+    // SimulationHandler::generateSolarSystem(simulation_handler);
+    // simulation_handler.initialize();
+
+    // Initialise asteroid field simulation handler
+    OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
+    asteroid_field_handler.initialize();
 }
 
 void scene_structure::display_frame()
 {
     // Set the light to the current position of the camera
-    environment.light = camera_control.camera_model.position();
+    environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
 
-    // DEBUG : draw planet and galaxy
-    galaxy.draw(environment, camera_control, gui.display_wireframe);
-    planet.draw(environment, camera_control, gui.display_wireframe);
-    ring_planet.draw(environment, camera_control, gui.display_wireframe);
+    // simulation_handler.simulateStep();
+    // simulation_handler.drawObjects(environment, camera_control, false);
+
+    asteroid_field_handler.simulateStep();
+    asteroid_field_handler.drawObjects(environment, camera_control, false);
+
     display_semiTransparent();
 }
 
@@ -73,8 +92,8 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    // Draw ring planet billboard
-    ring_planet.draw_ring_billboard(environment, camera_control, gui.display_wireframe);
+    // simulation_handler.drawBillboards(environment, camera_control, false);
+    asteroid_field_handler.drawBillboards(environment, camera_control, false);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

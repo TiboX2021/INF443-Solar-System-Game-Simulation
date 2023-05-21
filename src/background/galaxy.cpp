@@ -1,6 +1,7 @@
 #include "galaxy.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "environment.hpp"
+#include "utils/shaders/shader_loader.hpp"
 
 // TODO : no source lighting. Only uniform lighting (custom shader ?). Not a problem if we are inside ?
 
@@ -18,7 +19,7 @@ void Galaxy::initialize()
 {
 
     // Initialize CGP elements
-    galaxy_mesh = cgp::mesh_primitive_sphere(radius, position, 20, 10);
+    galaxy_mesh = cgp::mesh_primitive_sphere(radius, position, 60, 30);
     galaxy_mesh_drawable.initialize_data_on_gpu(galaxy_mesh);
 
     // Add texture
@@ -27,6 +28,9 @@ void Galaxy::initialize()
                                                                        GL_CLAMP_TO_EDGE);
     galaxy_mesh_drawable.material.texture_settings.two_sided = true;
     galaxy_mesh_drawable.material.phong.specular = 0; // No reflection for the planet display
+
+    // Custom uniform shader
+    galaxy_mesh_drawable.shader = ShaderLoader::getShader("uniform");
 }
 
 void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
@@ -46,4 +50,9 @@ void Galaxy::draw(environment_structure const &environment, camera_controller_or
 void Galaxy::setPosition(cgp::vec3 position)
 {
     galaxy_mesh_drawable.model.translation = position;
+}
+
+cgp::vec3 Galaxy::getPosition() const
+{
+    return position;
 }

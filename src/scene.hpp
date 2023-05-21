@@ -1,12 +1,9 @@
 #pragma once
 
-#include "background/galaxy.hpp"
-#include "cgp/cgp.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
-#include "planet/planet.hpp"
-#include "planet/ring_planet.hpp"
-#include "terrain.hpp"
+#include "simulation_handler/optimized_simulation_handler.hpp"
+#include "simulation_handler/simulation_handler.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
 using cgp::mesh;
@@ -18,6 +15,7 @@ using cgp::vec3;
 // Variables associated to the GUI
 struct gui_parameters
 {
+
     bool display_frame = false;
     bool display_wireframe = false;
 };
@@ -54,8 +52,6 @@ struct scene_structure : cgp::scene_inputs_generic
     // Display function for semi-transparent shapes
     void display_semiTransparent();
 
-    // DEBUG : to delete later
-    Planet planet;
-    Galaxy galaxy;
-    RingPlanet ring_planet;
+    SimulationHandler simulation_handler;
+    OptimizedSimulationHandler asteroid_field_handler;
 };

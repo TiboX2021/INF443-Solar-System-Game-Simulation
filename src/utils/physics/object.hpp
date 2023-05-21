@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 
 /*
@@ -10,46 +11,73 @@ Mapping 1e+4 UA <=> 1e+13 m
 The physics scale is then set to 1e-9
 
 This way, realistic physiscs distances and constants can be directly used in the simulation
+
+=> the masses and forces and positions of the physics engine are real
+=> the positions of the meshes are scaled down
+=> the radiuses of the meshes too ?
 */
 
-// TODO : prendre en compte la rotation des objets ! Il faudra prendre en compte les collisions aussi
 // Pour les collisions, faire une gestion maligne pour limiter le temps de calcul
 
-// Physics constants
-constexpr double GRAVITAIONAL_CONSTANT = 6.67408e-11;
-constexpr double PHYSICS_SCALE = 1e-9;
+// Display constants
+constexpr double PHYSICS_SCALE = 1e-10; // Reduce the scale enough so that Opengl does not freak out
+constexpr double DISPLAY_SCALE = 1500;  // Display larger models
 
+/**
+ * Physical Object with position and rotation abstract class
+ */
 class Object
 {
 public:
-    Object(double mass, cgp::vec3 position);
+    Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1}, bool should_translate = true, bool should_rotate = true);
 
-    // TODO : function to compute force, and to update with dt. speed, acceleration, etc?
     void update(double dt);
 
-    void reset_forces();
-    void compute_force(Object *other);
-    virtual void setPosition(cgp::vec3 position);
+    void resetForces();
+    void computeGravitationnalForce(Object *other);
+    virtual void updateModels(){}; // Abstract function to update the models based on the physical constants
+
+    // Getters
+    cgp::vec3 getPhysicsPosition() const;
+    cgp::rotation_transform getPhysicsRotation() const;
+    double getPhysicsRotationAngle() const;
+    bool getShouldTranslate() const;
+    bool getShouldRotate() const;
+    double getMass() const;
+
+    // Setters
+    void setShouldTranslate(bool should_translate);
+    void setShouldRotate(bool should_rotate);
+    void setPhysicsPosition(cgp::vec3 position);
+    void setInitialVelocity(cgp::vec3 velocity);
+    void setInitialRotationSpeed(double rotation_speed);
+    void setRotationAxis(cgp::vec3 rotation_axis);
 
     // STATIC MEMBERS
-
     // Scale a value to the physics scale (distance and mass)
-    static double scale(double value) { return value * PHYSICS_SCALE; }
-    static void setTimeScale(double timescale) // Asset time scale is greater than 1
+    static cgp::vec3
+    scaleDownDistanceForDisplay(cgp::vec3 distance)
     {
-        if (timescale >= 1.0)
-            time_scale = timescale;
-        else
-            time_scale = 1.0;
+        return distance * PHYSICS_SCALE;
     }
-    static double getTimeScale() { return time_scale; }
+    static double scaleRadiusForDisplay(double value) { return value * DISPLAY_SCALE * PHYSICS_SCALE; }
+    static double computeOrbitalSpeed(double M, double r);
+    static cgp::vec3 computeOrbitalSpeedForPosition(double M, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1});
 
 private:
+    // Translation
     double mass;
-    cgp::vec3 position;
+    cgp::vec3 physics_position;
     cgp::vec3 velocity;
     cgp::vec3 acceleration;
     cgp::vec3 forces;
 
-    static double time_scale;
+    // Rotation
+    double rotation_speed;
+    double rotation_angle;
+    cgp::vec3 rotation_axis;
+
+    // Immobile object or not
+    bool should_translate;
+    bool should_rotate;
 };

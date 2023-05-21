@@ -1,11 +1,12 @@
 #pragma once
 
 #include "environment.hpp"
+#include "utils/display/base_drawable.hpp"
 
 /**
  * Abstract base drawable class
  */
-class Drawable
+class Drawable : public virtual BaseDrawable
 {
 public:
     // Initialize member meshs

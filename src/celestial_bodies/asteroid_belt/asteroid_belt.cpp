@@ -29,41 +29,59 @@ void AsteroidBelt::initialize()
 
     for (int i = 0; i < n_base_asteroids; i++)
     {
-        // Generate mesh
-        // TODO : use smaller meshes to improve performance ?
-        cgp::mesh asteroid_mesh = mesh_primitive_perlin_sphere(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, 10, 5, ASTEROID_NOISE_PARAMS);
+        // Generate high poly mesh
+        cgp::mesh high_poly_asteroid_mesh = mesh_primitive_perlin_sphere(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, 50, 25, ASTEROID_NOISE_PARAMS);
 
         // Generate mesh drawable
-        cgp::mesh_drawable asteroid_mesh_drawable;
-        asteroid_mesh_drawable.initialize_data_on_gpu(asteroid_mesh);
+        cgp::mesh_drawable high_poly_asteroid_mesh_drawable;
+        high_poly_asteroid_mesh_drawable.initialize_data_on_gpu(high_poly_asteroid_mesh);
 
         // Set mesh drawable parameters
         // Add texture
-        asteroid_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + asteroid_textures[i],
-                                                                             GL_CLAMP_TO_EDGE,
-                                                                             GL_CLAMP_TO_EDGE);
-        asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
-        asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
+        high_poly_asteroid_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + asteroid_textures[i],
+                                                                                       GL_CLAMP_TO_EDGE,
+                                                                                       GL_CLAMP_TO_EDGE);
+        high_poly_asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
+        high_poly_asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
         // Generate low poly mesh
-        cgp::mesh low_poly_mesh = cgp::mesh_primitive_disc(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, {0, 0, 1}, LOW_POLY_RESOLUTION);
-        cgp::mesh_drawable low_poly_drawable;
-        low_poly_drawable.initialize_data_on_gpu(low_poly_mesh);
-        low_poly_drawable.material.phong.specular = 0; // No reflection for the low poly display
-        low_poly_drawable.material.color = asteroid_mean_colors[i];
+        cgp::mesh low_poly_asteroid_mesh = mesh_primitive_perlin_sphere(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, 10, 5, ASTEROID_NOISE_PARAMS);
+
+        // Generate mesh drawable
+        cgp::mesh_drawable low_poly_asteroid_mesh_drawable;
+        low_poly_asteroid_mesh_drawable.initialize_data_on_gpu(low_poly_asteroid_mesh);
+
+        // Set mesh drawable parameters
+        // Add texture
+        low_poly_asteroid_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + asteroid_textures[i],
+                                                                                      GL_CLAMP_TO_EDGE,
+                                                                                      GL_CLAMP_TO_EDGE);
+        low_poly_asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
+        low_poly_asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
+
+        // Generate low poly disk
+        cgp::mesh low_poly_disk_mesh = cgp::mesh_primitive_disc(ASTEROID_DISPLAY_RADIUS, {0, 0, 0}, {0, 0, 1}, LOW_POLY_RESOLUTION);
+        cgp::mesh_drawable low_poly_disk_mesh_drawable;
+        low_poly_disk_mesh_drawable.initialize_data_on_gpu(low_poly_disk_mesh);
+        low_poly_disk_mesh_drawable.material.phong.specular = 0; // No reflection for the low poly display
+        low_poly_disk_mesh_drawable.material.color = asteroid_mean_colors[i];
+        low_poly_disk_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
         // Add the asteroid mesh to the list
-        asteroid_mesh_drawables.push_back(asteroid_mesh_drawable);
-        low_poly_asteroid_mesh_drawables.push_back(low_poly_drawable);
+        asteroid_mesh_drawables.push_back(high_poly_asteroid_mesh_drawable);
+        asteroid_mesh_drawables.push_back(low_poly_asteroid_mesh_drawable);
+        asteroid_mesh_drawables.push_back(low_poly_disk_mesh_drawable);
 
-        // Add the mesh data
-        MeshInstancesData mesh_data;
-        mesh_data.mesh_index = i;
+        // Add the mesh data for each shader
+        asteroid_instances_data.push_back({3 * i, 0, {}, {}, {}});
+        asteroid_instances_data.push_back({3 * i + 1, 0, {}, {}, {}});
+        asteroid_instances_data.push_back({3 * i + 2, 0, {}, {}, {}}); //  TODO : compute the disk orientation
 
-        asteroid_instances_data.push_back(mesh_data);
+        // Add the mesh handler for the 3 meshes
+        distance_mesh_handlers.push_back({3 * i, 3 * i + 1, 3 * i + 2});
     }
 
-    const int N_ASTEROIDS = 1000;
+    const int N_ASTEROIDS = 10000;
 
     generateRandomAsteroids(N_ASTEROIDS);
 
@@ -81,7 +99,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     {
         // Use the attractor object
         // Generate random position
-        const float random_distance = DISTANCE * random_float(0.8, 1.5);
+        const float random_distance = DISTANCE * random_float(0.8, 4);
         const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
@@ -89,11 +107,8 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
         asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
 
-        // std::cout << "Generated asteroid at position " << asteroid.getPhysicsPosition() << std::endl;
-        // std::cout << Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position) << std::endl;
-
         // Assign random mesh index
-        int random_mesh_index = random_int(0, asteroid_mesh_drawables.size() - 1);
+        int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
 
         Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(0.2, 1.8)};
 
@@ -112,9 +127,27 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
     // Linear scan to build the data
     for (const auto &asteroid : asteroids)
     {
-        // TODO : compute asteroid distance to camera. Compute different steps
+        // Compute the asteroid size to camera distance ratio. The higher, the lesser poly count is required
+        float ratio = cgp::norm(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()) - camera.camera_model.position()) / (asteroid.scale * ASTEROID_DISPLAY_RADIUS);
 
-        asteroid_instances_data[asteroid.mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), asteroid.object.getPhysicsRotation().matrix(), asteroid.scale);
+        int mesh_index;
+        bool is_low_poly_disk = false;
+        if (ratio < 100) // Maybe lower
+        {
+            mesh_index = distance_mesh_handlers[asteroid.mesh_index].high_poly;
+        }
+        else if (ratio < 200) // Maybe higher
+        {
+            mesh_index = distance_mesh_handlers[asteroid.mesh_index].low_poly;
+        }
+        else
+        {
+            mesh_index = distance_mesh_handlers[asteroid.mesh_index].low_poly_disk;
+            is_low_poly_disk = true;
+        }
+
+        // Add data of this asteroid to the corresponding mesh instancing data
+        asteroid_instances_data[mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), is_low_poly_disk ? camera.camera_model.orientation().matrix() : asteroid.object.getPhysicsRotation().matrix(), asteroid.scale);
     }
 
     // Call instanced drawing function for each dataset

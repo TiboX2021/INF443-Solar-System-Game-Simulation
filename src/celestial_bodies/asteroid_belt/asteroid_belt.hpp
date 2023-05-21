@@ -25,7 +25,7 @@ constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     0.1f, // Influence of small frequencies
     6,    // Level of detail
     0.4f,
-    2.0f, // Global noise scale
+    1.0f, // Global noise scale
 };
 
 // TODO : add arrays of this for the different meshes ?
@@ -75,9 +75,9 @@ struct Asteroid
 // TODO mesh handler ?
 struct DistanceMeshHandler
 {
-    // store mesh indexes.
-    // Each asteroid object points to a mesh handler. They execute a function, and the mesh handler returns the correct mesh index.
-    // TODO : where to compose
+    int high_poly;
+    int low_poly;
+    int low_poly_disk;
 };
 
 class AsteroidBelt : public Drawable
@@ -109,8 +109,8 @@ private:
 
     // Random asteroid models
     std::vector<mesh_drawable> asteroid_mesh_drawables;
-    std::vector<mesh_drawable> low_poly_asteroid_mesh_drawables;
     std::vector<MeshInstancesData> asteroid_instances_data; // For each mesh drawable
+    std::vector<DistanceMeshHandler> distance_mesh_handlers;
 
     // TODO : add scales for randomized sizes
     // TODO : how to store which mesh to associate according to distance ?

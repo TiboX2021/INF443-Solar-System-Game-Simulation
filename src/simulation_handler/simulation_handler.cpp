@@ -145,11 +145,12 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     handler.addObject(saturn);
 
+    Object *saturn_ptr = handler.physical_objects.back();
+
     // Add asteroid belt around saturn
     AsteroidBelt saturnBelt;
-    saturnBelt.setAttractor(handler.physical_objects[handler.physical_objects.size() - 1]);
+    saturnBelt.addAttractor(saturn_ptr); // Add main attractor first
     handler.addAsteroidBelt(saturnBelt);
-    // TODO : center position on attractor
 
     // Add jupiter
     Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);

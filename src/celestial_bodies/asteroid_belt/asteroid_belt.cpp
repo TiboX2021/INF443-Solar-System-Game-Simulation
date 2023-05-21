@@ -91,6 +91,7 @@ void AsteroidBelt::initialize()
     {
         mesh_data.allocate(N_ASTEROIDS);
     }
+    last_attractor_position = attractors[0]->getPhysicsPosition();
 }
 
 void AsteroidBelt::generateRandomAsteroids(int n)
@@ -108,9 +109,9 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * random_distance / 30;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
-        Object asteroid(ASTEROID_MASS, saturn_rotation_matrix * random_position + attractor->getPhysicsPosition(), random_normalized_axis());
+        Object asteroid(ASTEROID_MASS, saturn_rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED * random_float(0.4, 1.5));
-        asteroid.setInitialVelocity(attractor->getPhysicsVelocity() + 10 * saturn_rotation_matrix * Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
+        asteroid.setInitialVelocity(ASTEROID_ORBIT_FACTOR * saturn_rotation_matrix * Object::computeOrbitalSpeedForPosition(attractors[0]->getMass(), random_position));
 
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
@@ -165,16 +166,24 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
 // Simulate gravitationnal attraction to the attractor
 void AsteroidBelt::simulateStep(float step)
 {
-    // Clear forces
+    cgp::vec3 delta_attractor_position = attractors[0]->getPhysicsPosition() - last_attractor_position;
+
+    // Clear forces + update positions to match the main attractor
     for (auto &asteroid : asteroids)
     {
         asteroid.object.resetForces();
+        asteroid.object.setPhysicsPosition(asteroid.object.getPhysicsPosition() + delta_attractor_position);
     }
 
     // Compute gravitationnal force to the attractor
     for (auto &asteroid : asteroids)
     {
-        asteroid.object.computeGravitationnalForce(attractor, 100);
+        bool isMainAttractor = true;
+        for (const auto &attractor : attractors)
+        {
+            asteroid.object.computeGravitationnalForce(attractor, isMainAttractor ? ASTEROID_ORBIT_FACTOR * ASTEROID_ORBIT_FACTOR : 1);
+            isMainAttractor = false;
+        }
     }
 
     // Simulate step
@@ -182,4 +191,6 @@ void AsteroidBelt::simulateStep(float step)
     {
         asteroid.object.update(step);
     }
+
+    last_attractor_position = attractors[0]->getPhysicsPosition();
 }

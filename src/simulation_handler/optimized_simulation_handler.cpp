@@ -89,6 +89,6 @@ void OptimizedSimulationHandler::generateAsteroidField(OptimizedSimulationHandle
 
     // Add an asteroid belt
     AsteroidBelt belt;
-    belt.setAttractor(handler.physical_attractors[0]);
+    belt.addAttractor(handler.physical_attractors[0]);
     handler.addAsteroidBelt(belt);
 }

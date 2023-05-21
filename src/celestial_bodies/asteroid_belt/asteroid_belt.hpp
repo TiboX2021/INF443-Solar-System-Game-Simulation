@@ -18,6 +18,7 @@ constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 40; // TODO : scale this
 const float ASTEROID_DISPLAY_RADIUS = Object::scaleRadiusForDisplay(ASTEROID_RADIUS);
 constexpr float ASTEROID_MASS = 1e22;
 constexpr float DISTANCE = SATURN_RADIUS * 2500; // Orbit distance : 1 billion meters, for saturn. TODO : update this for generic use
+constexpr float ASTEROID_ORBIT_FACTOR = 10;      // Accelerate asteroids orbit for visual purposes
 
 constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     0.1f,
@@ -95,12 +96,14 @@ public:
     virtual cgp::vec3 getPosition() const override { return cgp::vec3{}; };
 
     // Setters
-    void setAttractor(Object *attractor) { this->attractor = attractor; };
+    // void setAttractor(Object *attractor) { this->attractor = attractor; };
+    void addAttractor(Object *attractor) { this->attractors.push_back(attractor); };
 
 private:
     void generateRandomAsteroids(int n);
 
-    Object *attractor; // Pointer to the attractor object of the simulation
+    std::vector<Object *> attractors; // Pointer to the attractor object of the simulation
+    cgp::vec3 last_attractor_position;
 
     Star debugShadable;
 

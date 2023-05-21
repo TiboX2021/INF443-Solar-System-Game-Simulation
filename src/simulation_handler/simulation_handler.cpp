@@ -138,7 +138,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(mars);
 
     // Add Saturn
-    RingPlanet saturn(SATURN_MASS, SATURN_RADIUS, SATURN_RADIUS * 2, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", "assets/planets/rings/saturn_ring.png", NO_PERLIN_NOISE);
+    Planet saturn(SATURN_MASS, SATURN_RADIUS, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
     saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);

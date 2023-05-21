@@ -5,6 +5,7 @@
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/shaders/shader_loader.hpp"
+#include <bits/types/timer_t.h>
 #include <cmath>
 #include <iostream>
 #include <math.h>
@@ -39,12 +40,12 @@ void scene_structure::initialize()
     // Initialise asteroid field simulation handler
     // OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
     // asteroid_field_handler.initialize();
-    // TODO : add a belt to the standard simulation handler
-    // TODO : change the standard simulation handler into an optimized simulation handler
 }
 
 void scene_structure::display_frame()
 {
+    timer.update(); // Update timer
+
     // Set the light to the current position of the camera
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 

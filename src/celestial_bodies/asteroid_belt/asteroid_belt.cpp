@@ -110,7 +110,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
         Object asteroid(ASTEROID_MASS, saturn_rotation_matrix * random_position + attractor->getPhysicsPosition(), random_normalized_axis());
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED * random_float(0.4, 1.5));
-        asteroid.setInitialVelocity(attractor->getPhysicsVelocity() + saturn_rotation_matrix * Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
+        asteroid.setInitialVelocity(attractor->getPhysicsVelocity() + 10 * saturn_rotation_matrix * Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
 
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
@@ -174,7 +174,7 @@ void AsteroidBelt::simulateStep(float step)
     // Compute gravitationnal force to the attractor
     for (auto &asteroid : asteroids)
     {
-        asteroid.object.computeGravitationnalForce(attractor);
+        asteroid.object.computeGravitationnalForce(attractor, 100);
     }
 
     // Simulate step

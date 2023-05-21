@@ -7,6 +7,7 @@
 #include "utils/display/base_drawable.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
+#include "utils/physics/object.hpp"
 #include <iostream>
 #include <iterator>
 #include <memory>

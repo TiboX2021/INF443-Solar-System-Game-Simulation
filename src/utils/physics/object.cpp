@@ -34,10 +34,10 @@ void Object::resetForces()
 /**
  * Compute gravitational force from another object
  */
-void Object::computeGravitationnalForce(Object *other)
+void Object::computeGravitationnalForce(Object *other, double factor)
 {
     cgp::vec3 distance = other->physics_position - this->physics_position;
-    forces += GRAVITATIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance);
+    forces += GRAVITATIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance) * factor;
 }
 
 /** Update position */

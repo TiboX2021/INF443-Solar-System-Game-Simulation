@@ -35,7 +35,7 @@ public:
     void update(double dt);
 
     void resetForces();
-    void computeGravitationnalForce(Object *other);
+    void computeGravitationnalForce(Object *other, double factor = 1.0);
     virtual void updateModels(){}; // Abstract function to update the models based on the physical constants
 
     // Getters

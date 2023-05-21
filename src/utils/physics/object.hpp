@@ -22,6 +22,7 @@ This way, realistic physiscs distances and constants can be directly used in the
 // Display constants
 constexpr double PHYSICS_SCALE = 1e-10; // Reduce the scale enough so that Opengl does not freak out
 constexpr double DISPLAY_SCALE = 1500;  // Display larger models
+constexpr double ORBIT_FACTOR = 20;     // Make orbits faster in comparison to planets rotating on themselves, for display purposes
 
 /**
  * Physical Object with position and rotation abstract class
@@ -39,6 +40,7 @@ public:
 
     // Getters
     cgp::vec3 getPhysicsPosition() const;
+    cgp::vec3 getPhysicsVelocity() const;
     cgp::rotation_transform getPhysicsRotation() const;
     double getPhysicsRotationAngle() const;
     bool getShouldTranslate() const;

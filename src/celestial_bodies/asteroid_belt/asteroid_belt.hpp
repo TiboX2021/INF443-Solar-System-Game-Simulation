@@ -14,11 +14,11 @@
 // ************************************************** //
 //                  ASTEROID CONSTANTS                //
 // ************************************************** //
-
-constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 20; // TODO : scale this
+// BUG : asteroids are not displayed at all ! This is the usual bug. It does not happen with the other planets...
+constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 40; // TODO : scale this
 const float ASTEROID_DISPLAY_RADIUS = Object::scaleRadiusForDisplay(ASTEROID_RADIUS);
 constexpr float ASTEROID_MASS = 1e22;
-constexpr float DISTANCE = SATURN_RADIUS * 4000; // Orbit distance : 1 billion meters, for saturn. TODO : update this for generic use
+constexpr float DISTANCE = SATURN_RADIUS * 2500; // Orbit distance : 1 billion meters, for saturn. TODO : update this for generic use
 
 constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     0.1f,
@@ -28,8 +28,6 @@ constexpr perlin_noise_parameters ASTEROID_NOISE_PARAMS{
     1.0f, // Global noise scale
 };
 
-// TODO : add arrays of this for the different meshes ?
-// TODO : how to use different mesh resolutions, taking into account the distance ?
 /**
 Struct to handle the data for mesh instancing (keep it clean and fast)
 Using a linear scan on each frame, the data of the different asteroids is prepared in these instances before instancing call
@@ -91,7 +89,7 @@ public:
     virtual void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
     // Simulation
-    void simulateStep();
+    void simulateStep(float step = 24.0f * 3600 / 60);
 
     // Setters & getters useless in this case
     virtual void setPosition(cgp::vec3 position) override{};

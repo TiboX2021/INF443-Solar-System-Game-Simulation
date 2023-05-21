@@ -1,4 +1,5 @@
 #include "asteroid_belt.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/instancing/instancing.hpp"
 #include "utils/noise/perlin.hpp"
@@ -75,13 +76,13 @@ void AsteroidBelt::initialize()
         // Add the mesh data for each shader
         asteroid_instances_data.push_back({3 * i, 0, {}, {}, {}});
         asteroid_instances_data.push_back({3 * i + 1, 0, {}, {}, {}});
-        asteroid_instances_data.push_back({3 * i + 2, 0, {}, {}, {}}); //  TODO : compute the disk orientation
+        asteroid_instances_data.push_back({3 * i + 2, 0, {}, {}, {}});
 
         // Add the mesh handler for the 3 meshes
         distance_mesh_handlers.push_back({3 * i, 3 * i + 1, 3 * i + 2});
     }
 
-    const int N_ASTEROIDS = 10000;
+    const int N_ASTEROIDS = 2000;
 
     generateRandomAsteroids(N_ASTEROIDS);
 
@@ -94,18 +95,22 @@ void AsteroidBelt::initialize()
 
 void AsteroidBelt::generateRandomAsteroids(int n)
 {
+    cgp::mat3 saturn_rotation_matrix = cgp::rotation_transform::from_vector_transform({0, 0, 1}, SATURN_ROTATION_AXIS).matrix();
+
     // Generate ateroids with random positions, and bind them to the meshes
     for (int i = 0; i < n; i++)
     {
+        // TODO : use args to do this for saturn & the solar system asteroid belt
+
         // Use the attractor object
         // Generate random position
-        const float random_distance = DISTANCE * random_float(0.8, 4);
+        const float random_distance = DISTANCE * random_float(0.8, 1.2);
         const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
-        Object asteroid(ASTEROID_MASS, random_position, random_normalized_axis());
-        asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
-        asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
+        Object asteroid(ASTEROID_MASS, saturn_rotation_matrix * random_position + attractor->getPhysicsPosition(), random_normalized_axis());
+        asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED * random_float(0.4, 1.5));
+        asteroid.setInitialVelocity(attractor->getPhysicsVelocity() + saturn_rotation_matrix * Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
 
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
@@ -158,7 +163,7 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
 }
 
 // Simulate gravitationnal attraction to the attractor
-void AsteroidBelt::simulateStep()
+void AsteroidBelt::simulateStep(float step)
 {
     // Clear forces
     for (auto &asteroid : asteroids)
@@ -172,9 +177,11 @@ void AsteroidBelt::simulateStep()
         asteroid.object.computeGravitationnalForce(attractor);
     }
 
+    std::cout << "asteroid position : " << asteroids[0].object.getPhysicsPosition() << std::endl;
+
     // Simulate step
     for (auto &asteroid : asteroids)
     {
-        asteroid.object.update(24.0f * 3600 / 60 * 100); // TODO : set the time step
+        asteroid.object.update(step);
     }
 }

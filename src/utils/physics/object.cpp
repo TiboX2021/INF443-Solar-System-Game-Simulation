@@ -44,8 +44,8 @@ void Object::update(double dt)
     if (should_translate)
     {
         this->acceleration = this->forces / this->mass;
-        this->velocity += this->acceleration * dt;
-        this->physics_position += this->velocity * dt;
+        this->velocity += this->acceleration * dt * ORBIT_FACTOR;
+        this->physics_position += this->velocity * dt * ORBIT_FACTOR;
     }
 
     if (should_rotate)
@@ -125,4 +125,9 @@ void Object::setRotationAxis(cgp::vec3 rotation_axis)
 double Object::getMass() const
 {
     return this->mass;
+}
+
+cgp::vec3 Object::getPhysicsVelocity() const
+{
+    return this->velocity;
 }

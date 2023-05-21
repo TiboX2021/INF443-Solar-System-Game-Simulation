@@ -1,5 +1,6 @@
 #include "simulation_handler.hpp"
 #include "background/galaxy.hpp"
+#include "celestial_bodies/asteroid_belt/asteroid_belt.hpp"
 #include "celestial_bodies/overrides/star.hpp"
 #include "celestial_bodies/planet/planet.hpp"
 #include "celestial_bodies/ring_planet/ring_planet.hpp"
@@ -88,7 +89,7 @@ void SimulationHandler::simulateStep()
     // Simulate steps for asteroid belts
     for (auto &belt : asteroid_belts)
     {
-        belt.simulateStep();
+        belt.simulateStep(time_step);
     }
 }
 
@@ -142,6 +143,12 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     handler.addObject(saturn);
+
+    // Add asteroid belt around saturn
+    AsteroidBelt saturnBelt;
+    saturnBelt.setAttractor(handler.physical_objects[handler.physical_objects.size() - 1]);
+    handler.addAsteroidBelt(saturnBelt);
+    // TODO : center position on attractor
 
     // Add jupiter
     Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);

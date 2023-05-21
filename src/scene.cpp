@@ -46,7 +46,7 @@ void scene_structure::initialize()
 void scene_structure::display_frame()
 {
     // Set the light to the current position of the camera
-    environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
+    environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
     simulation_handler.simulateStep();
     simulation_handler.drawObjects(environment, camera_control, false);

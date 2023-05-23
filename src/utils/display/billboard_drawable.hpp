@@ -17,5 +17,5 @@ public:
     virtual void setPosition(cgp::vec3 position) = 0;
 
     // Draw function
-    virtual void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) = 0;
+    virtual void drawBillboards(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) = 0;
 };

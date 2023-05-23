@@ -25,25 +25,25 @@ void LowPolyDrawable::setLowPolyColor(cgp::vec3 color)
 }
 
 // Main draw function
-void LowPolyDrawable::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void LowPolyDrawable::draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe)
 {
     // Check distance in comparison to radius
-    if (shouldDrawLowPoly(camera))
+    if (shouldDrawLowPoly(position))
     {
         // Draw low poly
-        draw_low_poly(environment, camera, show_wireframe);
+        draw_low_poly(environment, position, rotation, show_wireframe);
     }
     else
     {
         // Draw real object
-        draw_real(environment, camera, show_wireframe);
+        draw_real(environment, position, rotation, show_wireframe);
     }
 }
 
-void LowPolyDrawable::draw_low_poly(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool)
+void LowPolyDrawable::draw_low_poly(environment_structure const &environment, cgp::vec3 &, cgp::rotation_transform &rotation, bool)
 {
     // Set disk orientation facing camera
-    low_poly_drawable.model.rotation = camera.camera_model.orientation();
+    low_poly_drawable.model.rotation = rotation;
 
     // Draw low poly
     cgp::draw(low_poly_drawable, environment);
@@ -58,9 +58,9 @@ cgp::vec3 LowPolyDrawable::getPosition() const
 {
     return low_poly_drawable.model.translation;
 }
-bool LowPolyDrawable::shouldDrawLowPoly(camera_controller_orbit_euler const &camera) const
+bool LowPolyDrawable::shouldDrawLowPoly(const cgp::vec3 &position) const
 {
-    double distance = cgp::norm(camera.camera_model.position() - getPosition());
+    double distance = cgp::norm(position - getPosition());
 
     return distance > LOW_POLY_DISTANCE_RATIO * low_poly_radius;
 }

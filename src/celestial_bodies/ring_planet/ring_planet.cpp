@@ -35,9 +35,9 @@ void RingPlanet::initialize()
     ring_mesh_drawable.material.texture_settings.two_sided = true;
 }
 
-void RingPlanet::drawBillboards(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool)
+void RingPlanet::drawBillboards(const environment_structure &environment, cgp::vec3 &position, cgp::rotation_transform &, bool)
 {
-    if (!shouldDrawLowPoly(camera))
+    if (!shouldDrawLowPoly(position))
     {
         cgp::draw(ring_mesh_drawable, environment);
     }

@@ -2,6 +2,7 @@
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
+#include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
@@ -53,7 +54,7 @@ void Planet::initialize()
 /**
  * Draw the planet in the given environment
  */
-void Planet::draw_real(const environment_structure &environment, camera_controller_orbit_euler const &, bool show_wireframe)
+void Planet::draw_real(const environment_structure &environment, cgp::vec3 &, cgp::rotation_transform &, bool show_wireframe)
 {
     cgp::draw(planet_mesh_drawable, environment);
 

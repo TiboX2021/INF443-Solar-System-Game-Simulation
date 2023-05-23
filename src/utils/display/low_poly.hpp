@@ -18,13 +18,13 @@ public:
 
     virtual void initialize() override;
 
-    virtual void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
+    virtual void draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) override;
 
     // Draw the real object
-    virtual void draw_real(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) = 0;
+    virtual void draw_real(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) = 0;
 
     // Draw the low poly object
-    void draw_low_poly(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    void draw_low_poly(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true);
 
     // Set low poly color
     virtual void setLowPolyColor(cgp::vec3 color);
@@ -34,7 +34,7 @@ public:
 
     // Getters
     cgp::vec3 getPosition() const override;
-    bool shouldDrawLowPoly(camera_controller_orbit_euler const &camera) const;
+    bool shouldDrawLowPoly(const cgp::vec3 &position) const;
 
 private:
     // Private : the low poly members do not need to be accessed from children classes

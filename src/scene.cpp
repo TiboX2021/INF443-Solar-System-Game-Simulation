@@ -64,7 +64,11 @@ void scene_structure::display_frame()
     environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
 
     simulation_handler.simulateStep(dt);
-    simulation_handler.drawObjects(environment, camera_control, false);
+
+    cgp::vec3 position = camera_control.camera_model.position();
+    cgp::rotation_transform rotation = camera_control.camera_model.orientation();
+
+    simulation_handler.drawObjects(environment, position, rotation, false);
 
     // asteroid_field_handler.simulateStep();
     // asteroid_field_handler.drawObjects(environment, camera_control, false);
@@ -123,7 +127,10 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    simulation_handler.drawBillboards(environment, camera_control, false);
+    cgp::vec3 position = camera_control.camera_model.position();
+    cgp::rotation_transform rotation = camera_control.camera_model.orientation();
+
+    simulation_handler.drawBillboards(environment, position, rotation, false);
     // asteroid_field_handler.drawBillboards(environment, camera_control, false);
 
     simulation_handler.drawBillboards(environment, camera_control, false);

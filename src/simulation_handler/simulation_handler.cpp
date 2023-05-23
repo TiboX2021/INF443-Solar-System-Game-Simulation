@@ -38,24 +38,24 @@ void SimulationHandler::addObject(TExtendsBaseDrawable drawable)
     }
 }
 
-void SimulationHandler::drawObjects(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void SimulationHandler::drawObjects(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe)
 {
     for (auto &drawable : drawable_objects)
     {
-        drawable->draw(environment, camera, show_wireframe);
+        drawable->draw(environment, position, rotation, show_wireframe);
     }
 
     for (auto &belt : asteroid_belts)
     {
-        belt.draw(environment, camera, show_wireframe);
+        belt.draw(environment, position, rotation, show_wireframe);
     }
 }
 
-void SimulationHandler::drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void SimulationHandler::drawBillboards(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe)
 {
     for (auto &drawable : billboard_drawable_objects)
     {
-        drawable->drawBillboards(environment, camera, show_wireframe);
+        drawable->drawBillboards(environment, position, rotation, show_wireframe);
     }
 }
 

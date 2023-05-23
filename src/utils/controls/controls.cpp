@@ -15,16 +15,15 @@ void Controls::updateCamera(cgp::camera_controller_orbit_euler &camera)
     // Exemple : déplacer la caméra vers le côté
     if (isHeldOrPressed(last_key_event.action) && last_key_event.key == KEY_Z)
     {
-        // Get camera facing direction
-        auto orientation = camera.camera_model.orientation();
+        // TODO faire une rotation vers le haut
 
-        // Move vector
-        cgp::vec3 move_vector = orientation * cgp::vec3(0, 0, -1);
+        // TODO : il faudra garder ça en tête dans le player object
+        // C'est de la vitesse de rotation, ok
+        camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0.01, 0);
+    }
 
-        // Comment mettre à jour la caméra ?
-        camera.camera_model.manipulator_translate_in_plane({0.1, 0}); // Ca fait quoi?
-        // Ca translate dans le plan, c'est tout.
-
-        // std::cout << "Moving the camera !" << std::endl;
+    if (isHeldOrPressed(last_key_event.action) && last_key_event.key == KEY_SPACE)
+    {
+        camera.camera_model.manipulator_translate_front(-0.1);
     }
 }

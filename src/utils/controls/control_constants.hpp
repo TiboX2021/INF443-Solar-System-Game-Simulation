@@ -10,3 +10,4 @@ constexpr int KEY_Z = 87;
 constexpr int KEY_Q = 65;
 constexpr int kEY_S = 83;
 constexpr int KEY_W = 90;
+constexpr int KEY_SPACE = 32;

@@ -10,9 +10,7 @@
 #include "navion/reacteur.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
-using cgp::mesh;
 using cgp::mesh_drawable;
-using cgp::numarray;
 using cgp::timer_basic;
 using cgp::vec3;
 
@@ -33,6 +31,7 @@ struct scene_structure : cgp::scene_inputs_generic
     // Elements and shapes of the scene
     // ****************************** //
     camera_controller_orbit_euler camera_control;
+    camera_controller_first_person_euler camera_control_first_person; // TODO : use this instead
     camera_projection_perspective camera_projection;
     window_structure window;
 

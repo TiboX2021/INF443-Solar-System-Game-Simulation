@@ -47,6 +47,9 @@ void scene_structure::display_frame()
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
     dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
 
+    // Send timer time as uniform to the shader
+    environment.uniform_generic.uniform_float["time"] = timer.t;
+
     // Set the light to the current position of the camera
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 

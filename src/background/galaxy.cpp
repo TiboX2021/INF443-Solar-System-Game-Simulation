@@ -43,6 +43,20 @@ void Galaxy::draw(environment_structure const &environment, camera_controller_or
     glClear(GL_DEPTH_BUFFER_BIT); // Reset depth buffer in order to draw every next object in front of the galaxy
 }
 
+void Galaxy::draw(environment_structure const &environment, camera_controller_first_person_euler const &camera, bool show_wireframe)
+{
+    // Remarque : pour la profondeur, jouer sur scene.camera_projection.depth_max = 10_000.0f;
+
+    // Set position to camera position
+    setPosition(camera.camera_model.position());
+
+    cgp::draw(galaxy_mesh_drawable, environment);
+
+    if (show_wireframe)
+        cgp::draw_wireframe(galaxy_mesh_drawable, environment);
+    glClear(GL_DEPTH_BUFFER_BIT); // Reset depth buffer in order to draw every next object in front of the galaxy
+}
+
 void Galaxy::setPosition(cgp::vec3 position)
 {
     galaxy_mesh_drawable.model.translation = position;

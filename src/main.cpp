@@ -68,7 +68,6 @@ int main(int, char *argv[])
 #endif
 
     std::cout << "\nAnimation loop stopped" << std::endl;
-    scene.keyboard_input.stop(); // Gracefully stop the keyboard input thread
 
     // Cleanup
     cgp::imgui_cleanup();

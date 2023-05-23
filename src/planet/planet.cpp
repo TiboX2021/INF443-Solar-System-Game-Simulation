@@ -1,6 +1,7 @@
 #include "planet.hpp"
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/shape/noise/noise.hpp"
+#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
 #include <cassert>
@@ -49,6 +50,14 @@ void Planet::initialize()
  * Draw the planet in the given environment
  */
 void Planet::draw_real(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+{
+    cgp::draw(planet_mesh_drawable, environment);
+
+    if (show_wireframe)
+        cgp::draw_wireframe(planet_mesh_drawable, environment);
+}
+
+void Planet::draw_real(const environment_structure &environment, camera_controller_first_person_euler const &camera, bool show_wireframe)
 {
     cgp::draw(planet_mesh_drawable, environment);
 

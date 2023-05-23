@@ -1,5 +1,6 @@
 #include "low_poly.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
 #include "utils/display/drawable.hpp"
 
 LowPolyDrawable::LowPolyDrawable(double low_poly_radius)
@@ -38,7 +39,32 @@ void LowPolyDrawable::draw(environment_structure const &environment, camera_cont
     }
 }
 
+// Main draw function
+void LowPolyDrawable::draw(environment_structure const &environment, camera_controller_first_person_euler const &camera, bool show_wireframe)
+{
+    // Check distance in comparison to radius
+    if (shouldDrawLowPoly(camera))
+    {
+        // Draw low poly
+        draw_low_poly(environment, camera, show_wireframe);
+    }
+    else
+    {
+        // Draw real object
+        draw_real(environment, camera, show_wireframe);
+    }
+}
+
 void LowPolyDrawable::draw_low_poly(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+{
+    // Set disk orientation facing camera
+    low_poly_drawable.model.rotation = camera.camera_model.orientation();
+
+    // Draw low poly
+    cgp::draw(low_poly_drawable, environment);
+}
+
+void LowPolyDrawable::draw_low_poly(environment_structure const &environment, camera_controller_first_person_euler const &camera, bool show_wireframe)
 {
     // Set disk orientation facing camera
     low_poly_drawable.model.rotation = camera.camera_model.orientation();
@@ -57,6 +83,13 @@ cgp::vec3 LowPolyDrawable::getPosition() const
     return low_poly_drawable.model.translation;
 }
 bool LowPolyDrawable::shouldDrawLowPoly(camera_controller_orbit_euler const &camera) const
+{
+    double distance = cgp::norm(camera.camera_model.position() - getPosition());
+
+    return distance > LOW_POLY_DISTANCE_RATIO * low_poly_radius;
+}
+
+bool LowPolyDrawable::shouldDrawLowPoly(camera_controller_first_person_euler const &camera) const
 {
     double distance = cgp::norm(camera.camera_model.position() - getPosition());
 

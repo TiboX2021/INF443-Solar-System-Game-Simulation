@@ -2,6 +2,7 @@
 
 #include "background/galaxy.hpp"
 #include "cgp/cgp.hpp"
+#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
 #include "planet/planet.hpp"
@@ -31,6 +32,7 @@ struct scene_structure : cgp::scene_inputs_generic
     // Elements and shapes of the scene
     // ****************************** //
     camera_controller_orbit_euler camera_control;
+    camera_controller_first_person_euler fps_camera_control;
     camera_projection_perspective camera_projection;
     window_structure window;
 
@@ -59,5 +61,4 @@ struct scene_structure : cgp::scene_inputs_generic
     Planet planet;
     Galaxy galaxy;
     RingPlanet ring_planet;
-    KeyboardInput keyboard_input;
 };

@@ -1,5 +1,6 @@
 #include "ring_planet.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "cgp/graphics/opengl/shaders/shaders.hpp"
 #include "utils/display/low_poly.hpp"
@@ -33,6 +34,14 @@ void RingPlanet::initialize()
 }
 
 void RingPlanet::draw_ring_billboard(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+{
+    if (!shouldDrawLowPoly(camera))
+    {
+        cgp::draw(ring_mesh_drawable, environment);
+    }
+}
+
+void RingPlanet::draw_ring_billboard(const environment_structure &environment, camera_controller_first_person_euler const &camera, bool show_wireframe)
 {
     if (!shouldDrawLowPoly(camera))
     {

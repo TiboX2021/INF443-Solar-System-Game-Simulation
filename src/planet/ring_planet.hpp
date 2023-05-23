@@ -12,6 +12,7 @@ public:
     // Draw functions
     virtual void initialize() override;
     void draw_ring_billboard(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    void draw_ring_billboard(const environment_structure &environment, camera_controller_first_person_euler const &camera, bool show_wireframe = true);
 
     virtual void setPosition(vec3 position) override;
 

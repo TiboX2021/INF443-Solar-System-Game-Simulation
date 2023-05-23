@@ -38,7 +38,7 @@ void OptimizedSimulationHandler::addObject(TExtendsBaseDrawable drawable, bool a
     }
 }
 
-void OptimizedSimulationHandler::simulateStep()
+void OptimizedSimulationHandler::simulateStep(float time_step)
 {
     // Clear forces
     for (auto &object : physical_objects)
@@ -62,14 +62,14 @@ void OptimizedSimulationHandler::simulateStep()
     // Update objects
     for (auto &object : physical_objects)
     {
-        object->update(time_step);
+        object->update(time_step * time_step_multiplier);
         object->updateModels();
     }
 
     // Simulate steps for asteroid belts
     for (auto &belt : asteroid_belts)
     {
-        belt.simulateStep();
+        belt.simulateStep(time_step * time_step_multiplier);
     }
 }
 

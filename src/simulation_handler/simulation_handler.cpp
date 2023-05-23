@@ -60,7 +60,7 @@ void SimulationHandler::drawBillboards(environment_structure const &environment,
     }
 }
 
-void SimulationHandler::simulateStep()
+void SimulationHandler::simulateStep(float time_step)
 {
     // Clear forces
     for (auto &object : physical_objects)
@@ -82,14 +82,14 @@ void SimulationHandler::simulateStep()
     // Update objects
     for (auto &object : physical_objects)
     {
-        object->update(time_step);
+        object->update(time_step * time_step_multiplier);
         object->updateModels();
     }
 
     // Simulate steps for asteroid belts
     for (auto &belt : asteroid_belts)
     {
-        belt.simulateStep(time_step);
+        belt.simulateStep(time_step * time_step_multiplier);
     }
 }
 
@@ -126,7 +126,13 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     solar_asteroid_belt.addAttractor(sun_ptr);
     handler.addAsteroidBelt(solar_asteroid_belt);
 
+    // BUG : earth rotation is not normal => Initial speed is too high
+    // Or initial earth position is wrong ?
+    // BUG  initial position is almost at the center ???
     // Add Earth
+    // Regarder dans git ce qui a changé
+    // On y va à l'ancienne, voir ce qui est nul. C'est pas mon premier bug
+    // BUG : si je remplace par la position de mars, ça crash carrément : il doit Y avoir une différence faite avec la distance de mars... A régler
     Planet earth(EARTH_MASS, EARTH_RADIUS, {EARTH_SUN_DISTANCE, 0, 0}, "assets/planets/earth.jpg", NO_PERLIN_NOISE);
     earth.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
     earth.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, EARTH_SUN_DISTANCE), 0});

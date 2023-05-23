@@ -1,7 +1,6 @@
 #include "scene.hpp"
 
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
-#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/shaders/shader_loader.hpp"
@@ -44,12 +43,14 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
-    timer.update(); // Update timer
+    float dt = timer.update(); // Update timer
+    // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
+    dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
 
     // Set the light to the current position of the camera
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
-    simulation_handler.simulateStep();
+    simulation_handler.simulateStep(dt);
     simulation_handler.drawObjects(environment, camera_control, false);
 
     // asteroid_field_handler.simulateStep();

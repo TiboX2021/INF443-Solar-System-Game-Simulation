@@ -1,6 +1,8 @@
 #pragma once
 
 // TODO : billboards that always face the camera (gas clouds, halo with a picture ?)
+// TODO : get a texture
+// TODO : change the background color when going through them ?
 
 #include "cgp/geometry/shape/mesh/structure/mesh.hpp"
 #include "utils/display/billboard_drawable.hpp"
@@ -20,10 +22,15 @@ public:
 
     virtual void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
 
+    // Setters
+    void setFaceCamera(bool faceCamera) { this->faceCamera = faceCamera; };
+
 private:
     std::string texture_path;
 
     float radius; // Billboard radius
+
+    bool faceCamera = false; // Billboard always faces the camera
 
     cgp::vec3 position; // Is it the physics position ?
 

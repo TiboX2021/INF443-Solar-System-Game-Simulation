@@ -51,7 +51,7 @@ void Planet::initialize()
 /**
  * Draw the planet in the given environment
  */
-void Planet::draw_real(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void Planet::draw_real(const environment_structure &environment, camera_controller_orbit_euler const &, bool show_wireframe)
 {
     cgp::draw(planet_mesh_drawable, environment);
 

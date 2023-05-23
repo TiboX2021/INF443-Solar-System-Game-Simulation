@@ -140,7 +140,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     }
 }
 
-void AsteroidBelt::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void AsteroidBelt::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool)
 {
     // Reset structs data
     for (auto &mesh_data : asteroid_instances_data)

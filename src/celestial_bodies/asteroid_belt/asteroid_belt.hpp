@@ -96,7 +96,7 @@ public:
     void simulateStep(float step = 24.0f * 3600 / 60);
 
     // Setters & getters useless in this case
-    virtual void setPosition(cgp::vec3 position) override{};
+    virtual void setPosition(cgp::vec3) override{};
     virtual cgp::vec3 getPosition() const override { return cgp::vec3{}; };
 
     // Setters

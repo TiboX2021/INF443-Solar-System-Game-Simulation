@@ -21,10 +21,10 @@ public:
     void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
 
     // Simulation Functions
-    virtual void simulateStep();
+    virtual void simulateStep(float time_step);
 
     // Default : 1 day / second, with 60 fps. For slider use
-    float time_step = 24.0f * 3600 / 60; // Accélération x100
+    float time_step_multiplier = 24.0f * 3600; // Accélération x100
     // Public static generators
     static void generateSolarSystem(SimulationHandler &handler);
 

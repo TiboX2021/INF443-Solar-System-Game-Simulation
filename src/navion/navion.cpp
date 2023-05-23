@@ -155,11 +155,15 @@ void Navion::draw(environment_structure const& environment) {
 	}
 
 
+	
 	// This function must be called before the drawing in order to propagate the deformations through the hierarchy
 	hierarchie.update_local_to_global_coordinates();
 
 	//Draw the hierarchy as a single mesh
 	cgp::draw(hierarchie, environment);
+
+	feu_sa_mere.display_reacteur(position_reacteur, direction_reacteur, environment);
+
 }
 
 
@@ -768,6 +772,8 @@ void Navion::create_star_destroyer(float const& scale) {
 	mesh_drawable batiment2;
 	mesh_drawable tour;
 	mesh_drawable command;
+	mesh_drawable reacteur;
+
 
 	has_wings = false;
 	 
@@ -776,6 +782,10 @@ void Navion::create_star_destroyer(float const& scale) {
 	batiment2.initialize_data_on_gpu(batiment_destroyer(0.7*scale));
 	tour.initialize_data_on_gpu(tour_destroyer(scale));
 	command.initialize_data_on_gpu(poste_de_commande_destroyer(scale));
+	reacteur.initialize_data_on_gpu(mesh_primitive_cylinder(0.4, {0,0,0}, {-0.65,0,0}));
+
+	
+	
 
 	corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
 		GL_REPEAT,
@@ -793,14 +803,44 @@ void Navion::create_star_destroyer(float const& scale) {
 		GL_REPEAT,
 		GL_REPEAT);
 
+	command.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 
+	reacteur.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
+		GL_REPEAT,
+		GL_REPEAT);
 
 	hierarchie.add(corps, "Corps");
 	hierarchie.add(batiment1, "Bat1", "Corps", scale * vec3(-0.75, 0,0));
 	hierarchie.add(batiment2, "Bat2", "Bat1", scale* vec3( - 0.3, 0, 0.5 ));
 	hierarchie.add(tour, "Tour", "Corps", scale * vec3(-2, 0, 1));
 	hierarchie.add(command, "Command", "Tour", scale * vec3(0,0, 1.05));
-	
+	hierarchie.add(reacteur, "Reacteur1", "Corps", scale * vec3(-3, 0, 0));
+	hierarchie.add(reacteur, "Reacteur2", "Corps", scale * vec3(-3, -2, 0));
+	hierarchie.add(reacteur, "Reacteur3", "Corps", scale * vec3(-3, 2, 0));
+
+
+
+	// Pour les flammes des reacteurs, on utilise la classe reacteur : il suffit d'ajouter les positions et directions à la liste
+	feu_sa_mere.initialize();
+
+	rotation_transform angle1 = rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
+	position_reacteur.push_back(scale * vec3(-3, 0, 0));
+	direction_reacteur.push_back(angle1);
+	position_reacteur.push_back(scale * vec3(-3, -2, 0));
+	direction_reacteur.push_back(angle1);
+	position_reacteur.push_back(scale * vec3(-3, 2, 0));
+	direction_reacteur.push_back(angle1);
+
+	rotation_transform angle2 = rotation_transform::from_axis_angle({ 1,0,0 }, -Pi / 2) * rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2) ;
+	position_reacteur.push_back(scale * vec3(-3, 0, 0));
+	direction_reacteur.push_back(angle2);
+	position_reacteur.push_back(scale * vec3(-3, -2, 0));
+	direction_reacteur.push_back(angle2);
+	position_reacteur.push_back(scale * vec3(-3, 2, 0));
+	direction_reacteur.push_back(angle2);
+
 }
 
 
@@ -879,7 +919,7 @@ mesh Navion::corps_destroyer(float const& scale) {
 mesh Navion::batiment_destroyer(float const& scale) {
 	mesh batiment;
 
-	// TODO : essayer de corriger la texture qui part dans le mauvais sens 
+	
 	//
 	//       _____---0---_____
 	//   2---                 ---8
@@ -894,9 +934,9 @@ mesh Navion::batiment_destroyer(float const& scale) {
 	batiment.uv.push_back({ 0.5,0 });
 
 	batiment.position.push_back(scale * vec3(0, -1, 0.9)); 
-	batiment.uv.push_back({ -0.25,-0.5 });
+	batiment.uv.push_back({ 0,-0.5 });
 	batiment.position.push_back(scale * vec3(-2, -1, 0.9));
-	batiment.uv.push_back({ 0.75,-0.5 });
+	batiment.uv.push_back({ 0.5,-0.5 });
 
 	batiment.position.push_back(scale * vec3(0, -1, 0)); 
 	batiment.uv.push_back({ -1, -1 });
@@ -909,9 +949,9 @@ mesh Navion::batiment_destroyer(float const& scale) {
 	batiment.uv.push_back({ 1.5, 1 });
 
 	batiment.position.push_back(scale * vec3(0, 1, 0.9));
-	batiment.uv.push_back({ -0.25, 0.5 });
+	batiment.uv.push_back({ 0, 0.5 });
 	batiment.position.push_back(scale * vec3(-2, 1, 0.9));
-	batiment.uv.push_back({ 0.75, 0.5 });
+	batiment.uv.push_back({ 0.5, 0.5 });
 
 
 	// puis la connectivité :
@@ -989,6 +1029,7 @@ mesh Navion::tour_destroyer(float const& scale) {
 
 mesh Navion::poste_de_commande_destroyer(float const& scale) {
 	mesh commande;
+
 	// les points et la connectivité
 	//           ____----0----____
 	//    10-----                  -----2
@@ -996,41 +1037,92 @@ mesh Navion::poste_de_commande_destroyer(float const& scale) {
 	//    |                             |
 	//    8------____         ____------4
 	//               ----6----
+	// et idem de l'autre côté
+	// 
+	// Problème : la texture s'applique de manière bizarre
+	// Solution : doubler les points pour avoir une texture cohérente (Problèmes de shaders après ?)
+
+
 	float heigh = scale * 0.6;
 	float length = scale * 2.0;
 	float depth = scale * 0.5;
 	float side_heigh = scale * 0.4;
 
+
+
+
+	//*******************************************************************//
+	// On définit ensuite les points qui serviront à former les faces avant et arrière : 
+	//*******************************************************************//
+
 	commande.position.push_back({ depth / 2, 0,heigh / 2 });
+	commande.uv.push_back({ 0,0 });
 	commande.position.push_back({ -depth / 2, 0, heigh / 2 });
-	commande.position.push_back({ depth / 2, length/2, side_heigh / 2 });
+	commande.uv.push_back({ 0,0.5 });
+
+	commande.position.push_back({ depth / 2, length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 1,0 });
 	commande.position.push_back({ -depth / 2, length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 1,0.5 });
+
 	commande.position.push_back({ depth / 2, length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 1.5,0 });
 	commande.position.push_back({ -depth / 2, length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 1.5,0.5 });
+
 	commande.position.push_back({ depth / 2, 0, -heigh / 2 });
+	commande.uv.push_back({ 2.5,0 });
 	commande.position.push_back({ -depth / 2, 0, -heigh / 2 });
+	commande.uv.push_back({ 2.5,0.5 });
+
 	commande.position.push_back({ depth / 2, -length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 3,0 });
 	commande.position.push_back({ -depth / 2, -length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 3,0.5 });
+
 	commande.position.push_back({ depth / 2, -length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 4,0 });
 	commande.position.push_back({ -depth / 2, -length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 4,0.5 });
 
 
-	// On définit ensuite la connectivité
-
-	//face avant :
-	commande.connectivity.push_back(uint3(10, 2, 0));
-	commande.connectivity.push_back(uint3(8, 6, 4));
-	commande.connectivity.push_back(uint3(10, 4, 2));
-	commande.connectivity.push_back(uint3(8, 4, 10));
 
 
-	//face arriere :
-	commande.connectivity.push_back(uint3(11, 3, 1));
-	commande.connectivity.push_back(uint3(9, 7, 5));
-	commande.connectivity.push_back(uint3(11, 5, 3));
-	commande.connectivity.push_back(uint3(9, 5, 11));
+	//************************************************//
+	//    d'abord on définit les point qui serviront pour les côtés, avec les coordonnées de texture qui conviennent //
+	//************************************************//
 
+	commande.position.push_back({ depth / 2, 0,heigh / 2 });
+	commande.uv.push_back({0.6 , 0});
+	commande.position.push_back({ -depth / 2, 0, heigh / 2 });
+	commande.uv.push_back({ 0.6, 0 });
 
+	commande.position.push_back({ depth / 2, length/2, side_heigh / 2 });
+	commande.uv.push_back({ 0.5,1 });
+	commande.position.push_back({ -depth / 2, length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 0.5,1 });
+
+	commande.position.push_back({ depth / 2, length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 0.1 , 1 });
+	commande.position.push_back({ -depth / 2, length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 0.1, 1 });
+
+	commande.position.push_back({ depth / 2, 0, -heigh / 2 });
+	commande.uv.push_back({ 0,0 });
+	commande.position.push_back({ -depth / 2, 0, -heigh / 2 });
+	commande.uv.push_back({ 0, 0 });
+
+	commande.position.push_back({ depth / 2, -length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 0.1, -1 });
+	commande.position.push_back({ -depth / 2, -length / 2, -side_heigh / 2 });
+	commande.uv.push_back({ 0.1, -1 });
+
+	commande.position.push_back({ depth / 2, -length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 0.5 , -1 });
+	commande.position.push_back({ -depth / 2, -length / 2, side_heigh / 2 });
+	commande.uv.push_back({ 0.5 , -1 });
+
+	//puis la connectivité des côtés :
 	// cotés :
 	commande.connectivity.push_back(uint3(10, 11, 8));
 	commande.connectivity.push_back(uint3(8, 11, 9));
@@ -1052,6 +1144,29 @@ mesh Navion::poste_de_commande_destroyer(float const& scale) {
 	commande.connectivity.push_back(uint3(6, 4, 5));
 	commande.connectivity.push_back(uint3(5, 4, 7));
 
+
+
+
+
+
+	
+	// On définit ensuite la connectivité
+
+	//face avant :
+	commande.connectivity.push_back(uint3(22, 14, 12));
+	commande.connectivity.push_back(uint3(20, 18, 16));
+	commande.connectivity.push_back(uint3(22, 16, 14));
+	commande.connectivity.push_back(uint3(20, 16, 22));
+
+
+	//face arriere :
+	commande.connectivity.push_back(uint3(23, 15, 13));
+	commande.connectivity.push_back(uint3(21, 19, 17));
+	commande.connectivity.push_back(uint3(23, 17, 15));
+	commande.connectivity.push_back(uint3(21, 17, 23));
+
+
+	
 
 
 

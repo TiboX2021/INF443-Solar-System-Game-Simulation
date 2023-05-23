@@ -6,6 +6,7 @@
 #include "simulation_handler/simulation_handler.hpp"
 
 #include "navion/navion.hpp"
+#include "navion/reacteur.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
 using cgp::mesh;

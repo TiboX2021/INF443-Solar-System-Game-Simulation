@@ -1,5 +1,6 @@
 #pragma once
 
+#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
 #include "cgp/graphics/camera/camera_controller/camera_controller_orbit_euler/camera_controller_orbit_euler.hpp"
 #include "cgp/graphics/input_devices/input_devices.hpp"
 
@@ -45,7 +46,7 @@ public:
         last_key_event = current_event;
     }
 
-    void updateCamera(cgp::camera_controller_orbit_euler &camera);
+    void updateCamera(cgp::camera_controller_first_person_euler &camera);
 
 private:
     KeyEvent last_key_event = {0, -1};

@@ -1,4 +1,5 @@
 #include "controls.hpp"
+#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
 #include "utils/controls/control_constants.hpp"
 #include <iostream>
 
@@ -7,7 +8,7 @@ bool isHeldOrPressed(int key)
     return key == KEY_PRESSED || key == KEY_REPEAT;
 }
 
-void Controls::updateCamera(cgp::camera_controller_orbit_euler &camera)
+void Controls::updateCamera(cgp::camera_controller_first_person_euler &camera)
 {
 
     //    std::cout << "Last action : " << last_key_event.action << std::endl;

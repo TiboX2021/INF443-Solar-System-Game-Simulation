@@ -15,7 +15,9 @@ using namespace cgp;
 
 void scene_structure::initialize()
 {
-    camera_control.initialize(inputs, window); // Give access to the inputs and window global state to the camera controler
+    camera_control.initialize(inputs, window);              // Give access to the inputs and window global state to the camera controler
+    camera_control_first_person.initialize(inputs, window); // TODO : use this instead
+    // TODO : set initial position
     camera_control.set_rotation_axis_z();
     camera_control.look_at({15.0f, 6.0f, 6.0f}, {0, 0, 0});
     global_frame.initialize_data_on_gpu(mesh_primitive_frame());
@@ -46,7 +48,7 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
-    keyboard_control_handler.updateCamera(camera_control); // TODO : implement this
+    keyboard_control_handler.updateCamera(camera_control_first_person); // TODO : implement this
 
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
@@ -65,8 +67,8 @@ void scene_structure::display_frame()
 
     simulation_handler.simulateStep(dt);
 
-    cgp::vec3 position = camera_control.camera_model.position();
-    cgp::rotation_transform rotation = camera_control.camera_model.orientation();
+    cgp::vec3 position = camera_control_first_person.camera_model.position();
+    cgp::rotation_transform rotation = camera_control_first_person.camera_model.orientation();
 
     simulation_handler.drawObjects(environment, position, rotation, false);
 
@@ -96,22 +98,22 @@ void scene_structure::display_gui()
 void scene_structure::mouse_move_event()
 {
     if (!inputs.keyboard.shift)
-        camera_control.action_mouse_move(environment.camera_view);
+        camera_control_first_person.action_mouse_move(environment.camera_view);
 }
 void scene_structure::mouse_click_event()
 {
-    camera_control.action_mouse_click(environment.camera_view);
+    camera_control_first_person.action_mouse_click(environment.camera_view);
 }
 void scene_structure::keyboard_event()
 {
-    camera_control.action_keyboard(environment.camera_view);
+    camera_control_first_person.action_keyboard(environment.camera_view);
     // By default, this function does nothing
 
-    keyboard_control_handler.handleKeyEvent(camera_control.inputs);
+    keyboard_control_handler.handleKeyEvent(camera_control_first_person.inputs);
 }
 void scene_structure::idle_frame()
 {
-    camera_control.idle_frame(environment.camera_view);
+    camera_control_first_person.idle_frame(environment.camera_view);
 }
 
 void scene_structure::display_semiTransparent()
@@ -127,8 +129,8 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    cgp::vec3 position = camera_control.camera_model.position();
-    cgp::rotation_transform rotation = camera_control.camera_model.orientation();
+    cgp::vec3 position = camera_control_first_person.camera_model.position();
+    cgp::rotation_transform rotation = camera_control_first_person.camera_model.orientation();
 
     simulation_handler.drawBillboards(environment, position, rotation, false);
     // asteroid_field_handler.drawBillboards(environment, camera_control, false);

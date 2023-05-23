@@ -4,6 +4,7 @@
 #include "environment.hpp"
 #include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
+#include "utils/controls/controls.hpp"
 
 #include "navion/navion.hpp"
 #include "navion/reacteur.hpp"
@@ -75,4 +76,7 @@ struct scene_structure : cgp::scene_inputs_generic
     Galaxy galaxy;
     RingPlanet ring_planet;
 >>>>>>> 6009f2c (creation de l'aile du falcon (problèmes de sahder à régler))
+    SimulationHandler simulation_handler;
+    OptimizedSimulationHandler asteroid_field_handler;
+    Controls keyboard_control_handler;
 };

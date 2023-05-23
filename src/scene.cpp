@@ -6,6 +6,7 @@
 #include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
+#include <GLFW/glfw3.h>
 #include <bits/types/timer_t.h>
 #include <cmath>
 #include <iostream>
@@ -45,6 +46,8 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
+    keyboard_control_handler.updateCamera(camera_control); // TODO : implement this
+
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
     dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
@@ -98,8 +101,9 @@ void scene_structure::mouse_click_event()
 void scene_structure::keyboard_event()
 {
     camera_control.action_keyboard(environment.camera_view);
+    // By default, this function does nothing
 
-    // TODO : test manipulation du clavier
+    keyboard_control_handler.handleKeyEvent(camera_control.inputs);
 }
 void scene_structure::idle_frame()
 {

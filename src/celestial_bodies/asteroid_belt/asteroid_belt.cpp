@@ -81,14 +81,30 @@ void AsteroidBelt::initialize()
         distance_mesh_handlers.push_back({3 * i, 3 * i + 1, 3 * i + 2});
     }
 
-    const int N_ASTEROIDS = preset == BeltPresets::SATURN ? 2000 : 10000;
+    int n_asteroids;
 
-    generateRandomAsteroids(N_ASTEROIDS);
+    switch (preset)
+    {
+    case BeltPresets::SATURN:
+        n_asteroids = 2000;
+        break;
+    case BeltPresets::SUN:
+        n_asteroids = 10000;
+        break;
+    case BeltPresets::KUIPER:
+        n_asteroids = 10000;
+        break;
+    default:
+        n_asteroids = 1000;
+        break;
+    }
+
+    generateRandomAsteroids(n_asteroids);
 
     // Preallocate memory for the instancing
     for (auto &mesh_data : asteroid_instances_data)
     {
-        mesh_data.allocate(N_ASTEROIDS);
+        mesh_data.allocate(n_asteroids);
     }
     last_attractor_position = attractors[0]->getPhysicsPosition();
 }
@@ -100,6 +116,8 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     double orbit_factor;
     double radius_min;
     double radius_max;
+    float scale_min;
+    float scale_max;
 
     // Load presets
     if (preset == BeltPresets::SATURN)
@@ -109,14 +127,29 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         orbit_factor = ORBIT_FACTOR;
         radius_min = 0.8;
         radius_max = 1.2;
+        scale_min = 0.2;
+        scale_max = 1.8;
     }
-    else
+    else if (preset == BeltPresets::SUN)
     {
         rotation_matrix = cgp::mat3::build_identity();
         distance = 3.0817e+11; // Main asteroid belt distance from the sun
         orbit_factor = 1;
         radius_min = 1;
         radius_max = 2;
+        scale_min = 0.2;
+        scale_max = 1.8;
+    }
+    else
+    {
+        // Kuiper belt
+        rotation_matrix = cgp::mat3::build_identity();
+        distance = 3.5e12;
+        orbit_factor = 1;
+        radius_min = 0.95;
+        radius_max = 1.05;
+        scale_min = 1;
+        scale_max = 5;
     }
 
     // Generate ateroids with random positions, and bind them to the meshes
@@ -134,7 +167,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
 
-        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(0.2, 1.8)};
+        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(scale_min, scale_max)};
 
         asteroids.push_back(asteroid_instance);
     }

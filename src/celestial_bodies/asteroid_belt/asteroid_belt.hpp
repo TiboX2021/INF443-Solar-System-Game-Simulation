@@ -31,6 +31,7 @@ enum BeltPresets
 {
     SATURN,
     SUN,
+    KUIPER,
 };
 
 /**

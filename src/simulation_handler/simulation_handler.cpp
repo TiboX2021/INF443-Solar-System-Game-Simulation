@@ -126,13 +126,11 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     solar_asteroid_belt.addAttractor(sun_ptr);
     handler.addAsteroidBelt(solar_asteroid_belt);
 
-    // BUG : earth rotation is not normal => Initial speed is too high
-    // Or initial earth position is wrong ?
-    // BUG  initial position is almost at the center ???
+    AsteroidBelt kuiper_belt(BeltPresets::KUIPER);
+    kuiper_belt.addAttractor(sun_ptr);
+    handler.addAsteroidBelt(kuiper_belt);
+
     // Add Earth
-    // Regarder dans git ce qui a changé
-    // On y va à l'ancienne, voir ce qui est nul. C'est pas mon premier bug
-    // BUG : si je remplace par la position de mars, ça crash carrément : il doit Y avoir une différence faite avec la distance de mars... A régler
     Planet earth(EARTH_MASS, EARTH_RADIUS, {EARTH_SUN_DISTANCE, 0, 0}, "assets/planets/earth.jpg", NO_PERLIN_NOISE);
     earth.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
     earth.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, EARTH_SUN_DISTANCE), 0});

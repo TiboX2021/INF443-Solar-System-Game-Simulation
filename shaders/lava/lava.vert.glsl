@@ -22,78 +22,56 @@ uniform mat4 view;       // View matrix (rigid transform) of the camera
 uniform mat4 projection; // Projection (perspective or orthogonal) matrix of the camera
 uniform float time;      // Time in seconds since the start of the program
 
-// Function to generate a random number between -1.0 and 1.0
-float random(vec3 st)
+vec3 computePerpendicularVector(vec3 v)
 {
-    return fract(sin(dot(st, vec3(12.9898, 78.233, 45.543))) * 43758.5453);
-}
 
-float mod289(float x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 perm(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
+    float threshold = 0.577; // Arbitrary
+    vec3 result;
 
-float noise(vec3 p)
-{
-    vec3 a = floor(p);
-    vec3 d = p - a;
-    d = d * d * (3.0 - 2.0 * d);
+    if (abs(v.x) < threshold)
+    {
+        result = vec3(1, 0, 0);
+    }
+    else if (abs(v.y) < threshold)
+    {
+        result = vec3(0, 1, 0);
+    }
+    else if (abs(v.z) < threshold)
+    {
+        result = vec3(0, 0, 1);
+    }
+    else
+    {
+        result = vec3(1, 0, 0);
+    }
 
-    vec4 b = a.xxyy + vec4(0.0, 1.0, 0.0, 1.0);
-    vec4 k1 = perm(b.xyxy);
-    vec4 k2 = perm(k1.xyxy + b.zzww);
-
-    vec4 c = k2 + a.zzzz;
-    vec4 k3 = perm(c);
-    vec4 k4 = perm(c + 1.0);
-
-    vec4 o1 = fract(k3 * (1.0 / 41.0));
-    vec4 o2 = fract(k4 * (1.0 / 41.0));
-
-    vec4 o3 = o2 * d.z + o1 * (1.0 - d.z);
-    vec2 o4 = o3.yw * d.x + o3.xz * (1.0 - d.x);
-
-    return o4.y * d.y + o4.x * (1.0 - d.y);
+    return normalize(cross(v, result));
 }
 
 void main()
 {
-    // Idée : combiner 2 mouvements oscillatoires, pour couvrir la régularité
-    // TODO : move the vertices perpendicular to the normal direction in order to create a fake animation
-    // TODO : pass the width of the star as a vbo argument in order to have correct amplitude ?
-    // TODO : j'aimerais faire une sorte de bruit de perlin sur la luminosité
-
-    // Generate a random offset for each vertex based on its position
-    vec3 randomOffset = vec3(random(vertex_position + time));
-
-    float speed = 1;
-    float amplitude = 0.05;
-
-    vec3 animationOffset = vec3(
-        sin(time * speed + randomOffset.x) * amplitude,
-        cos(time * speed + randomOffset.y) * amplitude,
-        sin(time * speed + randomOffset.z) * amplitude);
-
     // The position of the vertex in the world space
     vec4 position = model * vec4(vertex_position, 1.0);
 
     float space_multiplier = 4;
+    float amplitude = 0.05;
 
-    // TODO : find the best vector to create the movement that I want for this
-    // TODO : create a similar thing for the galaxy fragment shader ?
-    vec3 circularOffset = vec3(sin(time + position.y * space_multiplier), cos(time + position.x * space_multiplier), sin(time + position.z * space_multiplier)) * amplitude;
+    // Create orthonormal base for the normal vector
+    vec3 u = computePerpendicularVector(vertex_normal);
+    vec3 v = normalize(cross(vertex_normal, u));
 
-    // Faire en sorte que chaque point ait une variation circulaire autour de son centre
-    // XXX : c'est ici qu'on ajoute l'offset
-    // position.xyz += normalize(cross(circularOffset, vertex_normal)) * amplitude;
+    // Create a sinusoidal rotation, etc
+    vec3 offset = u * sin(time + position.x * space_multiplier) + v * cos(time + position.y * space_multiplier);
+
+    // Add tangent offset to the vertex position
+    position.xyz += offset * amplitude;
 
     // The projected position of the vertex in the normalized device coordinates:
     vec4 position_projected = projection * view * position;
 
-    // TODO : calcul d'unmultiplicateur de luminosité via un bruit de perlin
-
     // Fill the parameters sent to the fragment shader
     fragment.position = position.xyz;
-    fragment.color = vertex_color; // * noise(position.xyz);
+    fragment.color = vertex_color;
     fragment.uv = vertex_uv;
 
     // gl_Position is a built-in variable which is the expected output of the vertex shader

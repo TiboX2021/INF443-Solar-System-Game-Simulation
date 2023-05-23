@@ -11,20 +11,39 @@ bool isHeldOrPressed(int key)
 void Controls::updateCamera(cgp::camera_controller_first_person_euler &camera)
 {
 
-    //    std::cout << "Last action : " << last_key_event.action << std::endl;
-
-    // Exemple : déplacer la caméra vers le côté
-    if (isHeldOrPressed(last_key_event.action) && last_key_event.key == KEY_Z)
+    // Scan key states
+    for (auto &key_state : key_states)
     {
-        // TODO faire une rotation vers le haut
+        // If the key is pressed or held
+        if (isHeldOrPressed(key_state.second))
+        {
+            // Handle actions
+            switch (key_state.first)
+            {
+            case KEY_Z:
+                // Pitch up
+                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0.01, 0);
+                break;
+            case KEY_Q:
+                // Turn left
+                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0, 0.01);
+                break;
+            case kEY_S:
+                // Turn right
+                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0, -0.01);
+                break;
+            case KEY_W:
+                // Pitch down
+                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, -0.01, 0);
 
-        // TODO : il faudra garder ça en tête dans le player object
-        // C'est de la vitesse de rotation, ok
-        camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0.01, 0);
-    }
-
-    if (isHeldOrPressed(last_key_event.action) && last_key_event.key == KEY_SPACE)
-    {
-        camera.camera_model.manipulator_translate_front(-0.1);
+                break;
+            case KEY_SPACE:
+                // Move forward
+                camera.camera_model.manipulator_translate_front(-0.1);
+                break;
+            default:
+                break;
+            }
+        }
     }
 }

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
-#include "cgp/graphics/camera/camera_controller/camera_controller_orbit_euler/camera_controller_orbit_euler.hpp"
 #include "cgp/graphics/input_devices/input_devices.hpp"
+#include "utils/controls/control_constants.hpp"
+#include <map>
 
 // TODO : gérer les clics et les mouvements de la souris
 /**
@@ -34,20 +35,24 @@ struct KeyEvent
 class Controls
 {
 public:
+    Controls()
+    {
+        // Initialise key states
+        key_states[KEY_Z] = KEY_RELEASED;
+        key_states[KEY_Q] = KEY_RELEASED;
+        key_states[kEY_S] = KEY_RELEASED;
+        key_states[KEY_W] = KEY_RELEASED;
+        key_states[KEY_SPACE] = KEY_RELEASED;
+    }
+
     void handleKeyEvent(cgp::input_devices *inputs)
     {
-        KeyEvent current_event = {inputs->keyboard.last_action.action, inputs->keyboard.last_action.key};
-
-        // TODO : treat this
-
-        // TODO : what if multiple keys are pressed ? Keep their states in a map in order to detect changes
-
-        // Replace old
-        last_key_event = current_event;
+        // Update key states
+        key_states[inputs->keyboard.last_action.key] = inputs->keyboard.last_action.action;
     }
 
     void updateCamera(cgp::camera_controller_first_person_euler &camera);
 
 private:
-    KeyEvent last_key_event = {0, -1};
+    std::map<int, int> key_states;
 };

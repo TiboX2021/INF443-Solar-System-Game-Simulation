@@ -106,8 +106,8 @@ void scene_structure::mouse_click_event()
 }
 void scene_structure::keyboard_event()
 {
-    camera_control_first_person.action_keyboard(environment.camera_view);
-    // By default, this function does nothing
+    // camera_control_first_person.action_keyboard(environment.camera_view);
+    //  By default, this function does nothing
 
     keyboard_control_handler.handleKeyEvent(camera_control_first_person.inputs);
 }

@@ -98,6 +98,8 @@ void scene_structure::mouse_click_event()
 void scene_structure::keyboard_event()
 {
     camera_control.action_keyboard(environment.camera_view);
+
+    // TODO : test manipulation du clavier
 }
 void scene_structure::idle_frame()
 {

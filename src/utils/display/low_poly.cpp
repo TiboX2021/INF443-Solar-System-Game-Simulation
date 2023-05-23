@@ -40,7 +40,7 @@ void LowPolyDrawable::draw(environment_structure const &environment, camera_cont
     }
 }
 
-void LowPolyDrawable::draw_low_poly(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void LowPolyDrawable::draw_low_poly(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool)
 {
     // Set disk orientation facing camera
     low_poly_drawable.model.rotation = camera.camera_model.orientation();

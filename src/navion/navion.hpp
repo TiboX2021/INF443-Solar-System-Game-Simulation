@@ -2,6 +2,8 @@
 
 #include "cgp/cgp.hpp"
 #include "environment.hpp"
+#include "reacteur.hpp"
+#include <vector>
 
 using cgp::mesh;
 using cgp::mesh_drawable;
@@ -43,6 +45,14 @@ private:
     bool has_wings = false;
     float angle_aile_min = 0;    
     float angle_aile_max = 90;
+
+
+
+    // Pour ajouter des flammes, on définit ces variables globales de la classe. 
+    //Elles donnent les positions et orientations des flammes des reacteurs, par défaut il n'y en a pas 
+    Reacteur feu_sa_mere;
+    std::vector<vec3> position_reacteur;
+    std::vector<rotation_transform> direction_reacteur;
     
     
 };

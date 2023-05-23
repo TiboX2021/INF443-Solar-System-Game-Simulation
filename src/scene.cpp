@@ -60,7 +60,8 @@ void scene_structure::initialize()
 
     //un_vaisseau.initialize();
     un_vaisseau.create_star_destroyer();
-   
+
+
     galaxy.initialize();
 
     //planet.initialize();

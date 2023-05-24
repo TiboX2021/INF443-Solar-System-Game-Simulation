@@ -78,6 +78,9 @@ void scene_structure::display_frame()
     if (gui.display_frame)
         draw(global_frame, environment);
 
+    environment.uniform_generic.uniform_float["time"] = timer.t; 
+    timer.update();
+
     /*
 
     draw(terrain, environment);
@@ -109,13 +112,16 @@ void scene_structure::display_frame()
 
     */
 
+    galaxy.draw(environment, camera_control, false);
+
+
    // un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau * Pi / 180) ;
    un_vaisseau.draw(environment);
    un_vaisseau.set_angle_aile(gui.angle_aile_vaisseau);
    
 
     //planet.draw(environment, camera_control, false);
-    galaxy.draw(environment, camera_control, false);
+   
 }
 
 void scene_structure::display_gui()

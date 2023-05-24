@@ -162,6 +162,9 @@ void Navion::draw(environment_structure const& environment) {
 	//Draw the hierarchy as a single mesh
 	cgp::draw(hierarchie, environment);
 
+
+	// On ajoute ensuite le feu des réacteurs par l'appel à la classe
+	// à noter : si le vaisseau n'a pas de réacteur, la liste est vide et rien n'est affiché
 	feu_sa_mere.display_reacteur(position_reacteur, direction_reacteur, environment);
 
 }
@@ -841,6 +844,35 @@ void Navion::create_star_destroyer(float const& scale) {
 	position_reacteur.push_back(scale * vec3(-3, 2, 0));
 	direction_reacteur.push_back(angle2);
 
+	rotation_transform angle3 = rotation_transform::from_axis_angle({ 1,0,0 }, Pi / 4) * rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
+	position_reacteur.push_back(scale * vec3(-3, 0, 0));
+	direction_reacteur.push_back(angle3);
+	position_reacteur.push_back(scale * vec3(-3, -2, 0));
+	direction_reacteur.push_back(angle3);
+	position_reacteur.push_back(scale * vec3(-3, 2, 0));
+	direction_reacteur.push_back(angle3);
+
+	rotation_transform angle4 = rotation_transform::from_axis_angle({ 1,0,0 }, -Pi / 4) * rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
+	position_reacteur.push_back(scale * vec3(-3, 0, 0));
+	direction_reacteur.push_back(angle4);
+	position_reacteur.push_back(scale * vec3(-3, -2, 0));
+	direction_reacteur.push_back(angle4);
+	position_reacteur.push_back(scale * vec3(-3, 2, 0));
+	direction_reacteur.push_back(angle4);
+
+	// On ajoute ensuite trois disques pour que les réacteurs ressemblent à qqch :
+	mesh_drawable disque_feu;
+	disque_feu.initialize_data_on_gpu(mesh_primitive_disc(0.4, { -0.01,0,0 }, {1,0,0}));
+
+	// TODO : revoir la couleur
+	disque_feu.material.color = { 0.5,0.5,1 };
+	disque_feu.material.phong.ambient = 1;
+	disque_feu.material.phong.diffuse = 1;
+	disque_feu.material.phong.specular = 0;
+
+	hierarchie.add(disque_feu, "Disque1", "Reacteur1");
+	hierarchie.add(disque_feu, "Disque2", "Reacteur2");
+	hierarchie.add(disque_feu, "Disque3", "Reacteur3");
 }
 
 

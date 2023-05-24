@@ -16,6 +16,17 @@ void Reacteur::initialize() {
 	feu_reacteur.initialize_data_on_gpu(feu);
 	feu_reacteur.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/blue-flame-png-hd--1920.png");
 	feu_reacteur.material.phong = { 0.4f, 0.6f,0,1 };
+
+
+	//pour le shading :
+	opengl_shader_structure shader_flamme;
+	shader_flamme.load(
+		project::path + "shaders/custom_shaders/flamme.vert.glsl",
+		project::path + "shaders/custom_shaders/flamme.frag.glsl" );
+
+	feu_reacteur.shader = shader_flamme;
+
+	feu_reacteur.material.texture_settings.two_sided = true;
 }
 
 void Reacteur::display_reacteur(std::vector<vec3> const& positions, std::vector<rotation_transform> const& directions, environment_structure const& environment) {

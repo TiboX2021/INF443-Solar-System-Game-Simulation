@@ -3,6 +3,7 @@
 // Handle drawing asteroids using instancing
 // This class does not handle the physics, just the drawing
 
+#include "celestial_bodies/asteroid_belt/asteroid_thread_pool.hpp"
 #include "utils/display/drawable.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
@@ -86,7 +87,15 @@ struct DistanceMeshHandler
 class AsteroidBelt : public Drawable
 {
 public:
-    AsteroidBelt(BeltPresets preset = BeltPresets::SATURN);
+    AsteroidBelt() : preset(BeltPresets::SATURN), pool(4){};
+    AsteroidBelt(BeltPresets preset);
+
+    ~AsteroidBelt()
+    {
+        // Stop thread pool in destructor
+        pool.stop();
+    };
+
     // Initialize member meshs
     virtual void initialize() override;
 
@@ -119,4 +128,7 @@ private:
     std::vector<Asteroid> asteroids; // Asteroid physical objects
 
     BeltPresets preset;
+
+    // test : use a computing thread pool
+    AsteroidThreadPool pool;
 };

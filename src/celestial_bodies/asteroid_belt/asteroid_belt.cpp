@@ -1,4 +1,5 @@
 #include "asteroid_belt.hpp"
+#include "celestial_bodies/asteroid_belt/asteroid_thread_pool.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/display/low_poly.hpp"
@@ -11,7 +12,7 @@
 #include <cmath>
 #include <iostream>
 
-AsteroidBelt::AsteroidBelt(BeltPresets preset)
+AsteroidBelt::AsteroidBelt(BeltPresets preset) : pool(4) // DEBUG : initialize pool with 4 threads
 {
     this->preset = preset;
 }
@@ -107,6 +108,9 @@ void AsteroidBelt::initialize()
         mesh_data.allocate(n_asteroids);
     }
     last_attractor_position = attractors[0]->getPhysicsPosition();
+
+    // Start pool
+    pool.start();
 }
 
 void AsteroidBelt::generateRandomAsteroids(int n)
@@ -145,7 +149,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Kuiper belt
         rotation_matrix = cgp::mat3::build_identity();
         distance = 3.5e12;
-        orbit_factor = 1;
+        orbit_factor = 5; // The Kuiper belt is far away : accelerate its movement by 5
         radius_min = 0.95;
         radius_max = 1.05;
         scale_min = 1;

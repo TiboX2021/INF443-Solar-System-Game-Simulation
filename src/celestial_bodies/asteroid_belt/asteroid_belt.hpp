@@ -72,22 +72,15 @@ struct MeshInstancesData
 // Data for an asteroid
 struct Asteroid
 {
-    Object object;
+    Object object; // TODO : store index in object vector instead (it will be coming from the thread pool)
     int mesh_index;
     float scale = 1.0f;
-};
-
-struct DistanceMeshHandler
-{
-    int high_poly;
-    int low_poly;
-    int low_poly_disk;
 };
 
 class AsteroidBelt : public Drawable
 {
 public:
-    AsteroidBelt() : preset(BeltPresets::SATURN), pool(4){};
+    AsteroidBelt() : preset(BeltPresets::SATURN), pool({}){};
     AsteroidBelt(BeltPresets preset);
 
     ~AsteroidBelt()

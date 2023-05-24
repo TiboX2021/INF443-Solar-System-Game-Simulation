@@ -12,7 +12,7 @@
 #include <cmath>
 #include <iostream>
 
-AsteroidBelt::AsteroidBelt(BeltPresets preset) : pool(4) // DEBUG : initialize pool with 4 threads
+AsteroidBelt::AsteroidBelt(BeltPresets preset) : pool({})
 {
     this->preset = preset;
 }
@@ -109,6 +109,13 @@ void AsteroidBelt::initialize()
     }
     last_attractor_position = attractors[0]->getPhysicsPosition();
 
+    std::vector<Object> debug;
+
+    // Initialize thread pool data
+    pool.setAttractor(attractors[0]);
+    pool.setDistanceMeshHandlers(distance_mesh_handlers); // TODO : no need to store them in AsteroidBelt object
+    pool.setAsteroids(debug);                             // TODO : add generated asteroids
+
     // Start pool
     pool.start();
 }
@@ -179,6 +186,10 @@ void AsteroidBelt::generateRandomAsteroids(int n)
 
 void AsteroidBelt::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool)
 {
+    pool.updateCameraPosition(camera.camera_model.position()); // Update camera position for the next iteration computation
+
+    // TODO : communicate with the threads to get the data.
+
     // Reset structs data
     for (auto &mesh_data : asteroid_instances_data)
     {

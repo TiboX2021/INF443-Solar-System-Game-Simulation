@@ -1,7 +1,5 @@
 #include "threads.hpp"
 
-// TODO : implement things
-
 void ThreadsSync::setThreadCount(int thread_count)
 {
     this->thread_count = thread_count;

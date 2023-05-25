@@ -93,7 +93,7 @@ void AsteroidBelt::initialize()
         n_asteroids = 10000;
         break;
     case BeltPresets::KUIPER:
-        n_asteroids = 10000;
+        n_asteroids = 10000; // TODO : add more
         break;
     default:
         n_asteroids = 1000;
@@ -189,6 +189,10 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
     pool.updateCameraPosition(camera.camera_model.position()); // Update camera position for the next iteration computation
 
     // TODO : communicate with the threads to get the data.
+    pool.swapBuffers();
+    // TODO : récupérer les données du buffer
+    pool.getGPUData();
+    pool.awaitAndLaunchNextFrameComputation(); // Unlock all threads in order to enable them to compute the next frame data into the buffer (not the one we just got)
 
     // Reset structs data
     for (auto &mesh_data : asteroid_instances_data)

@@ -48,7 +48,7 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
-    keyboard_control_handler.updateCamera(camera_control_first_person); // TODO : implement this
+    keyboard_control_handler.updateCamera(camera_control_first_person);
 
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit

@@ -70,7 +70,8 @@ void AsteroidThreadPool::swapBuffers()
 // Unlock the sync mutex to enable the next computation for all threads
 void AsteroidThreadPool::awaitAndLaunchNextFrameComputation()
 {
-    sync_util.awaitAll(); // Wait for all threads to finish their computation
+    // Do not wait : causes freeze frames / deadlocks
+    // sync_util.awaitAll(); // Wait for all threads to finish their computation
 
     // Updae the attractor position while the threads are waiting
     // WARNING : this is technically not thread safe, but it should be fine

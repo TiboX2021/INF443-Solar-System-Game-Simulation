@@ -198,7 +198,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     }
 }
 
-void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool)
+void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &, bool)
 {
     pool.updateCameraPosition(position); // Update camera position for the next iteration computation
 

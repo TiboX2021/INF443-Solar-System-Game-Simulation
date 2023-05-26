@@ -88,12 +88,15 @@ void AsteroidBelt::initialize()
     {
     case BeltPresets::SATURN:
         n_asteroids = 2000;
+        orbit_factor = ORBIT_FACTOR;
         break;
     case BeltPresets::SUN:
         n_asteroids = 10000;
+        orbit_factor = 1;
         break;
     case BeltPresets::KUIPER:
         n_asteroids = 10000; // TODO : add more
+        orbit_factor = 5;    // The Kuiper belt is far away : accelerate its movement by 5
         break;
     default:
         n_asteroids = 1000;
@@ -109,12 +112,30 @@ void AsteroidBelt::initialize()
     }
     last_attractor_position = attractors[0]->getPhysicsPosition();
 
-    std::vector<Object> debug;
+    // TODO : do this in a better way in order to fully transition to the thread pools
+    // Initialize objects to send to the thread pool
+    std::vector<Object> debug_agregated_objects;
+
+    for (int i = 0; i < asteroids.size(); i++)
+    {
+        debug_agregated_objects.push_back(asteroids[i].object);
+    }
+
+    // Initialize asteroids config data to send to the thread pool
+    std::vector<AsteroidConfigData> debug_asteroid_config(asteroids.size());
+
+    for (int i = 0; i < asteroids.size(); i++)
+    {
+        debug_asteroid_config[i] = {asteroids[i].scale, asteroids[i].mesh_index};
+    }
 
     // Initialize thread pool data
     pool.setAttractor(attractors[0]);
     pool.setDistanceMeshHandlers(distance_mesh_handlers); // TODO : no need to store them in AsteroidBelt object
-    pool.setAsteroids(debug);                             // TODO : add generated asteroids
+    pool.setAsteroidConfigData(debug_asteroid_config);    // Set asteroid config data
+    pool.setAsteroids(debug_agregated_objects);           // add generated asteroids
+    pool.setOrbitFactor(orbit_factor);
+    pool.allocateBuffers();
 
     // Start pool
     pool.start();
@@ -124,7 +145,6 @@ void AsteroidBelt::generateRandomAsteroids(int n)
 {
     cgp::mat3 rotation_matrix;
     double distance;
-    double orbit_factor;
     double radius_min;
     double radius_max;
     float scale_min;
@@ -135,7 +155,6 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     {
         rotation_matrix = cgp::rotation_transform::from_vector_transform({0, 0, 1}, SATURN_ROTATION_AXIS).matrix();
         distance = DISTANCE;
-        orbit_factor = ORBIT_FACTOR;
         radius_min = 0.8;
         radius_max = 1.2;
         scale_min = 0.2;
@@ -145,7 +164,6 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     {
         rotation_matrix = cgp::mat3::build_identity();
         distance = 3.0817e+11; // Main asteroid belt distance from the sun
-        orbit_factor = 1;
         radius_min = 1;
         radius_max = 2;
         scale_min = 0.2;
@@ -156,7 +174,6 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Kuiper belt
         rotation_matrix = cgp::mat3::build_identity();
         distance = 3.5e12;
-        orbit_factor = 5; // The Kuiper belt is far away : accelerate its movement by 5
         radius_min = 0.95;
         radius_max = 1.05;
         scale_min = 1;
@@ -188,10 +205,10 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
 {
     pool.updateCameraPosition(camera.camera_model.position()); // Update camera position for the next iteration computation
 
-    // TODO : communicate with the threads to get the data.
+    // Communicate with the threads to get the data.
     pool.swapBuffers();
-    // TODO : récupérer les données du buffer
-    pool.getGPUData();
+    // TODO : récupérer les données du buffer plus proprement, voir cleanup
+    auto debug = pool.getGPUData();
     pool.awaitAndLaunchNextFrameComputation(); // Unlock all threads in order to enable them to compute the next frame data into the buffer (not the one we just got)
 
     // Reset structs data
@@ -200,30 +217,10 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
         mesh_data.resetData();
     }
 
-    // Linear scan to build the data
-    for (const auto &asteroid : asteroids)
+    // Iterate with i in order to join GPU data and config data
+    for (int i = 0; i < debug.size(); i++)
     {
-        // Compute the asteroid size to camera distance ratio. The higher, the lesser poly count is required
-        float ratio = cgp::norm(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()) - camera.camera_model.position()) / (asteroid.scale * ASTEROID_DISPLAY_RADIUS);
-
-        int mesh_index;
-        bool is_low_poly_disk = false;
-        if (ratio < 100) // Maybe lower
-        {
-            mesh_index = distance_mesh_handlers[asteroid.mesh_index].high_poly;
-        }
-        else if (ratio < 200) // Maybe higher
-        {
-            mesh_index = distance_mesh_handlers[asteroid.mesh_index].low_poly;
-        }
-        else
-        {
-            mesh_index = distance_mesh_handlers[asteroid.mesh_index].low_poly_disk;
-            is_low_poly_disk = true;
-        }
-
-        // Add data of this asteroid to the corresponding mesh instancing data
-        asteroid_instances_data[mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), is_low_poly_disk ? camera.camera_model.orientation().matrix() : asteroid.object.getPhysicsRotation().matrix(), asteroid.scale);
+        asteroid_instances_data[debug[i].mesh_index].addData(debug[i].position, debug[i].rotation, asteroids[i].scale);
     }
 
     // Call instanced drawing function for each dataset
@@ -250,20 +247,6 @@ void AsteroidBelt::simulateStep(float step)
     {
         for (const auto &attractor : attractors)
         {
-            float orbit_factor = 1;
-            switch (preset)
-            {
-            case BeltPresets::SATURN:
-                orbit_factor = ORBIT_FACTOR;
-                break;
-            case BeltPresets::SUN:
-                orbit_factor = 1;
-                break;
-            case BeltPresets::KUIPER:
-                orbit_factor = 5;
-                break;
-            }
-
             asteroid.object.computeGravitationnalForce(attractor, orbit_factor * orbit_factor);
         }
     }

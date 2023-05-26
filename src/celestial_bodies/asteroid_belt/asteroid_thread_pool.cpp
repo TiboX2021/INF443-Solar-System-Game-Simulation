@@ -1,4 +1,9 @@
 #include "asteroid_thread_pool.hpp"
+#include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
+#include "utils/physics/object.hpp"
+#include <cmath>
+#include <iostream>
 
 // Define the copy constructor
 AsteroidThreadPool::AsteroidThreadPool(const AsteroidThreadPool &other)
@@ -6,13 +11,12 @@ AsteroidThreadPool::AsteroidThreadPool(const AsteroidThreadPool &other)
     isRunning.store(other.isRunning.load());
     // camera_position.store(other.camera_position.load());
     attractor.store(other.attractor.load());
+    orbitFactor.store(other.orbitFactor.load());
 
     // Copy the data
     asteroids = other.asteroids;
     distance_mesh_handlers = other.distance_mesh_handlers;
 }
-
-// TODO : define functions here, less cluttered
 
 // Instanciate threads, initialize thread sync and launch threads
 void AsteroidThreadPool::start()
@@ -23,14 +27,16 @@ void AsteroidThreadPool::start()
     threads.clear();
     isRunning = true;
 
+    // Compute number of threads to use according to the number of asteroids to simulate
+    int n_threads = std::ceil((float)asteroids.size() / ASTEROIDS_PER_THREAD);
+
     // Initialize thread sync
     sync_util.setThreadCount(n_threads);
 
     // Launch threads
-    // TODO : use ASTEROIDS_PER_THREAD to determine the number of threads instead
     for (int i = 0; i < n_threads; i++)
     {
-        threads.push_back(std::thread(&AsteroidThreadPool::worker, this, i, i + 1));
+        threads.push_back(std::thread(&AsteroidThreadPool::worker, this, i * ASTEROIDS_PER_THREAD, std::min(((i + 1) * ASTEROIDS_PER_THREAD), (int)asteroids.size())));
     }
 }
 
@@ -59,7 +65,13 @@ void AsteroidThreadPool::swapBuffers()
 void AsteroidThreadPool::awaitAndLaunchNextFrameComputation()
 {
     sync_util.awaitAll(); // Wait for all threads to finish their computation
-    sync_util.start();    // Restart the threads
+
+    // Updae the attractor position while the threads are waiting
+    // WARNING : this is technically not thread safe, but it should be fine
+    last_attractor_position = current_attractor_position;
+    current_attractor_position = Object::scaleDownDistanceForDisplay(attractor.load()->getPhysicsPosition());
+
+    sync_util.start(); // Restart the threads
 }
 
 // Get data to send to the GPU
@@ -77,23 +89,25 @@ void AsteroidThreadPool::updateCameraPosition(cgp::vec3 camera_position)
     this->camera_position = camera_position;
 }
 
+cgp::vec3 AsteroidThreadPool::getCameraPosition()
+{
+    std::lock_guard<std::mutex> lock(camera_mutex);
+    return camera_position;
+}
+
 // Worker thread function
 void AsteroidThreadPool::worker(int start_index, int end_index)
 {
     // TODO : compute things.
     std::cout << "Starting thread with indexes " << start_index << " to " << end_index << std::endl;
 
-    // TODO : compute loop
     while (isRunning)
     {
-        // // Wait for framerate to unlock the next computation
-        // std::unique_lock<std::mutex> lock(sync_mutex);
-        // sync_condition_variable.wait(lock, [this]
-        //                              { return ready; });
+        // Update physics positions
+        simulateStepForIndexes(Timer::dt * 24.0f * 3600, start_index, end_index);
 
-        // TODO : compute next positions. TODO : remove this, or test lag
-        // Artificial sleep time
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        // Compute & add the mesh index data to the buffers to be sent to the GPU
+        computeGPUDataForIndexes(start_index, end_index);
 
         // Wait for the launch signal to be given for the next iteration.
         sync_util.markDone();
@@ -101,4 +115,66 @@ void AsteroidThreadPool::worker(int start_index, int end_index)
     }
 
     std::cout << "Ending thread with indexes " << start_index << " to " << end_index << std::endl;
+}
+
+// Simulate a step for asteroids ranging from start to end indexes.
+// Helper for the worker thread function
+void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
+{
+    cgp::vec3 delta_attractor_position = (current_attractor_position - last_attractor_position) / PHYSICS_SCALE;
+
+    // Clear forces + update positions to match the main attractor
+    for (int i = start; i < end; i++)
+    {
+        asteroids[i].resetForces();
+        asteroids[i].setPhysicsPosition(asteroids[i].getPhysicsPosition() + delta_attractor_position);
+    }
+
+    // Compute gravitationnal force to the attractor
+    for (int i = start; i < end; i++)
+    {
+        asteroids[i].computeGravitationnalForce(attractor, orbitFactor * orbitFactor);
+    }
+
+    // Simulate step
+    for (int i = start; i < end; i++)
+    {
+        asteroids[i].update(step);
+    }
+}
+
+void AsteroidThreadPool::computeGPUDataForIndexes(int start, int end)
+{
+
+    // Get camera position for distance computation
+    cgp::vec3 camera_position = getCameraPosition();
+    cgp::mat3 rotation;
+
+    for (int i = start; i < end; i++)
+    {
+        // Compute the asteroid size to camera distance ratio. The higher, the lesser poly count is required
+        float ratio = cgp::norm(Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()) - camera_position) / (asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS);
+
+        int mesh_index;
+        bool is_low_poly_disk = false;
+        if (ratio < 100) // Maybe lower
+        {
+            mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].high_poly;
+        }
+        else if (ratio < 200) // Maybe higher
+        {
+            mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].low_poly;
+        }
+        else
+        {
+            mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].low_poly_disk;
+            is_low_poly_disk = true;
+        }
+
+        // If this is the low poly disk, compute the rotation to face the camera
+        rotation = is_low_poly_disk ? cgp::rotation_transform::from_vector_transform({0, 0, 1}, cgp::normalize(camera_position - Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()))).matrix() : asteroids[i].getPhysicsRotation().matrix();
+
+        //  Add data to the GPU buffer
+        gpu_data_buffer[i] = {Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()), rotation, mesh_index};
+    }
 }

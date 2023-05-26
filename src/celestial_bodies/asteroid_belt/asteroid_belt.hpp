@@ -14,8 +14,6 @@
 // ************************************************** //
 //                  ASTEROID CONSTANTS                //
 // ************************************************** //
-constexpr float ASTEROID_RADIUS = SATURN_RADIUS / 40;
-const float ASTEROID_DISPLAY_RADIUS = Object::scaleRadiusForDisplay(ASTEROID_RADIUS);
 constexpr float ASTEROID_MASS = 1e22;
 constexpr float DISTANCE = SATURN_RADIUS * 2500; // Orbit distance : 1 billion meters, for saturn. TODO : update this for generic use
 constexpr float ASTEROID_ORBIT_FACTOR = 10;      // Accelerate asteroids orbit for visual purposes
@@ -119,6 +117,7 @@ private:
 
     // Objects
     std::vector<Asteroid> asteroids; // Asteroid physical objects
+    float orbit_factor;              // Orbit acceleration factor in order to display faster orbits (for visual purposes)
 
     BeltPresets preset;
 

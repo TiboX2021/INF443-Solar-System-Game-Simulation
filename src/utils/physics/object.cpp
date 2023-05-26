@@ -5,6 +5,10 @@
 #include <cmath>
 #include <iostream>
 
+// Initialize timer variables
+std::atomic<double> Timer::time(0); // Time since start
+std::atomic<double> Timer::dt(0);   // Time since last iteration
+
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {
     // Translations

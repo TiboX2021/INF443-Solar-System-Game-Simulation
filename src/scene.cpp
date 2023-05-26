@@ -3,6 +3,7 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <bits/types/timer_t.h>
 #include <cmath>
@@ -46,6 +47,11 @@ void scene_structure::display_frame()
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
     dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
+
+    // Set global timer attributes
+    // TODO : access time via this timer only
+    Timer::dt = dt;
+    Timer::time = timer.t;
 
     // Send timer time as uniform to the shader
     environment.uniform_generic.uniform_float["time"] = timer.t;

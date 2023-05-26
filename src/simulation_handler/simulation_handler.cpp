@@ -45,7 +45,6 @@ void SimulationHandler::drawObjects(environment_structure const &environment, ca
         drawable->draw(environment, camera, show_wireframe);
     }
 
-    // std::cout << "Number of belts: " << asteroid_belts.size() << std::endl;
     for (auto &belt : asteroid_belts)
     {
         belt.draw(environment, camera, show_wireframe);
@@ -84,12 +83,6 @@ void SimulationHandler::simulateStep(float time_step)
     {
         object->update(time_step * time_step_multiplier);
         object->updateModels();
-    }
-
-    // Simulate steps for asteroid belts
-    for (auto &belt : asteroid_belts)
-    {
-        belt.simulateStep(time_step * time_step_multiplier);
     }
 }
 

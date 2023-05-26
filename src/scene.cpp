@@ -1,10 +1,11 @@
 #include "scene.hpp"
 
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
-#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
+#include <bits/types/timer_t.h>
 #include <cmath>
 #include <iostream>
 #include <math.h>
@@ -33,24 +34,36 @@ void scene_structure::initialize()
     ShaderLoader::initialise();
 
     // Initialize simulation handler
-    // SimulationHandler::generateSolarSystem(simulation_handler);
-    // simulation_handler.initialize();
+    SimulationHandler::generateSolarSystem(simulation_handler);
+    simulation_handler.initialize();
 
     // Initialise asteroid field simulation handler
-    OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
-    asteroid_field_handler.initialize();
+    // OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
+    // asteroid_field_handler.initialize();
 }
 
 void scene_structure::display_frame()
 {
+    float dt = timer.update(); // Update timer
+    // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
+    dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
+
+    // Set global timer attributes
+    // TODO : access time via this timer only
+    Timer::dt = dt;
+    Timer::time = timer.t;
+
+    // Send timer time as uniform to the shader
+    environment.uniform_generic.uniform_float["time"] = timer.t;
+
     // Set the light to the current position of the camera
-    environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
+    environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
-    // simulation_handler.simulateStep();
-    // simulation_handler.drawObjects(environment, camera_control, false);
+    simulation_handler.simulateStep(dt);
+    simulation_handler.drawObjects(environment, camera_control, false);
 
-    asteroid_field_handler.simulateStep();
-    asteroid_field_handler.drawObjects(environment, camera_control, false);
+    // asteroid_field_handler.simulateStep();
+    // asteroid_field_handler.drawObjects(environment, camera_control, false);
 
     display_semiTransparent();
 }
@@ -92,8 +105,8 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    // simulation_handler.drawBillboards(environment, camera_control, false);
-    asteroid_field_handler.drawBillboards(environment, camera_control, false);
+    simulation_handler.drawBillboards(environment, camera_control, false);
+    // asteroid_field_handler.drawBillboards(environment, camera_control, false);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

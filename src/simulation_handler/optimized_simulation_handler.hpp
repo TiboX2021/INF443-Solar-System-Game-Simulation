@@ -9,13 +9,13 @@ public:
     template <typename TExtendsBaseDrawable>
     void addObject(TExtendsBaseDrawable drawable, bool attractor = false); // Do not use reference, as the object will be copied and moved to a unique_ptr
 
-    virtual void simulateStep() override;
+    virtual void simulateStep(float time_step) override;
 
     // Public static generators
     static void generateAsteroidField(OptimizedSimulationHandler &handler);
 
     // Default : 1 day / second, with 60 fps. For slider use
-    float time_step = 24.0f * 3600 / 60 * 100; // x100 time acceleration
+    float time_step_multiplier = 24.0f * 3600 / 60 * 100; // x100 time acceleration
 
 protected:
     std::vector<Object *> physical_attractors;

@@ -1,11 +1,12 @@
 #include "simulation_handler.hpp"
 #include "background/galaxy.hpp"
+#include "celestial_bodies/asteroid_belt/asteroid_belt.hpp"
 #include "celestial_bodies/overrides/star.hpp"
 #include "celestial_bodies/planet/planet.hpp"
-#include "celestial_bodies/ring_planet/ring_planet.hpp"
 #include "utils/display/base_drawable.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
+#include "utils/physics/object.hpp"
 #include <iostream>
 #include <iterator>
 #include <memory>
@@ -44,7 +45,6 @@ void SimulationHandler::drawObjects(environment_structure const &environment, ca
         drawable->draw(environment, camera, show_wireframe);
     }
 
-    // std::cout << "Number of belts: " << asteroid_belts.size() << std::endl;
     for (auto &belt : asteroid_belts)
     {
         belt.draw(environment, camera, show_wireframe);
@@ -59,7 +59,7 @@ void SimulationHandler::drawBillboards(environment_structure const &environment,
     }
 }
 
-void SimulationHandler::simulateStep()
+void SimulationHandler::simulateStep(float time_step)
 {
     // Clear forces
     for (auto &object : physical_objects)
@@ -81,14 +81,8 @@ void SimulationHandler::simulateStep()
     // Update objects
     for (auto &object : physical_objects)
     {
-        object->update(time_step);
+        object->update(time_step * time_step_multiplier);
         object->updateModels();
-    }
-
-    // Simulate steps for asteroid belts
-    for (auto &belt : asteroid_belts)
-    {
-        belt.simulateStep();
     }
 }
 
@@ -119,6 +113,16 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     sun.setShader("lava");
     handler.addObject(sun);
 
+    Object *sun_ptr = handler.physical_objects.back();
+
+    AsteroidBelt solar_asteroid_belt(BeltPresets::SUN);
+    solar_asteroid_belt.addAttractor(sun_ptr);
+    handler.addAsteroidBelt(solar_asteroid_belt);
+
+    AsteroidBelt kuiper_belt(BeltPresets::KUIPER);
+    kuiper_belt.addAttractor(sun_ptr);
+    handler.addAsteroidBelt(kuiper_belt);
+
     // Add Earth
     Planet earth(EARTH_MASS, EARTH_RADIUS, {EARTH_SUN_DISTANCE, 0, 0}, "assets/planets/earth.jpg", NO_PERLIN_NOISE);
     earth.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
@@ -136,12 +140,19 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     handler.addObject(mars);
 
     // Add Saturn
-    RingPlanet saturn(SATURN_MASS, SATURN_RADIUS, SATURN_RADIUS * 2, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", "assets/planets/rings/saturn_ring.png", NO_PERLIN_NOISE);
+    Planet saturn(SATURN_MASS, SATURN_RADIUS, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
     saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
     handler.addObject(saturn);
+
+    Object *saturn_ptr = handler.physical_objects.back();
+
+    // Add asteroid belt around saturn
+    AsteroidBelt saturnBelt(BeltPresets::SATURN);
+    saturnBelt.addAttractor(saturn_ptr); // Add main attractor first
+    handler.addAsteroidBelt(saturnBelt);
 
     // Add jupiter
     Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);

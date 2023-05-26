@@ -2,6 +2,7 @@
 
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
+#include <atomic>
 
 /*
 PHYSICS_SCALE :
@@ -22,6 +23,16 @@ This way, realistic physiscs distances and constants can be directly used in the
 // Display constants
 constexpr double PHYSICS_SCALE = 1e-10; // Reduce the scale enough so that Opengl does not freak out
 constexpr double DISPLAY_SCALE = 1500;  // Display larger models
+constexpr double ORBIT_FACTOR = 20;     // Make orbits faster in comparison to planets rotating on themselves, for display purposes
+
+/**
+ * Static timer class in order for it to be accessible from anywhere
+ */
+struct Timer
+{
+    static std::atomic<double> time; // Time since start
+    static std::atomic<double> dt;   // Time since last iteration
+};
 
 /**
  * Physical Object with position and rotation abstract class
@@ -34,11 +45,12 @@ public:
     void update(double dt);
 
     void resetForces();
-    void computeGravitationnalForce(Object *other);
+    void computeGravitationnalForce(Object *other, double factor = 1.0);
     virtual void updateModels(){}; // Abstract function to update the models based on the physical constants
 
     // Getters
     cgp::vec3 getPhysicsPosition() const;
+    cgp::vec3 getPhysicsVelocity() const;
     cgp::rotation_transform getPhysicsRotation() const;
     double getPhysicsRotationAngle() const;
     bool getShouldTranslate() const;

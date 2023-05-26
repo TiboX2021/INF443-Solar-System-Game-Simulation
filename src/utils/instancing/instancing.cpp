@@ -4,12 +4,6 @@
 
 namespace cgp
 {
-    // TODO : create an updated shader accordingly & test it with the debug star
-    // TODO : how to change the shader and send the correct vbos for instancing ?
-    // DEBUG : voir la page suivante pour compléter mon code et faire en sorte que ça marche
-    // https://learnopengl.com/Advanced-OpenGL/Instancing
-    // Faire du array instancing. On pourra même y mettre des scale !
-
     void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<mat3> &orientations, const std::vector<float> &scales, int n_instances, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
     {
         opengl_check;
@@ -140,6 +134,11 @@ namespace cgp
         glBindVertexArray(0);
         drawable.texture.unbind();
         glUseProgram(0);
+
+        // Delete buffers to avoid memory leak, see if this resolves the memory leak issue
+        glDeleteBuffers(1, &custom_vbo);
+        glDeleteBuffers(1, &rotations_vbo);
+        glDeleteBuffers(1, &scales_vbo);
     }
 
 }

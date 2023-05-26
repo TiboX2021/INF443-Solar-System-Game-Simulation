@@ -4,10 +4,11 @@
 #include "utils/shaders/shader_loader.hpp"
 
 // A star class specifically created to override the Planet shader
+// A star has more vertices than a default Planet in order to have smoother shader animations
 class Star : public Planet
 {
 public:
-    Star(double mass, double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f}) : Planet(mass, radius, position, texture_path, parameters){};
+    Star(double mass, double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f}) : Planet(mass, radius, position, texture_path, parameters, 200, 100){};
 
     // Set a custom shader
     void setShader(const std::string &name)

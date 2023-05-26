@@ -1,23 +1,24 @@
 #include "asteroid_belt.hpp"
+#include "celestial_bodies/asteroid_belt/asteroid_thread_pool.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
+#include "utils/display/low_poly.hpp"
 #include "utils/instancing/instancing.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/physics/constants.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/random/random.hpp"
 #include "utils/shaders/shader_loader.hpp"
+#include <cmath>
 #include <iostream>
 
-AsteroidBelt::AsteroidBelt() : debugShadable(SUN_MASS, SUN_RADIUS / 10, {0, 0, 0}, "assets/planets/sun.jpg", NO_PERLIN_NOISE)
+AsteroidBelt::AsteroidBelt(BeltPresets preset) : pool({})
 {
-    debugShadable.setShader("instanced");
+    this->preset = preset;
 }
 
 void AsteroidBelt::initialize()
 {
-    // Initialize the planet
-    debugShadable.initialize();
-
     // ************************************************** //
     //               RANDOM ASTEROID GENERATION           //
     // ************************************************** //
@@ -75,79 +76,148 @@ void AsteroidBelt::initialize()
         // Add the mesh data for each shader
         asteroid_instances_data.push_back({3 * i, 0, {}, {}, {}});
         asteroid_instances_data.push_back({3 * i + 1, 0, {}, {}, {}});
-        asteroid_instances_data.push_back({3 * i + 2, 0, {}, {}, {}}); //  TODO : compute the disk orientation
+        asteroid_instances_data.push_back({3 * i + 2, 0, {}, {}, {}});
 
         // Add the mesh handler for the 3 meshes
         distance_mesh_handlers.push_back({3 * i, 3 * i + 1, 3 * i + 2});
     }
 
-    const int N_ASTEROIDS = 10000;
+    int n_asteroids;
 
-    generateRandomAsteroids(N_ASTEROIDS);
+    switch (preset)
+    {
+    case BeltPresets::SATURN:
+        n_asteroids = 5000;
+        orbit_factor = ORBIT_FACTOR;
+        break;
+    case BeltPresets::SUN:
+        n_asteroids = 10000;
+        orbit_factor = 1;
+        break;
+    case BeltPresets::KUIPER:
+        n_asteroids = 100000; // Can go up to 200 000 with a beefy enough gpu
+        orbit_factor = 5;     // The Kuiper belt is far away : accelerate its movement by 5
+        break;
+    default:
+        n_asteroids = 1000;
+        break;
+    }
+
+    generateRandomAsteroids(n_asteroids);
 
     // Preallocate memory for the instancing
     for (auto &mesh_data : asteroid_instances_data)
     {
-        mesh_data.allocate(N_ASTEROIDS);
+        mesh_data.allocate(n_asteroids);
     }
+    last_attractor_position = attractors[0]->getPhysicsPosition();
+
+    // TODO : do this in a better way in order to fully transition to the thread pools
+    // Initialize objects to send to the thread pool
+    std::vector<Object> debug_agregated_objects;
+
+    for (int i = 0; i < asteroids.size(); i++)
+    {
+        debug_agregated_objects.push_back(asteroids[i].object);
+    }
+
+    // Initialize asteroids config data to send to the thread pool
+    std::vector<AsteroidConfigData> debug_asteroid_config(asteroids.size());
+
+    for (int i = 0; i < asteroids.size(); i++)
+    {
+        debug_asteroid_config[i] = {asteroids[i].scale, asteroids[i].mesh_index};
+    }
+
+    // Initialize thread pool data
+    pool.setAttractor(attractors[0]);
+    pool.setDistanceMeshHandlers(distance_mesh_handlers); // TODO : no need to store them in AsteroidBelt object
+    pool.setAsteroidConfigData(debug_asteroid_config);    // Set asteroid config data
+    pool.setAsteroids(debug_agregated_objects);           // add generated asteroids
+    pool.setOrbitFactor(orbit_factor);
+    pool.allocateBuffers();
+
+    // Start pool
+    pool.start();
 }
 
 void AsteroidBelt::generateRandomAsteroids(int n)
 {
+    cgp::mat3 rotation_matrix;
+    double distance;
+    double radius_std;
+    float scale_min;
+    float scale_max;
+    float random_deviation_factor = 1.0f / 30; // Cannot be too big, else the asteroids do not follow a centered circular orbit
+
+    // Load presets
+    if (preset == BeltPresets::SATURN)
+    {
+        rotation_matrix = cgp::rotation_transform::from_vector_transform({0, 0, 1}, SATURN_ROTATION_AXIS).matrix();
+        distance = DISTANCE;
+        radius_std = distance / 10;
+        scale_min = 0.1;
+        scale_max = 1;
+    }
+    else if (preset == BeltPresets::SUN)
+    {
+        rotation_matrix = cgp::mat3::build_identity();
+        distance = 4.0817e+11; // Main asteroid belt distance from the sun
+        radius_std = distance / 10;
+        scale_min = 0.2;
+        scale_max = 1.8;
+    }
+    else //  if (preset == BeltPresets::KUIPER)
+    {
+        // Kuiper belt
+        rotation_matrix = cgp::mat3::build_identity();
+        distance = 4e12;
+        radius_std = distance / 8;
+        scale_min = 1;
+        scale_max = 5;
+    }
+
     // Generate ateroids with random positions, and bind them to the meshes
     for (int i = 0; i < n; i++)
     {
-        // Use the attractor object
-        // Generate random position
-        const float random_distance = DISTANCE * random_float(0.8, 4);
-        const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * cgp::norm(random_position) / 30;
+        // Generate random position with gaussian distribution
+        const float random_gaussian_distance = random_gaussian(distance, radius_std);
+        const cgp::vec3 random_position = random_orbit_position(random_gaussian_distance) + random_normalized_axis() * random_gaussian_distance * random_deviation_factor;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
-        Object asteroid(ASTEROID_MASS, random_position, random_normalized_axis());
-        asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED / 100 * random_float(0.4, 1.5));
-        asteroid.setInitialVelocity(Object::computeOrbitalSpeedForPosition(attractor->getMass(), random_position));
+        Object asteroid(ASTEROID_MASS, rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
+        asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED * random_float(1, 2));
+        asteroid.setInitialVelocity(orbit_factor * rotation_matrix * Object::computeOrbitalSpeedForPosition(attractors[0]->getMass(), random_position));
 
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
 
-        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(0.2, 1.8)};
+        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(scale_min, scale_max)};
 
         asteroids.push_back(asteroid_instance);
     }
 }
 
-void AsteroidBelt::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void AsteroidBelt::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool)
 {
+    pool.updateCameraPosition(camera.camera_model.position()); // Update camera position for the next iteration computation
+
+    // Communicate with the threads to get the data.
+    pool.swapBuffers();
+
+    auto data_from_worker_threads = pool.getGPUData();
+    pool.awaitAndLaunchNextFrameComputation(); // Unlock all threads in order to enable them to compute the next frame data into the buffer (not the one we just got)
+
     // Reset structs data
     for (auto &mesh_data : asteroid_instances_data)
     {
         mesh_data.resetData();
     }
 
-    // Linear scan to build the data
-    for (const auto &asteroid : asteroids)
+    // Iterate with i in order to join GPU data and config data
+    for (int i = 0; i < data_from_worker_threads.size(); i++)
     {
-        // Compute the asteroid size to camera distance ratio. The higher, the lesser poly count is required
-        float ratio = cgp::norm(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()) - camera.camera_model.position()) / (asteroid.scale * ASTEROID_DISPLAY_RADIUS);
-
-        int mesh_index;
-        bool is_low_poly_disk = false;
-        if (ratio < 100) // Maybe lower
-        {
-            mesh_index = distance_mesh_handlers[asteroid.mesh_index].high_poly;
-        }
-        else if (ratio < 200) // Maybe higher
-        {
-            mesh_index = distance_mesh_handlers[asteroid.mesh_index].low_poly;
-        }
-        else
-        {
-            mesh_index = distance_mesh_handlers[asteroid.mesh_index].low_poly_disk;
-            is_low_poly_disk = true;
-        }
-
-        // Add data of this asteroid to the corresponding mesh instancing data
-        asteroid_instances_data[mesh_index].addData(Object::scaleDownDistanceForDisplay(asteroid.object.getPhysicsPosition()), is_low_poly_disk ? camera.camera_model.orientation().matrix() : asteroid.object.getPhysicsRotation().matrix(), asteroid.scale);
+        asteroid_instances_data[data_from_worker_threads[i].mesh_index].addData(data_from_worker_threads[i].position, data_from_worker_threads[i].rotation, asteroids[i].scale);
     }
 
     // Call instanced drawing function for each dataset
@@ -158,23 +228,31 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
 }
 
 // Simulate gravitationnal attraction to the attractor
-void AsteroidBelt::simulateStep()
+void AsteroidBelt::simulateStep(float step)
 {
-    // Clear forces
+    cgp::vec3 delta_attractor_position = attractors[0]->getPhysicsPosition() - last_attractor_position;
+
+    // Clear forces + update positions to match the main attractor
     for (auto &asteroid : asteroids)
     {
         asteroid.object.resetForces();
+        asteroid.object.setPhysicsPosition(asteroid.object.getPhysicsPosition() + delta_attractor_position);
     }
 
     // Compute gravitationnal force to the attractor
     for (auto &asteroid : asteroids)
     {
-        asteroid.object.computeGravitationnalForce(attractor);
+        for (const auto &attractor : attractors)
+        {
+            asteroid.object.computeGravitationnalForce(attractor, orbit_factor * orbit_factor);
+        }
     }
 
     // Simulate step
     for (auto &asteroid : asteroids)
     {
-        asteroid.object.update(24.0f * 3600 / 60 * 100); // TODO : set the time step
+        asteroid.object.update(step);
     }
+
+    last_attractor_position = attractors[0]->getPhysicsPosition();
 }

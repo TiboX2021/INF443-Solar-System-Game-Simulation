@@ -5,6 +5,10 @@
 #include <cmath>
 #include <iostream>
 
+// Initialize timer variables
+std::atomic<double> Timer::time(0); // Time since start
+std::atomic<double> Timer::dt(0);   // Time since last iteration
+
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {
     // Translations
@@ -32,10 +36,10 @@ void Object::resetForces()
 /**
  * Compute gravitational force from another object
  */
-void Object::computeGravitationnalForce(Object *other)
+void Object::computeGravitationnalForce(Object *other, double factor)
 {
     cgp::vec3 distance = other->physics_position - this->physics_position;
-    forces += GRAVITATIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance);
+    forces += GRAVITATIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance) * factor;
 }
 
 /** Update position */
@@ -44,8 +48,8 @@ void Object::update(double dt)
     if (should_translate)
     {
         this->acceleration = this->forces / this->mass;
-        this->velocity += this->acceleration * dt;
-        this->physics_position += this->velocity * dt;
+        this->velocity += this->acceleration * dt * ORBIT_FACTOR;
+        this->physics_position += this->velocity * dt * ORBIT_FACTOR;
     }
 
     if (should_rotate)
@@ -125,4 +129,9 @@ void Object::setRotationAxis(cgp::vec3 rotation_axis)
 double Object::getMass() const
 {
     return this->mass;
+}
+
+cgp::vec3 Object::getPhysicsVelocity() const
+{
+    return this->velocity;
 }

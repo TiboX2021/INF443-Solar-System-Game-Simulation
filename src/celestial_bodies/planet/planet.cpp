@@ -22,7 +22,7 @@ Planet::Planet() : LowPolyDrawable(scaleRadiusForDisplay(EARTH_RADIUS)), Object(
     parameters = NO_PERLIN_NOISE;
 }
 
-Planet::Planet(double mass, double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters) : LowPolyDrawable(scaleRadiusForDisplay(radius)), Object(mass, position)
+Planet::Planet(double mass, double radius, vec3 position, std::string texture_path, perlin_noise_parameters parameters, int Nu, int Nv) : LowPolyDrawable(scaleRadiusForDisplay(radius)), Object(mass, position)
 {
 
     // Initialize display planet data
@@ -30,6 +30,8 @@ Planet::Planet(double mass, double radius, vec3 position, std::string texture_pa
     this->position = scaleDownDistanceForDisplay(position);
     this->texture_path = texture_path;
     this->parameters = parameters;
+    this->Nu = Nu;
+    this->Nv = Nv;
 }
 
 // Initialize
@@ -37,7 +39,7 @@ void Planet::initialize()
 {
     LowPolyDrawable::initialize(); // Call base class initialize function
     // Initialize CGP elements
-    planet_mesh = mesh_primitive_perlin_sphere(radius, {0, 0, 0}, 50, 25, parameters);
+    planet_mesh = mesh_primitive_perlin_sphere(radius, {0, 0, 0}, Nu, Nv, parameters);
     planet_mesh_drawable.initialize_data_on_gpu(planet_mesh);
 
     // Add texture
@@ -51,7 +53,7 @@ void Planet::initialize()
 /**
  * Draw the planet in the given environment
  */
-void Planet::draw_real(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void Planet::draw_real(const environment_structure &environment, camera_controller_orbit_euler const &, bool show_wireframe)
 {
     cgp::draw(planet_mesh_drawable, environment);
 

@@ -9,6 +9,9 @@
 // Generate a random floating point number
 float random_float(float min = 0.0f, float max = 1.0f);
 
+// Generate a random floating point number following a gaussian distribution
+float random_gaussian(float mean = 0.0f, float std_dev = 1.0f);
+
 // Generate a random integer
 int random_int(int min = 0, int max = 1);
 

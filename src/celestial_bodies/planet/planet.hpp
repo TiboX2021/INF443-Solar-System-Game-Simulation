@@ -16,7 +16,7 @@ class Planet : public LowPolyDrawable, public Object
 public:
     Planet();
     // Default perlin noise is no noise for the detailed constructor
-    Planet(double mass, double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f});
+    Planet(double mass, double radius, vec3 position, std::string texture_path = "assets/planets/mars.jpg", perlin_noise_parameters parameters = {0.0f, 0.0f, 0, 0.0f, 0.0f}, int Nu = 50, int Nv = 25);
 
     // Draw function
     virtual void initialize() override;
@@ -40,6 +40,9 @@ private:
     double radius;
     vec3 position;
     std::string texture_path;
+
+    int Nu = 50;
+    int Nv = 25;
 
 protected:
     // CGP elements

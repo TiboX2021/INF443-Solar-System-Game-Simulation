@@ -9,7 +9,7 @@
 #include <thread>
 #include <vector>
 
-constexpr int ASTEROIDS_PER_THREAD = 10000;
+constexpr int ASTEROIDS_PER_THREAD = 40000;
 const float ASTEROID_DISPLAY_RADIUS = Object::scaleRadiusForDisplay(58232e3 / 40);
 
 // Data that is computed by the worker threads, and then directly passed on to the GPU using instancing

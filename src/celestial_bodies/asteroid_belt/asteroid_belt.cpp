@@ -87,7 +87,7 @@ void AsteroidBelt::initialize()
     switch (preset)
     {
     case BeltPresets::SATURN:
-        n_asteroids = 2000;
+        n_asteroids = 5000;
         orbit_factor = ORBIT_FACTOR;
         break;
     case BeltPresets::SUN:
@@ -95,8 +95,8 @@ void AsteroidBelt::initialize()
         orbit_factor = 1;
         break;
     case BeltPresets::KUIPER:
-        n_asteroids = 10000; // TODO : add more
-        orbit_factor = 5;    // The Kuiper belt is far away : accelerate its movement by 5
+        n_asteroids = 100000; // Can go up to 200 000 with a beefy enough gpu
+        orbit_factor = 5;     // The Kuiper belt is far away : accelerate its movement by 5
         break;
     default:
         n_asteroids = 1000;
@@ -145,37 +145,34 @@ void AsteroidBelt::generateRandomAsteroids(int n)
 {
     cgp::mat3 rotation_matrix;
     double distance;
-    double radius_min;
-    double radius_max;
+    double radius_std;
     float scale_min;
     float scale_max;
+    float random_deviation_factor = 1.0f / 30; // Cannot be too big, else the asteroids do not follow a centered circular orbit
 
     // Load presets
     if (preset == BeltPresets::SATURN)
     {
         rotation_matrix = cgp::rotation_transform::from_vector_transform({0, 0, 1}, SATURN_ROTATION_AXIS).matrix();
         distance = DISTANCE;
-        radius_min = 0.8;
-        radius_max = 1.2;
-        scale_min = 0.2;
-        scale_max = 1.8;
+        radius_std = distance / 10;
+        scale_min = 0.1;
+        scale_max = 1;
     }
     else if (preset == BeltPresets::SUN)
     {
         rotation_matrix = cgp::mat3::build_identity();
-        distance = 3.0817e+11; // Main asteroid belt distance from the sun
-        radius_min = 1;
-        radius_max = 2;
+        distance = 4.0817e+11; // Main asteroid belt distance from the sun
+        radius_std = distance / 10;
         scale_min = 0.2;
         scale_max = 1.8;
     }
-    else
+    else //  if (preset == BeltPresets::KUIPER)
     {
         // Kuiper belt
         rotation_matrix = cgp::mat3::build_identity();
-        distance = 3.5e12;
-        radius_min = 0.95;
-        radius_max = 1.05;
+        distance = 4e12;
+        radius_std = distance / 8;
         scale_min = 1;
         scale_max = 5;
     }
@@ -183,9 +180,9 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     // Generate ateroids with random positions, and bind them to the meshes
     for (int i = 0; i < n; i++)
     {
-        // Generate random position
-        const float random_distance = distance * random_float(radius_min, radius_max);
-        const cgp::vec3 random_position = random_orbit_position(random_distance) + random_normalized_axis() * random_distance / 30;
+        // Generate random position with gaussian distribution
+        const float random_gaussian_distance = random_gaussian(distance, radius_std);
+        const cgp::vec3 random_position = random_orbit_position(random_gaussian_distance) + random_normalized_axis() * random_gaussian_distance * random_deviation_factor;
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
         Object asteroid(ASTEROID_MASS, rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
@@ -207,8 +204,8 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
 
     // Communicate with the threads to get the data.
     pool.swapBuffers();
-    // TODO : récupérer les données du buffer plus proprement, voir cleanup
-    auto debug = pool.getGPUData();
+
+    auto data_from_worker_threads = pool.getGPUData();
     pool.awaitAndLaunchNextFrameComputation(); // Unlock all threads in order to enable them to compute the next frame data into the buffer (not the one we just got)
 
     // Reset structs data
@@ -218,9 +215,9 @@ void AsteroidBelt::draw(environment_structure const &environment, camera_control
     }
 
     // Iterate with i in order to join GPU data and config data
-    for (int i = 0; i < debug.size(); i++)
+    for (int i = 0; i < data_from_worker_threads.size(); i++)
     {
-        asteroid_instances_data[debug[i].mesh_index].addData(debug[i].position, debug[i].rotation, asteroids[i].scale);
+        asteroid_instances_data[data_from_worker_threads[i].mesh_index].addData(data_from_worker_threads[i].position, data_from_worker_threads[i].rotation, asteroids[i].scale);
     }
 
     // Call instanced drawing function for each dataset

@@ -134,6 +134,11 @@ namespace cgp
         glBindVertexArray(0);
         drawable.texture.unbind();
         glUseProgram(0);
+
+        // Delete buffers to avoid memory leak, see if this resolves the memory leak issue
+        glDeleteBuffers(1, &custom_vbo);
+        glDeleteBuffers(1, &rotations_vbo);
+        glDeleteBuffers(1, &scales_vbo);
     }
 
 }

@@ -38,6 +38,9 @@ void AsteroidThreadPool::start()
     {
         threads.push_back(std::thread(&AsteroidThreadPool::worker, this, i * ASTEROIDS_PER_THREAD, std::min(((i + 1) * ASTEROIDS_PER_THREAD), (int)asteroids.size())));
     }
+
+    if (threads.size() > 0)
+        std::cout << "Started " << threads.size() << " simulation worker threads" << std::endl;
 }
 
 // Stop all threads gracefully
@@ -53,6 +56,9 @@ void AsteroidThreadPool::stop()
     {
         thread.join();
     }
+
+    if (threads.size() > 0)
+        std::cout << "Gracefully stopped " << threads.size() << " worker threads" << std::endl;
 }
 
 void AsteroidThreadPool::swapBuffers()
@@ -98,9 +104,6 @@ cgp::vec3 AsteroidThreadPool::getCameraPosition()
 // Worker thread function
 void AsteroidThreadPool::worker(int start_index, int end_index)
 {
-    // TODO : compute things.
-    std::cout << "Starting thread with indexes " << start_index << " to " << end_index << std::endl;
-
     while (isRunning)
     {
         // Update physics positions
@@ -113,8 +116,6 @@ void AsteroidThreadPool::worker(int start_index, int end_index)
         sync_util.markDone();
         sync_util.awaitRestart();
     }
-
-    std::cout << "Ending thread with indexes " << start_index << " to " << end_index << std::endl;
 }
 
 // Simulate a step for asteroids ranging from start to end indexes.

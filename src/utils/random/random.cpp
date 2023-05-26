@@ -1,10 +1,21 @@
 #include "random.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include <cmath>
+#include <random>
 
 float random_float(float min, float max)
 {
     return min + static_cast<float>(rand()) / (static_cast<float>(float(RAND_MAX) / (max - min)));
+}
+
+float random_gaussian(float mean, float std_dev)
+{
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    std::normal_distribution<double> distribution(mean, std_dev);
+    return distribution(gen);
+
+    return 0;
 }
 
 int random_int(int min, int max)

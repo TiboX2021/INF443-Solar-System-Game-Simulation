@@ -15,11 +15,9 @@ using namespace cgp;
 
 void scene_structure::initialize()
 {
-    camera_control.initialize(inputs, window);              // Give access to the inputs and window global state to the camera controler
-    camera_control_first_person.initialize(inputs, window); // TODO : use this instead
-    // TODO : set initial position
-    camera_control.set_rotation_axis_z();
-    camera_control.look_at({15.0f, 6.0f, 6.0f}, {0, 0, 0});
+    // Initialize custom camera. The default direction is {1, 0, 0}, and the default top is {0, 0, 1} (set in the header)
+    custom_camera.initialize(inputs, window);
+
     global_frame.initialize_data_on_gpu(mesh_primitive_frame());
 
     // Change depth of field
@@ -40,24 +38,23 @@ void scene_structure::initialize()
     // Initialize simulation handler
     SimulationHandler::generateSolarSystem(simulation_handler);
     simulation_handler.initialize();
-
-    // Initialise asteroid field simulation handler
-    // OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
-    // asteroid_field_handler.initialize();
 }
 
 void scene_structure::display_frame()
 {
-    keyboard_control_handler.updateCamera(camera_control_first_person);
-
+    // Update timer (ALWAYS FIRST)
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
     dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
 
     // Set global timer attributes
-    // TODO : access time via this timer only
     Timer::dt = dt;
     Timer::time = timer.t;
+
+    // Handle keyboard & other controls
+    keyboard_control_handler.handlePlayerKeys();
+    keyboard_control_handler.updatePlayer();
+    keyboard_control_handler.updateCamera(custom_camera);
 
     // Send timer time as uniform to the shader
     environment.uniform_generic.uniform_float["time"] = timer.t;
@@ -67,8 +64,9 @@ void scene_structure::display_frame()
 
     simulation_handler.simulateStep(dt);
 
-    cgp::vec3 position = camera_control_first_person.camera_model.position();
-    cgp::rotation_transform rotation = camera_control_first_person.camera_model.orientation();
+    // Get camera position and rotation to compute custom meshes for distant objects
+    cgp::vec3 position = custom_camera.camera_model.position();
+    cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawObjects(environment, position, rotation, false);
 
@@ -97,23 +95,25 @@ void scene_structure::display_gui()
 
 void scene_structure::mouse_move_event()
 {
-    if (!inputs.keyboard.shift)
-        camera_control_first_person.action_mouse_move(environment.camera_view);
+    // Does nothing but update the camera matrix
+    // Mouse events shall be handled with the control instance
+    custom_camera.idle_frame(environment.camera_view);
 }
 void scene_structure::mouse_click_event()
 {
-    camera_control_first_person.action_mouse_click(environment.camera_view);
+    // Same as mouse_move_event
+    custom_camera.idle_frame(environment.camera_view);
 }
 void scene_structure::keyboard_event()
 {
-    // camera_control_first_person.action_keyboard(environment.camera_view);
-    //  By default, this function does nothing
-
-    keyboard_control_handler.handleKeyEvent(camera_control_first_person.inputs);
+    // Keyboard control is handled by the Control class instance
+    keyboard_control_handler.handleKeyEvent(custom_camera.inputs);
+    custom_camera.idle_frame(environment.camera_view);
 }
 void scene_structure::idle_frame()
 {
-    camera_control_first_person.idle_frame(environment.camera_view);
+    // Update the camera model on idle frames
+    custom_camera.idle_frame(environment.camera_view);
 }
 
 void scene_structure::display_semiTransparent()
@@ -129,8 +129,8 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    cgp::vec3 position = camera_control_first_person.camera_model.position();
-    cgp::rotation_transform rotation = camera_control_first_person.camera_model.orientation();
+    cgp::vec3 position = custom_camera.camera_model.position();
+    cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawBillboards(environment, position, rotation, false);
     // asteroid_field_handler.drawBillboards(environment, camera_control, false);

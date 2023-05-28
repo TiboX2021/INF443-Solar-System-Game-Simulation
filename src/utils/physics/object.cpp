@@ -6,8 +6,9 @@
 #include <iostream>
 
 // Initialize timer variables
-std::atomic<double> Timer::time(0); // Time since start
-std::atomic<double> Timer::dt(0);   // Time since last iteration
+std::atomic<double> Timer::time(0);                     // Time since start
+std::atomic<double> Timer::dt(0);                       // Time since last iteration
+std::atomic<double> Timer::timer_multiplier(24 * 3600); // 1s IRL = 1 day in the simulation
 
 Object::Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis, bool should_translate, bool should_rotate)
 {

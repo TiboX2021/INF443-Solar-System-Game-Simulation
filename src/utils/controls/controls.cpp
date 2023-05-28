@@ -1,5 +1,5 @@
 #include "controls.hpp"
-#include "cgp/graphics/camera/camera_controller/camera_controller_first_person_euler/camera_controller_first_person_euler.hpp"
+#include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/control_constants.hpp"
 #include <iostream>
 
@@ -8,9 +8,9 @@ bool isHeldOrPressed(int key)
     return key == KEY_PRESSED || key == KEY_REPEAT;
 }
 
-void Controls::updateCamera(cgp::camera_controller_first_person_euler &camera)
+// Handle player key presses
+void Controls::handlePlayerKeys()
 {
-
     // Scan key states
     for (auto &key_state : key_states)
     {
@@ -20,30 +20,57 @@ void Controls::updateCamera(cgp::camera_controller_first_person_euler &camera)
             // Handle actions
             switch (key_state.first)
             {
-            case KEY_Z:
+            case KEY_ARROW_UP:
                 // Pitch up
-                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0.01, 0);
+                player.moveUp();
                 break;
-            case KEY_Q:
+            case KEY_ARROW_LEFT:
                 // Turn left
-                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0, 0.01);
+                player.moveLeft();
                 break;
-            case kEY_S:
+            case KEY_ARROW_RIGHT:
                 // Turn right
-                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, 0, -0.01);
+                player.moveRight();
                 break;
-            case KEY_W:
+            case KEY_ARROW_DOWN:
                 // Pitch down
-                camera.camera_model.manipulator_rotate_roll_pitch_yaw(0, -0.01, 0);
-
+                player.moveDown();
                 break;
             case KEY_SPACE:
                 // Move forward
-                camera.camera_model.manipulator_translate_front(-0.1);
+                player.moveForward();
+                break;
+            case KEY_Q:
+                player.rollLeft();
+                break;
+            case KEY_S:
+                player.rollRight();
                 break;
             default:
                 break;
             }
         }
     }
+
+    // If space bar is not pressed, slow down
+    if (key_states[KEY_SPACE] == KEY_RELEASED)
+    {
+        player.brake();
+    }
+}
+
+void Controls::updateCamera(custom_camera_controller &camera)
+{
+    // Update camera orientation according to the player
+    player.updatePlayerCamera(camera.camera_model);
+}
+
+void Controls::updatePlayer()
+{
+    player.step();
+}
+
+Navion &Controls::getPlayerShip()
+{
+    return navion;
 }

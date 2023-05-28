@@ -4,6 +4,7 @@
 #include "environment.hpp"
 #include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
+#include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/controls.hpp"
 
 #include "navion/navion.hpp"
@@ -30,8 +31,9 @@ struct scene_structure : cgp::scene_inputs_generic
     // ****************************** //
     // Elements and shapes of the scene
     // ****************************** //
-    camera_controller_orbit_euler camera_control;
-    camera_controller_first_person_euler camera_control_first_person; // TODO : use this instead
+    // camera_controller_orbit_euler camera_control;
+    // camera_controller_first_person_euler camera_control_first_person;
+    custom_camera_controller custom_camera;
     camera_projection_perspective camera_projection;
     window_structure window;
 

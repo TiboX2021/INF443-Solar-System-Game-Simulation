@@ -34,8 +34,14 @@ constexpr double ORBIT_FACTOR = 20;     // Make orbits faster in comparison to p
  */
 struct Timer
 {
-    static std::atomic<double> time; // Time since start
-    static std::atomic<double> dt;   // Time since last iteration
+    static std::atomic<double> time;             // Time since start
+    static std::atomic<double> dt;               // Time since last iteration
+    static std::atomic<double> timer_multiplier; // 1s IRL = timer_multiplier s in the simulation
+
+    static double getSimulStep()
+    {
+        return dt * timer_multiplier;
+    }
 };
 
 /**

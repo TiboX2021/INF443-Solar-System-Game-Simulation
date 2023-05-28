@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
+#include "navion/navion.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 
 // TODO : faire ça pour contrôler la position de la caméra
@@ -88,6 +89,7 @@ public:
 
     // Update camera
     void updatePlayerCamera(custom_camera_model &camera_model) const;
+    void updatePlayerShip(Navion &ship) const;
 
 private:
     cgp::vec3 position;     // Display position, not the physics one

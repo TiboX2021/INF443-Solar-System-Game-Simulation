@@ -50,6 +50,7 @@ public:
 
     // Update the player object (simulate one step)
     void updatePlayer();
+    void updateShip(); // Update the spaceship position according to the player object
 
     // For display and initialization
     Navion &getPlayerShip();

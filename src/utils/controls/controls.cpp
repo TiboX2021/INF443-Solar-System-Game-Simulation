@@ -74,3 +74,8 @@ Navion &Controls::getPlayerShip()
 {
     return navion;
 }
+
+void Controls::updateShip()
+{
+    player.updatePlayerShip(navion);
+}

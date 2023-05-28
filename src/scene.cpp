@@ -38,6 +38,9 @@ void scene_structure::initialize()
     // Initialize simulation handler
     SimulationHandler::generateSolarSystem(simulation_handler);
     simulation_handler.initialize();
+
+    // TODO : change ship scale
+    keyboard_control_handler.getPlayerShip().create_millennium_falcon(); // Initialize player spaceship
 }
 
 void scene_structure::display_frame()
@@ -56,6 +59,9 @@ void scene_structure::display_frame()
     keyboard_control_handler.updatePlayer();
     keyboard_control_handler.updateCamera(custom_camera);
 
+    // BUG : cannot do this, error in hierarchy
+    // keyboard_control_handler.updateShip();
+
     // Send timer time as uniform to the shader
     environment.uniform_generic.uniform_float["time"] = timer.t;
 
@@ -70,19 +76,9 @@ void scene_structure::display_frame()
 
     simulation_handler.drawObjects(environment, position, rotation, false);
 
-    // asteroid_field_handler.simulateStep();
-    // asteroid_field_handler.drawObjects(environment, camera_control, false);
+    keyboard_control_handler.getPlayerShip().draw(environment);
 
-    // // DEBUG : draw planet and galaxy
-    galaxy.draw(environment, camera_control, gui.display_wireframe);
-    // planet.draw(environment, camera_control, gui.display_wireframe);
-    // ring_planet.draw(environment, camera_control, gui.display_wireframe);
-    sun.draw(environment, camera_control, gui.display_wireframe);
     display_semiTransparent();
-
-    * /
-
-        un_vaisseau.draw(environment);
 }
 
 void scene_structure::display_gui()

@@ -105,3 +105,10 @@ void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model) const
     camera_model.top = directionTop;
     camera_model.camera_position = Object::scaleDownDistanceForDisplay(position);
 }
+
+void PlayerObject::updatePlayerShip(Navion &ship) const
+{
+    // TODO : also set orientation
+    ship.set_direction(direction);
+    ship.set_position(Object::scaleDownDistanceForDisplay(position));
+}

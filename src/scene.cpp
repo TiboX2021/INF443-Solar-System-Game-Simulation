@@ -38,8 +38,7 @@ void scene_structure::initialize()
     SimulationHandler::generateSolarSystem(simulation_handler);
     simulation_handler.initialize();
 
-    // TODO : change ship scale
-    keyboard_control_handler.getPlayerShip().create_millennium_falcon(); // Initialize player spaceship
+    keyboard_control_handler.getPlayerShip().create_millennium_falcon(0.2); // Initialize player spaceship
 }
 
 void scene_structure::display_frame()
@@ -56,10 +55,11 @@ void scene_structure::display_frame()
     // Handle keyboard & other controls
     keyboard_control_handler.handlePlayerKeys();
     keyboard_control_handler.updatePlayer();
+    keyboard_control_handler.updateShip();
     keyboard_control_handler.updateCamera(custom_camera);
 
-    // BUG : cannot do this, error in hierarchy
-    // keyboard_control_handler.updateShip();
+    // BUG : il y a un temps de flottement entre le déplacement de la caméra et celui du joueur...
+    // C'est peut-être juste une question d'update les objets dans le bon ordre...
 
     // Send timer time as uniform to the shader
     environment.uniform_generic.uniform_float["time"] = timer.t;

@@ -23,7 +23,7 @@ public:
     void create_star_destroyer(float const& scale = 1);
    
 
-protected:
+public: // DEBUG : pour l'instant la mise Ã  jour des orientations n'est pas faite
     cgp::hierarchy_mesh_drawable hierarchie;
 
 private:
@@ -48,8 +48,8 @@ private:
 
 
 
-    // Pour ajouter des flammes, on définit ces variables globales de la classe. 
-    //Elles donnent les positions et orientations des flammes des reacteurs, par défaut il n'y en a pas 
+    // Pour ajouter des flammes, on dï¿½finit ces variables globales de la classe. 
+    //Elles donnent les positions et orientations des flammes des reacteurs, par dï¿½faut il n'y en a pas 
     Reacteur feu_sa_mere;
     std::vector<vec3> position_reacteur;
     std::vector<rotation_transform> direction_reacteur;

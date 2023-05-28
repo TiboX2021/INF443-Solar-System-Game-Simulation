@@ -42,9 +42,6 @@ void PlayerObject::brake()
     velocity = direction * speed;
 }
 
-// TODO : movement functions
-// TODO : rotate the direction axis (with a rotation speed)
-// Problème : up / down, etc : il faut savoir où est le dessus ?
 void PlayerObject::moveUp()
 {
     // TODO : rotation plus difficile si on va vite
@@ -101,14 +98,34 @@ void PlayerObject::rollRight()
 
 void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model) const
 {
+    // TODO : when upating camera, see the top of the ship ? Just a rotation ? This will be better with animations
+    // TODO: assifier ça en une fonction qui donnerait dirrect ce dont on a besoin (+ pour faire le retard de rotation par rapport au vaisseau)
+    // Ajouter une petite rotation
+    auto rotation_axis = cgp::cross(direction, directionTop);
+    auto additional_rotation = cgp::rotation_transform::from_axis_angle(rotation_axis, -0.3f);
+
     camera_model.direction = direction;
     camera_model.top = directionTop;
-    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position);
+    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position) - additional_rotation * direction * 10.0f; // Add camera offset to be able to see the spaceship
 }
 
 void PlayerObject::updatePlayerShip(Navion &ship) const
 {
     // TODO : also set orientation
-    ship.set_direction(direction);
-    ship.set_position(Object::scaleDownDistanceForDisplay(position));
+    // ship.set_direction(direction);
+    // ship.set_position(Object::scaleDownDistanceForDisplay(position));
+    ship.hierarchie["Centre"].transform_local.translation = Object::scaleDownDistanceForDisplay(position);
+    ship.hierarchie["Centre"].transform_local.rotation = orientation();
+    ship.hierarchie.update_local_to_global_coordinates();
+}
+
+cgp::rotation_transform PlayerObject::orientation() const
+{
+    // Rotate to the base direction
+    auto match_directions = cgp::rotation_transform::from_vector_transform(PLAYER_BASE_DIRECTION, direction);
+
+    // Once the directions match, rotate AROUND the directions in order to make the top directions match
+    auto match_tops = cgp::rotation_transform::from_vector_transform(match_directions * PLAYER_BASE_TOP, directionTop);
+
+    return match_tops * match_directions;
 }

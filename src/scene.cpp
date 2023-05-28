@@ -1,7 +1,6 @@
 #include "scene.hpp"
 
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
-#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
@@ -65,8 +64,8 @@ void scene_structure::display_frame()
     // Send timer time as uniform to the shader
     environment.uniform_generic.uniform_float["time"] = timer.t;
 
-    // Set the light to the current position of the camera
-    environment.light = vec3{1000, 0, 0}; // camera_control.camera_model.position();
+    // Set the light to the sun position (center)
+    environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
     simulation_handler.simulateStep(dt);
 
@@ -129,9 +128,6 @@ void scene_structure::display_semiTransparent()
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawBillboards(environment, position, rotation, false);
-    // asteroid_field_handler.drawBillboards(environment, camera_control, false);
-
-    simulation_handler.drawBillboards(environment, camera_control, false);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

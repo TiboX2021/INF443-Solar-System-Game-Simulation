@@ -2,7 +2,6 @@
 
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
-#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/controls.hpp"
@@ -59,25 +58,6 @@ struct scene_structure : cgp::scene_inputs_generic
     // Display function for semi-transparent shapes
     void display_semiTransparent();
 
-<<<<<<< HEAD
     SimulationHandler simulation_handler;
-    OptimizedSimulationHandler asteroid_field_handler;
-=======
-
-    //***********************************************
-    // Pour le projet
-    //**********************************************
-    Navion un_vaisseau;
-
-    mesh_drawable truc_test;
-
-    // DEBUG : to delete later
-    Planet planet;
-    Planet sun;
-    Galaxy galaxy;
-    RingPlanet ring_planet;
->>>>>>> 6009f2c (creation de l'aile du falcon (problèmes de sahder à régler))
-    SimulationHandler simulation_handler;
-    OptimizedSimulationHandler asteroid_field_handler;
     Controls keyboard_control_handler;
 };

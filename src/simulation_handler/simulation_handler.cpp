@@ -59,7 +59,7 @@ void SimulationHandler::drawBillboards(environment_structure const &environment,
     }
 }
 
-void SimulationHandler::simulateStep()
+void SimulationHandler::simulateStep(float time_step)
 {
     // Clear forces
     for (auto &object : physical_objects)

@@ -17,8 +17,8 @@ public:
     void initialize();
 
     // Draw Functions
-    void drawObjects(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
-    void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true);
+    void drawObjects(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true);
+    void drawBillboards(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true);
 
     // Simulation Functions
     virtual void simulateStep(float time_step);

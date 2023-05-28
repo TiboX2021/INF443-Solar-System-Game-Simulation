@@ -2,13 +2,15 @@
 
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "environment.hpp"
-#include "simulation_handler/optimized_simulation_handler.hpp"
 #include "simulation_handler/simulation_handler.hpp"
+#include "utils/camera/custom_camera_controller.hpp"
+#include "utils/controls/controls.hpp"
+
+#include "navion/navion.hpp"
+#include "navion/reacteur.hpp"
 
 // This definitions allow to use the structures: mesh, mesh_drawable, etc. without mentionning explicitly cgp::
-using cgp::mesh;
 using cgp::mesh_drawable;
-using cgp::numarray;
 using cgp::timer_basic;
 using cgp::vec3;
 
@@ -18,6 +20,7 @@ struct gui_parameters
 
     bool display_frame = false;
     bool display_wireframe = false;
+    float angle_aile_vaisseau;
 };
 
 // The structure of the custom scene
@@ -27,7 +30,9 @@ struct scene_structure : cgp::scene_inputs_generic
     // ****************************** //
     // Elements and shapes of the scene
     // ****************************** //
-    camera_controller_orbit_euler camera_control;
+    // camera_controller_orbit_euler camera_control;
+    // camera_controller_first_person_euler camera_control_first_person;
+    custom_camera_controller custom_camera;
     camera_projection_perspective camera_projection;
     window_structure window;
 
@@ -54,5 +59,5 @@ struct scene_structure : cgp::scene_inputs_generic
     void display_semiTransparent();
 
     SimulationHandler simulation_handler;
-    OptimizedSimulationHandler asteroid_field_handler;
+    Controls keyboard_control_handler;
 };

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include <vector>
 

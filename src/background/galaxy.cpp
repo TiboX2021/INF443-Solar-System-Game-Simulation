@@ -33,12 +33,12 @@ void Galaxy::initialize()
     galaxy_mesh_drawable.shader = ShaderLoader::getShader("uniform");
 }
 
-void Galaxy::draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe)
+void Galaxy::draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &, bool show_wireframe)
 {
     // Remarque : pour la profondeur, jouer sur scene.camera_projection.depth_max = 10_000.0f;
 
     // Set position to camera position
-    setPosition(camera.camera_model.position());
+    setPosition(position);
 
     cgp::draw(galaxy_mesh_drawable, environment);
 

@@ -5,6 +5,7 @@
 #include "third_party/src/imgui/imgui.h"
 #include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
+#include <GLFW/glfw3.h>
 #include <bits/types/timer_t.h>
 #include <cmath>
 #include <iostream>
@@ -13,9 +14,9 @@ using namespace cgp;
 
 void scene_structure::initialize()
 {
-    camera_control.initialize(inputs, window); // Give access to the inputs and window global state to the camera controler
-    camera_control.set_rotation_axis_z();
-    camera_control.look_at({15.0f, 6.0f, 6.0f}, {0, 0, 0});
+    // Initialize custom camera. The default direction is {1, 0, 0}, and the default top is {0, 0, 1} (set in the header)
+    custom_camera.initialize(inputs, window);
+
     global_frame.initialize_data_on_gpu(mesh_primitive_frame());
 
     // Change depth of field
@@ -37,33 +38,44 @@ void scene_structure::initialize()
     SimulationHandler::generateSolarSystem(simulation_handler);
     simulation_handler.initialize();
 
-    // Initialise asteroid field simulation handler
-    // OptimizedSimulationHandler::generateAsteroidField(asteroid_field_handler);
-    // asteroid_field_handler.initialize();
+    // TODO : change ship scale
+    keyboard_control_handler.getPlayerShip().create_millennium_falcon(); // Initialize player spaceship
 }
 
 void scene_structure::display_frame()
 {
+    // Update timer (ALWAYS FIRST)
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
     dt = std::min(dt, 1.0f / 30); // Max time step is that of 30 fps
 
     // Set global timer attributes
-    // TODO : access time via this timer only
     Timer::dt = dt;
     Timer::time = timer.t;
+
+    // Handle keyboard & other controls
+    keyboard_control_handler.handlePlayerKeys();
+    keyboard_control_handler.updatePlayer();
+    keyboard_control_handler.updateCamera(custom_camera);
+
+    // BUG : cannot do this, error in hierarchy
+    // keyboard_control_handler.updateShip();
 
     // Send timer time as uniform to the shader
     environment.uniform_generic.uniform_float["time"] = timer.t;
 
-    // Set the light to the current position of the camera
+    // Set the light to the sun position (center)
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
     simulation_handler.simulateStep(dt);
-    simulation_handler.drawObjects(environment, camera_control, false);
 
-    // asteroid_field_handler.simulateStep();
-    // asteroid_field_handler.drawObjects(environment, camera_control, false);
+    // Get camera position and rotation to compute custom meshes for distant objects
+    cgp::vec3 position = custom_camera.camera_model.position();
+    cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
+
+    simulation_handler.drawObjects(environment, position, rotation, false);
+
+    keyboard_control_handler.getPlayerShip().draw(environment);
 
     display_semiTransparent();
 }
@@ -72,24 +84,31 @@ void scene_structure::display_gui()
 {
     ImGui::Checkbox("Frame", &gui.display_frame);
     ImGui::Checkbox("Wireframe", &gui.display_wireframe);
+
+    ImGui::SliderFloat("Angle Aile", &gui.angle_aile_vaisseau, 0, 100);
 }
 
 void scene_structure::mouse_move_event()
 {
-    if (!inputs.keyboard.shift)
-        camera_control.action_mouse_move(environment.camera_view);
+    // Does nothing but update the camera matrix
+    // Mouse events shall be handled with the control instance
+    custom_camera.idle_frame(environment.camera_view);
 }
 void scene_structure::mouse_click_event()
 {
-    camera_control.action_mouse_click(environment.camera_view);
+    // Same as mouse_move_event
+    custom_camera.idle_frame(environment.camera_view);
 }
 void scene_structure::keyboard_event()
 {
-    camera_control.action_keyboard(environment.camera_view);
+    // Keyboard control is handled by the Control class instance
+    keyboard_control_handler.handleKeyEvent(custom_camera.inputs);
+    custom_camera.idle_frame(environment.camera_view);
 }
 void scene_structure::idle_frame()
 {
-    camera_control.idle_frame(environment.camera_view);
+    // Update the camera model on idle frames
+    custom_camera.idle_frame(environment.camera_view);
 }
 
 void scene_structure::display_semiTransparent()
@@ -105,8 +124,10 @@ void scene_structure::display_semiTransparent()
     //  - They are supposed to be display from furest to nearest elements
     glDepthMask(false);
 
-    simulation_handler.drawBillboards(environment, camera_control, false);
-    // asteroid_field_handler.drawBillboards(environment, camera_control, false);
+    cgp::vec3 position = custom_camera.camera_model.position();
+    cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
+
+    simulation_handler.drawBillboards(environment, position, rotation, false);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

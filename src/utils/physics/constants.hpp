@@ -74,3 +74,5 @@ constexpr double NEPTUNE_MASS = 102.41e24;                                     /
 constexpr double NEPTUNE_RADIUS = 24622e3;                                     // In meters
 constexpr double NEPTUNE_SUN_DISTANCE = 2.795e12;                              // In meters
 constexpr double NEPTUNE_ROTATION_SPEED = (2 * M_PI) / (16.11 * 24 * 60 * 60); // In rad/day
+
+// Jupiter constants

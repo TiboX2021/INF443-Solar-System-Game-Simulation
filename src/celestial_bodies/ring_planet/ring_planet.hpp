@@ -12,7 +12,7 @@ public:
 
     // Draw functions
     virtual void initialize() override;
-    void drawBillboards(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
+    void drawBillboards(const environment_structure &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) override;
 
     virtual void setPosition(vec3 position) override;
     virtual void updateModels() override;

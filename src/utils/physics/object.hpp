@@ -16,6 +16,10 @@ This way, realistic physiscs distances and constants can be directly used in the
 => the masses and forces and positions of the physics engine are real
 => the positions of the meshes are scaled down
 => the radiuses of the meshes too ?
+
+=> the masses and forces and positions of the physics engine are real
+=> the positions of the meshes are scaled down
+=> the radiuses of the meshes too ?
 */
 
 // Pour les collisions, faire une gestion maligne pour limiter le temps de calcul
@@ -30,8 +34,14 @@ constexpr double ORBIT_FACTOR = 20;     // Make orbits faster in comparison to p
  */
 struct Timer
 {
-    static std::atomic<double> time; // Time since start
-    static std::atomic<double> dt;   // Time since last iteration
+    static std::atomic<double> time;             // Time since start
+    static std::atomic<double> dt;               // Time since last iteration
+    static std::atomic<double> timer_multiplier; // 1s IRL = timer_multiplier s in the simulation
+
+    static double getSimulStep()
+    {
+        return dt * timer_multiplier;
+    }
 };
 
 /**
@@ -73,6 +83,7 @@ public:
         return distance * PHYSICS_SCALE;
     }
     static double scaleRadiusForDisplay(double value) { return value * DISPLAY_SCALE * PHYSICS_SCALE; }
+
     static double computeOrbitalSpeed(double M, double r);
     static cgp::vec3 computeOrbitalSpeedForPosition(double M, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1});
 

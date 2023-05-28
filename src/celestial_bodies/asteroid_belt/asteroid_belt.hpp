@@ -91,7 +91,7 @@ public:
     virtual void initialize() override;
 
     // Draw function
-    virtual void draw(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
+    virtual void draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) override;
 
     // Simulation
     void simulateStep(float step = 24.0f * 3600 / 60);

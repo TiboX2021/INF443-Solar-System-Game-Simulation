@@ -19,7 +19,7 @@ public:
 
     virtual void setPosition(cgp::vec3 position) override;
 
-    virtual void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
+    virtual void drawBillboards(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) override;
 
 private:
     Object *object = nullptr; // The object that must be followed

@@ -20,7 +20,7 @@ public:
         billboard_mesh_drawable.model.translation = position;
     };
 
-    virtual void drawBillboards(environment_structure const &environment, camera_controller_orbit_euler const &camera, bool show_wireframe = true) override;
+    virtual void drawBillboards(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) override;
 
     // Setters
     void setFaceCamera(bool faceCamera) { this->faceCamera = faceCamera; };

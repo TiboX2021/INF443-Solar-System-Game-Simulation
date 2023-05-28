@@ -16,11 +16,11 @@ void Billboard::initialize()
     billboard_mesh_drawable.material.phong.specular = 0;
 }
 
-void Billboard::drawBillboards(const environment_structure &environment, camera_controller_orbit_euler const &camera, bool)
+void Billboard::drawBillboards(const environment_structure &environment, cgp::vec3 &, cgp::rotation_transform &rotation, bool)
 {
     // Set billboard orientation to the camera
     if (faceCamera)
-        billboard_mesh_drawable.model.rotation = camera.camera_model.orientation();
+        billboard_mesh_drawable.model.rotation = rotation;
 
     // Draw the billboard
     cgp::draw(billboard_mesh_drawable, environment);

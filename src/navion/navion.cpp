@@ -172,7 +172,7 @@ void Navion::draw(environment_structure const& environment) {
 
 
 void Navion::set_position(vec3 const& position) {
-	hierarchie["global_frame"].transform_local.translation = position;
+	hierarchie["Corps"].transform_local.translation = position;
 }
 
 void Navion::set_direction(vec3 const& direction) {
@@ -445,10 +445,11 @@ void Navion::create_millennium_falcon(float const& scale ) {
 	//     - An element must necessarily be added after its parent
 	//     - The first element (without explicit name of its parent) is assumed to be the root.
 
-	hierarchie.add(centre, "Centre");
 	
-	hierarchie.add(corps, "Corps", "Centre");
+	
+	hierarchie.add(corps, "Corps");
 
+	hierarchie.add(centre, "Centre", "Corps");
 	
 
 	hierarchie.add(aile_droite, "Aile_droite", "Centre", { scale * 1.5, scale * 0.2,0 });
@@ -616,7 +617,7 @@ void Navion::create_vaisseau_vador(float const& scale) {
 	// add elements to hierarchie
 
 	hierarchie.add(corps, "Corps");
-	hierarchie.add(barre_transversale, "Barre");
+	hierarchie.add(barre_transversale, "Barre", "Corps");
 	hierarchie.add(avant, "Avant", "Corps", {scale*0.3,0,0});
 	hierarchie.add(arriere, "Arriere", "Corps", {scale* -0.3,0,0 });
 	hierarchie.add(aile_droite, "AileDroite", "Barre", { 0,-2 * scale,0 });

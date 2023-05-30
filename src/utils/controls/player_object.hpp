@@ -13,6 +13,7 @@ constexpr float PLAYER_MAX_TRANSLATION_ACCELERATION = PLAYER_MAX_TRANSLATION_SPE
 // Max player rotation speed along any axis
 // TODO : animate ? When going left / right, also tilt the ship without tilting the camera ?
 constexpr float PLAYER_MAX_ROTATION_SPEED = 0.01 * 60 / (3600 * 24); // radians
+constexpr float PLAYER_MAX_ROLL_SPEED = 0.03 * 60 / (3600 * 24);     // radians. This is higher, as rolling does not change the tajectory
 
 // Player orientation default (for the playe spaceship)
 const cgp::vec3 PLAYER_BASE_DIRECTION = {1, 0, 0};

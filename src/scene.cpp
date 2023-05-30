@@ -43,6 +43,10 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
+    /*********************************************/
+    /*              TIMER HANDLING               */
+    /*********************************************/
+
     // Update timer (ALWAYS FIRST)
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
@@ -51,6 +55,13 @@ void scene_structure::display_frame()
     // Set global timer attributes
     Timer::dt = dt;
     Timer::time = timer.t;
+
+    // Send timer time as uniform to the shader
+    environment.uniform_generic.uniform_float["time"] = timer.t;
+
+    /*********************************************/
+    /*          INPUTS & PLAYER HANDLING         */
+    /*********************************************/
 
     // Handle keyboard & other controls
     keyboard_control_handler.handlePlayerKeys();
@@ -61,11 +72,12 @@ void scene_structure::display_frame()
     // BUG : il y a un temps de flottement entre le déplacement de la caméra et celui du joueur...
     // C'est peut-être juste une question d'update les objets dans le bon ordre...
 
-    // Send timer time as uniform to the shader
-    environment.uniform_generic.uniform_float["time"] = timer.t;
-
     // Set the light to the sun position (center)
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
+
+    /*********************************************/
+    /*            SIMULATION & DRAWING           */
+    /*********************************************/
 
     simulation_handler.simulateStep(dt);
 
@@ -74,7 +86,6 @@ void scene_structure::display_frame()
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawObjects(environment, position, rotation, false);
-
     keyboard_control_handler.getPlayerShip().draw(environment);
 
     display_semiTransparent();

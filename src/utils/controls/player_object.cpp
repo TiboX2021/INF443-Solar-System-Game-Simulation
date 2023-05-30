@@ -82,7 +82,7 @@ void PlayerObject::moveRight()
 
 void PlayerObject::rollLeft()
 {
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, -PLAYER_MAX_ROTATION_SPEED * Timer::getSimulStep());
+    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, -PLAYER_MAX_ROLL_SPEED * Timer::getSimulStep());
 
     // Rotate both vectors
     directionTop = rotation_transform_obj.matrix() * directionTop;
@@ -90,7 +90,7 @@ void PlayerObject::rollLeft()
 
 void PlayerObject::rollRight()
 {
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, +PLAYER_MAX_ROTATION_SPEED * Timer::getSimulStep());
+    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, +PLAYER_MAX_ROLL_SPEED * Timer::getSimulStep());
 
     // Rotate both vectors
     directionTop = rotation_transform_obj.matrix() * directionTop;

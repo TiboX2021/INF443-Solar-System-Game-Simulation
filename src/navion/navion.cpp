@@ -345,7 +345,7 @@ void Navion::create_millennium_falcon(float const &scale)
     mesh_drawable corps;
     mesh_drawable tunnel_interne; // A faire
     mesh_drawable bords;          // A faire
-    mesh_drawable reacteur;
+   
 
     mesh_drawable aile_droite;
     mesh_drawable aile_gauche;
@@ -359,9 +359,7 @@ void Navion::create_millennium_falcon(float const &scale)
     tunnel_interne.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 2.5, {0, 0, -2.5}));
 
 
-    reacteur.initialize_data_on_gpu(mesh_primitive_quadrangle(
-        scale *2 * vec3(cos(5 *Pi/6), sin(5 *Pi/6), 0.09), scale * 2 * vec3(-1, 0, 0.09), 
-        scale * 2 * vec3(-1,0,-0.09), scale * 2 * vec3(cos(5 * Pi / 6), sin(5 * Pi / 6), -0.09)));
+   
 
     // ******************************************
     // pour le cocpit :
@@ -411,7 +409,6 @@ void Navion::create_millennium_falcon(float const &scale)
                                                               GL_REPEAT,
                                                               GL_REPEAT);
 
-    reacteur.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/grille_falcon.jpg");
 
 
     centre.material.phong.specular = 0.0;
@@ -440,9 +437,7 @@ void Navion::create_millennium_falcon(float const &scale)
     hierarchie["Aile_gauche"].transform_local.rotation = rotation_transform::from_axis_angle({1, 0, 0}, Pi);
 
 
-    hierarchie.add(reacteur, "Reacteur1", "Corps", scale* vec3(-0.001, 0, 0));
-    hierarchie.add(reacteur, "Reacteur2", "Corps", scale* vec3(-0.001, 0, 0));
-    hierarchie["Reacteur2"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,0,1 }, Pi / 6);
+    
 
 
 
@@ -497,6 +492,31 @@ void Navion::create_millennium_falcon(float const &scale)
     hierarchie.add(milieu2_cocpit, "Milieu2", "Cocpit");
     hierarchie.add(milieu3_cocpit, "Milieu3", "Cocpit");
     hierarchie.add(milieu4_cocpit, "Milieu4", "Cocpit");
+
+
+
+    //*************************************************
+    // On s'occupe maintenant du reacteur du falcon :
+
+    mesh_drawable reacteur;
+    reacteur.initialize_data_on_gpu(mesh_primitive_quadrangle(
+        scale * 2 * vec3(cos(5 * Pi / 6), sin(5 * Pi / 6), 0.09), scale * 2 * vec3(-1, 0, 0.09),
+        scale * 2 * vec3(-1, 0, -0.09), scale * 2 * vec3(cos(5 * Pi / 6), sin(5 * Pi / 6), -0.09)));
+
+    reacteur.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/grille_falcon.jpg");
+
+    opengl_shader_structure shader_reacteur;
+    shader_reacteur.load(
+        project::path + "shaders/custom_shaders/reacteur/reacteur.vert.glsl",
+        project::path + "shaders/custom_shaders/reacteur/reacteur.frag.glsl");
+
+    reacteur.shader = shader_reacteur;
+    reacteur.material.phong.specular = 0.3;
+
+    hierarchie.add(reacteur, "Reacteur1", "Corps", scale* vec3(-0.003, 0, 0));
+    hierarchie.add(reacteur, "Reacteur2", "Corps", scale* vec3(-0.003, 0, 0));
+    hierarchie["Reacteur2"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,0,1 }, Pi / 6);
+
 }
 
 //***************************************************************************
@@ -752,7 +772,7 @@ void Navion::create_star_destroyer(float const &scale)
     batiment2.initialize_data_on_gpu(batiment_destroyer(0.7 * scale));
     tour.initialize_data_on_gpu(tour_destroyer(scale));
     command.initialize_data_on_gpu(poste_de_commande_destroyer(scale));
-    reacteur.initialize_data_on_gpu(mesh_primitive_cylinder(0.4, {0, 0, 0}, {-0.65, 0, 0}));
+    reacteur.initialize_data_on_gpu(mesh_primitive_cylinder(scale *0.4, {0, 0, 0}, scale * vec3( - 0.65, 0, 0 )));
 
     corps.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/texture_vaisseau_mieux.jpg",
                                                         GL_REPEAT,

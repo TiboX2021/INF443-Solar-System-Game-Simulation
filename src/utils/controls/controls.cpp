@@ -57,6 +57,23 @@ void Controls::handlePlayerKeys()
     {
         player.brake();
     }
+
+    // If roll keys are not pressed, decelerate the roll
+    if (key_states[KEY_Q] == KEY_RELEASED && key_states[KEY_S] == KEY_RELEASED)
+    {
+        player.decelerateRoll();
+    }
+
+    // Same for vertical and horizontal rotations
+    if (key_states[KEY_ARROW_UP] == KEY_RELEASED && key_states[KEY_ARROW_DOWN] == KEY_RELEASED)
+    {
+        player.decelerateVerticalRotation();
+    }
+
+    if (key_states[KEY_ARROW_LEFT] == KEY_RELEASED && key_states[KEY_ARROW_RIGHT] == KEY_RELEASED)
+    {
+        player.decelerateHorizontalRotation();
+    }
 }
 
 void Controls::updateCamera(custom_camera_controller &camera, cgp::mat4 &camera_matrix_view)

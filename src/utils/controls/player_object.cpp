@@ -8,7 +8,25 @@
 
 void PlayerObject::step()
 {
-    // TODO : rotation via rotation speed (currently directly during key events)
+    // Roll speed
+    auto roll_rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, roll_speed.value * Timer::getSimulStep());
+
+    // Only rotate the top vector
+    directionTop = roll_rotation_transform_obj.matrix() * directionTop;
+
+    // Vertical rotation speed
+    cgp::vec3 rotation_axis = cgp::cross(direction, directionTop);
+    auto vertical_rotation_transform_obj = cgp::rotation_transform::from_axis_angle(rotation_axis, vertical_rotation_speed.value * Timer::getSimulStep());
+
+    // Rotate both vectors
+    direction = vertical_rotation_transform_obj.matrix() * direction;
+    directionTop = vertical_rotation_transform_obj.matrix() * directionTop;
+
+    // Horizontal rotation speed
+    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(directionTop, horizontal_rotation_speed.value * Timer::getSimulStep());
+
+    // Only rotate the dirrection vector
+    direction = rotation_transform_obj.matrix() * direction;
 
     // Translation
     position += velocity * Timer::getSimulStep();
@@ -19,81 +37,49 @@ void PlayerObject::step()
 // Accelerate with animation
 void PlayerObject::moveForward()
 {
-    speed += PLAYER_MAX_TRANSLATION_ACCELERATION * Timer::getSimulStep();
-
-    // Cap speed
-    if (speed > PLAYER_MAX_TRANSLATION_SPEED)
-        speed = PLAYER_MAX_TRANSLATION_SPEED;
+    speed.one_step_up();
 
     // Apply speed to object model
-    velocity = direction * speed;
+    velocity = direction * speed.value;
 }
 
 // Brake with animation
 void PlayerObject::brake()
 {
-    speed -= PLAYER_MAX_TRANSLATION_ACCELERATION * Timer::getSimulStep();
-
-    // Cap speed
-    if (speed < 0)
-        speed = 0;
+    speed.one_step_down();
 
     // Apply speed to object model
-    velocity = direction * speed;
+    velocity = direction * speed.value;
 }
 
 void PlayerObject::moveUp()
 {
-    // TODO : rotation plus difficile si on va vite
-    // Rotate towards the "up" vector (which is perpendicular to the direction vector)
-    cgp::vec3 rotation_axis = cgp::cross(direction, directionTop);
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(rotation_axis, PLAYER_MAX_ROTATION_SPEED * Timer::getSimulStep());
-
-    // Rotate both vectors
-    direction = rotation_transform_obj.matrix() * direction;
-    directionTop = rotation_transform_obj.matrix() * directionTop;
+    vertical_rotation_speed.one_step_up();
 }
 
 void PlayerObject::moveDown()
 {
-    cgp::vec3 rotation_axis = cgp::cross(direction, directionTop);
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(rotation_axis, -PLAYER_MAX_ROTATION_SPEED * Timer::getSimulStep());
-
-    // Rotate both vectors
-    direction = rotation_transform_obj.matrix() * direction;
-    directionTop = rotation_transform_obj.matrix() * directionTop;
+    vertical_rotation_speed.one_step_down();
 }
 
 void PlayerObject::moveLeft()
 {
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(directionTop, +PLAYER_MAX_ROTATION_SPEED * Timer::getSimulStep());
-
-    // Rotate both vectors
-    direction = rotation_transform_obj.matrix() * direction;
+    horizontal_rotation_speed.one_step_up();
 }
 
 void PlayerObject::moveRight()
 {
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(directionTop, -PLAYER_MAX_ROTATION_SPEED * Timer::getSimulStep());
-
-    // Rotate both vectors
-    direction = rotation_transform_obj.matrix() * direction;
+    horizontal_rotation_speed.one_step_down();
 }
 
 void PlayerObject::rollLeft()
 {
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, -PLAYER_MAX_ROLL_SPEED * Timer::getSimulStep());
-
-    // Rotate both vectors
-    directionTop = rotation_transform_obj.matrix() * directionTop;
+    roll_speed.one_step_down();
 }
 
 void PlayerObject::rollRight()
 {
-    auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, +PLAYER_MAX_ROLL_SPEED * Timer::getSimulStep());
-
-    // Rotate both vectors
-    directionTop = rotation_transform_obj.matrix() * directionTop;
+    roll_speed.one_step_up();
 }
 
 void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model) const
@@ -119,4 +105,19 @@ cgp::rotation_transform PlayerObject::orientation() const
     auto match_tops = cgp::rotation_transform::from_vector_transform(match_directions * PLAYER_BASE_TOP, directionTop);
 
     return match_tops * match_directions;
+}
+
+void PlayerObject::decelerateRoll()
+{
+    roll_speed.one_step_decelerate();
+}
+
+void PlayerObject::decelerateHorizontalRotation()
+{
+    horizontal_rotation_speed.one_step_decelerate();
+}
+
+void PlayerObject::decelerateVerticalRotation()
+{
+    vertical_rotation_speed.one_step_decelerate();
 }

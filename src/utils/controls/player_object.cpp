@@ -36,8 +36,8 @@ void PlayerObject::step()
     camera_direction_top = perpendicular_projection(camera_direction_top, camera_direction);
 
     // Set camera diection buffer values
-    camera_direction_buffer.add(direction);
-    camera_direction_top_buffer.add(directionTop);
+    camera_direction_buffer.add(camera_direction);
+    camera_direction_top_buffer.add(camera_direction_top);
 
     // Translation
     position += velocity * Timer::getSimulStep();

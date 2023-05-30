@@ -26,9 +26,9 @@ constexpr float PLAYER_ROTATION_ACCELERATION = PLAYER_MAX_ROTATION_SPEED * 60 / 
 const cgp::vec3 PLAYER_BASE_DIRECTION = {1, 0, 0};
 const cgp::vec3 PLAYER_BASE_TOP = {0, 0, 1};
 
-// TODO : bouge bien, mais gros délai. Vraiment ajuste ces paamètres, et ça sera fini pour la cam (faire le bouclie ensuite)
-constexpr int DELAY_FRAMES = 20;    // Delay frames for the camera
-constexpr float DELAY_RATIO = 0.90; // Ratio of the delayed buffer direction
+// Both parameters have an influence (sweet spot for 60 fps)
+constexpr int DELAY_FRAMES = 15;   // Delay frames for the camera. 1 second
+constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 
 // constexpr int DELAY_FRAMES = 60;   // Delay frames for the camera
 // constexpr float DELAY_RATIO = 0.3; // Ratio of the delayed buffer direction

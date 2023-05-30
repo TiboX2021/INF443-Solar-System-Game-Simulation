@@ -36,7 +36,12 @@ uniform vec3 light; // position of the light
 
 //**********************************************************
 //*********************************************************
+// la rapidite est un float entre 0 et 1 qui determine a quel point le reacteur est eclaire :
+//  - si elle vaut 0, le reacteur a sa texture par defaut
+//  - si elle vaut 1, le reacteur sera totalement bleu  
 uniform float rapidite;
+
+// TODO : obtenir la rapidite de la part de la boucle principale (par exemple rapidite = vitesse / vitesse_max)
 
 
 
@@ -77,7 +82,7 @@ void main()
     vec3 camera_position = -O * last_col;
 
     // Renormalize normal
-    vec3 N = normalize(fragment.normal); // TODO : ici, le problème c'est le sens du fragment
+    vec3 N = normalize(fragment.normal); 
 
     // Inverse the normal if it is viewed from its back (two-sided surface)
     //  (note: gl_FrontFacing doesn't work on Mac)

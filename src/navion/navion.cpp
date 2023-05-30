@@ -846,9 +846,14 @@ void Navion::create_star_destroyer(float const &scale)
     mesh_drawable disque_feu;
     disque_feu.initialize_data_on_gpu(mesh_primitive_disc(0.39, {-0.01, 0, 0}, {1, 0, 0}));
 
-    disque_feu.material.color = {0.5, 0.7, 1};
-    disque_feu.material.phong.ambient = 1;
-    disque_feu.material.phong.diffuse = 0;
+    opengl_shader_structure shader_reacteur;
+    shader_reacteur.load(
+        project::path + "shaders/custom_shaders/reacteur/reacteur.vert.glsl",
+        project::path + "shaders/custom_shaders/reacteur/reacteur.frag.glsl");
+
+    disque_feu.shader = shader_reacteur;
+
+    disque_feu.material.color = {0.2, 0.2, 0.2};
     disque_feu.material.phong.specular = 0;
 
     hierarchie.add(disque_feu, "Disque1", "Reacteur1");

@@ -66,6 +66,7 @@ public:
     bool getShouldTranslate() const;
     bool getShouldRotate() const;
     double getMass() const;
+    float getPhysicsRadius() const;
 
     // Setters
     void setShouldTranslate(bool should_translate);
@@ -74,6 +75,7 @@ public:
     void setInitialVelocity(cgp::vec3 velocity);
     void setInitialRotationSpeed(double rotation_speed);
     void setRotationAxis(cgp::vec3 rotation_axis);
+    void setPhysicsRadius(float radius);
 
     // STATIC MEMBERS
     // Scale a value to the physics scale (distance and mass)
@@ -103,4 +105,7 @@ private:
     // Immobile object or not
     bool should_translate;
     bool should_rotate;
+
+    // Size
+    float physics_radius;
 };

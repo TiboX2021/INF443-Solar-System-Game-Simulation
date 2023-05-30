@@ -126,6 +126,23 @@ void AsteroidThreadPool::worker(int start_index, int end_index)
 // Helper for the worker thread function
 void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
 {
+    // BEFORRER SIMULATION !
+    // Deactivate asteroids on collision with the attractor
+    for (int i = start; i < end; i++)
+    {
+        if (!deactivated_asteroids[i])
+        {
+            // First : check collision with the player
+            float distance = cgp::norm(asteroids[i].getPhysicsPosition() - attractor.load()->getPhysicsPosition());
+
+            if (distance < attractor.load()->getPhysicsRadius())
+            {
+                // Deactivate asteroid
+                deactivated_asteroids[i] = true;
+            }
+        }
+    }
+
     cgp::vec3 delta_attractor_position = (current_attractor_position - last_attractor_position) / PHYSICS_SCALE;
 
     // Clear forces + update positions to match the main attractor

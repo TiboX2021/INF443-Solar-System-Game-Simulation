@@ -136,3 +136,13 @@ cgp::vec3 Object::getPhysicsVelocity() const
 {
     return this->velocity;
 }
+
+float Object::getPhysicsRadius() const
+{
+    return this->physics_radius;
+}
+
+void Object::setPhysicsRadius(float physics_radius)
+{
+    this->physics_radius = physics_radius;
+}

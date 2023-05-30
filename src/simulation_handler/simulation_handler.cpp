@@ -117,6 +117,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     sun.setShouldRotate(false);
     sun.setShouldTranslate(false);
     sun.setShader("lava");
+    sun.setPhysicsRadius(SUN_RADIUS / 10 * DISPLAY_SCALE); // For asteroid collisions
     handler.addObject(sun);
 
     Object *sun_ptr = handler.physical_objects.back();
@@ -151,6 +152,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
+    saturn.setPhysicsRadius(SATURN_RADIUS * DISPLAY_SCALE); // For asteroid collisions
     handler.addObject(saturn);
 
     Object *saturn_ptr = handler.physical_objects.back();

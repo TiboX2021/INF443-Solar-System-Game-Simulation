@@ -44,13 +44,13 @@ void Object::computeGravitationnalForce(Object *other, double factor)
 }
 
 /** Update position */
-void Object::update(double dt)
+void Object::update(double dt, float orbit_factor)
 {
     if (should_translate)
     {
         this->acceleration = this->forces / this->mass;
-        this->velocity += this->acceleration * dt * ORBIT_FACTOR;
-        this->physics_position += this->velocity * dt * ORBIT_FACTOR;
+        this->velocity += this->acceleration * dt * orbit_factor;
+        this->physics_position += this->velocity * dt * orbit_factor;
     }
 
     if (should_rotate)

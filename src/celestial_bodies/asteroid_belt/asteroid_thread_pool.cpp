@@ -169,7 +169,7 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
     {
         if (!deactivated_asteroids[i])
         {
-            asteroids[i].update(step);
+            asteroids[i].update(step, orbitFactor);
         }
     }
 
@@ -197,7 +197,7 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
                 cgp::vec3 relative_velocity = asteroids[i].getPhysicsVelocity() - collision_data.velocity;
 
                 // Redirect the asteroid with this velocity in the reflection diection from this velocity
-                cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal);
+                cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal) + collision_data.velocity * cgp::dot(normal, normalize_or_zero(collision_data.velocity)) / (orbitFactor * orbitFactor);
 
                 // Apply the new velocity
                 asteroids[i].setInitialVelocity(new_velocity);

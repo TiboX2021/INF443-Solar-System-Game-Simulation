@@ -92,11 +92,11 @@ void AsteroidBelt::initialize()
         break;
     case BeltPresets::SUN:
         n_asteroids = 10000;
-        orbit_factor = 1;
+        orbit_factor = 3;
         break;
     case BeltPresets::KUIPER:
         n_asteroids = 100000; // Can go up to 200 000 with a beefy enough gpu
-        orbit_factor = 5;     // The Kuiper belt is far away : accelerate its movement by 5
+        orbit_factor = 10;    // The Kuiper belt is far away : accelerate its movement by 10
         break;
     default:
         n_asteroids = 1000;

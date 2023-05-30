@@ -8,6 +8,8 @@
 
 // Useful tools & classes
 
+constexpr float NORMALIZE_FLOAT_MARGIN = 0.01;
+
 template <class T>
 class ObjectBuffer
 {
@@ -70,4 +72,10 @@ inline cgp::vec3 perpendicular_projection(const cgp::vec3 &v1, const cgp::vec3 &
 inline cgp::vec3 reflect(const cgp::vec3 &incoming, const cgp::vec3 &normal)
 {
     return incoming - 2 * cgp::dot(incoming, normal) * normal;
+}
+
+// Normalize, but {0, 0, 0}-proof
+inline cgp::vec3 normalize_or_zero(const cgp::vec3 &v)
+{
+    return cgp::norm(v) > NORMALIZE_FLOAT_MARGIN ? cgp::normalize(v) : cgp::vec3(0, 0, 0);
 }

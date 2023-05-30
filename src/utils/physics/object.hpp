@@ -52,7 +52,7 @@ class Object
 public:
     Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1}, bool should_translate = true, bool should_rotate = true);
 
-    void update(double dt);
+    void update(double dt, float orbit_factor = ORBIT_FACTOR);
 
     void resetForces();
     void computeGravitationnalForce(Object *other, double factor = 1.0);

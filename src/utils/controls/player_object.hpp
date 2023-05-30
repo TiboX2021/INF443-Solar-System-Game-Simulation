@@ -4,6 +4,7 @@
 #include "navion/navion.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 #include "utils/physics/object.hpp"
+#include "utils/tools/tools.hpp"
 
 // Max player speed
 constexpr float PLAYER_MAX_TRANSLATION_SPEED = 0.03 * 10e10 * 60 / (3600 * 24);
@@ -12,8 +13,8 @@ constexpr float PLAYER_MAX_TRANSLATION_SPEED = 0.03 * 10e10 * 60 / (3600 * 24);
 constexpr float PLAYER_TRANSLATION_ACCELERATION = PLAYER_MAX_TRANSLATION_SPEED * 60 / (3600 * 24) / 180; // Player acceleration per frame
 
 // Max player rotation speed along any axis
-constexpr float PLAYER_MAX_ROTATION_SPEED = 0.01 * 60 / (3600 * 24); // radians
-constexpr float PLAYER_MAX_ROLL_SPEED = 0.03 * 60 / (3600 * 24);     // radians. This is higher, as rolling does not change the tajectory
+constexpr float PLAYER_MAX_ROTATION_SPEED = 0.015 * 60 / (3600 * 24); // radians
+constexpr float PLAYER_MAX_ROLL_SPEED = 0.03 * 60 / (3600 * 24);      // radians. This is higher, as rolling does not change the tajectory
 
 // Roll acceleration (takes 0.25 seconds for full roll speed)
 constexpr float PLAYER_ROLL_ACCELERATION = PLAYER_MAX_ROLL_SPEED * 60 / (3600 * 24) / 15; // Player acceleration per frame
@@ -24,6 +25,13 @@ constexpr float PLAYER_ROTATION_ACCELERATION = PLAYER_MAX_ROTATION_SPEED * 60 / 
 // Player orientation default (for the playe spaceship)
 const cgp::vec3 PLAYER_BASE_DIRECTION = {1, 0, 0};
 const cgp::vec3 PLAYER_BASE_TOP = {0, 0, 1};
+
+// TODO : bouge bien, mais gros délai. Vraiment ajuste ces paamètres, et ça sera fini pour la cam (faire le bouclie ensuite)
+constexpr int DELAY_FRAMES = 20;    // Delay frames for the camera
+constexpr float DELAY_RATIO = 0.90; // Ratio of the delayed buffer direction
+
+// constexpr int DELAY_FRAMES = 60;   // Delay frames for the camera
+// constexpr float DELAY_RATIO = 0.3; // Ratio of the delayed buffer direction
 
 // Strruct to handle gradual otation and translation speeds
 struct GradualCoeff
@@ -81,7 +89,9 @@ public:
                      speed({0, PLAYER_MAX_TRANSLATION_SPEED, 0, PLAYER_TRANSLATION_ACCELERATION}),
                      roll_speed({0, PLAYER_MAX_ROLL_SPEED, -PLAYER_MAX_ROLL_SPEED, PLAYER_ROLL_ACCELERATION}),
                      vertical_rotation_speed({0, PLAYER_MAX_ROTATION_SPEED, -PLAYER_MAX_ROTATION_SPEED, PLAYER_ROTATION_ACCELERATION}),
-                     horizontal_rotation_speed({0, PLAYER_MAX_ROTATION_SPEED, -PLAYER_MAX_ROTATION_SPEED, PLAYER_ROTATION_ACCELERATION}){};
+                     horizontal_rotation_speed({0, PLAYER_MAX_ROTATION_SPEED, -PLAYER_MAX_ROTATION_SPEED, PLAYER_ROTATION_ACCELERATION}),
+                     camera_direction_buffer(DELAY_FRAMES, PLAYER_BASE_DIRECTION),
+                     camera_direction_top_buffer(DELAY_FRAMES, PLAYER_BASE_TOP){};
 
     void step(); // Simulate one step for the player
 
@@ -115,6 +125,10 @@ private:
     cgp::vec3 directionTop; // Vector that points to the top of the player
     cgp::vec3 velocity;
 
+    // Camera vectors
+    cgp::vec3 camera_direction;
+    cgp::vec3 camera_direction_top;
+
     // Player rotation
     cgp::rotation_transform rotation;
 
@@ -123,4 +137,8 @@ private:
     GradualCoeff roll_speed;
     GradualCoeff vertical_rotation_speed;
     GradualCoeff horizontal_rotation_speed;
+
+    // Camera position buffer
+    ObjectBuffer<cgp::vec3> camera_direction_buffer;     // = ObjectBuffer<cgp::vec3>(2);
+    ObjectBuffer<cgp::vec3> camera_direction_top_buffer; // = ObjectBuffer<cgp::vec3>(2);
 };

@@ -3,6 +3,7 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 #include "utils/physics/object.hpp"
+#include "utils/tools/tools.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -25,8 +26,18 @@ void PlayerObject::step()
     // Horizontal rotation speed
     auto rotation_transform_obj = cgp::rotation_transform::from_axis_angle(directionTop, horizontal_rotation_speed.value * Timer::getSimulStep());
 
-    // Only rotate the dirrection vector
+    // Only rotate the direction vector
     direction = rotation_transform_obj.matrix() * direction;
+
+    // Update camera values with ones from buffer
+    camera_direction = vector_mix(camera_direction_buffer.getNextOne(), direction, DELAY_RATIO);
+    camera_direction_top = vector_mix(camera_direction_top_buffer.getNextOne(), directionTop, DELAY_RATIO);
+    // Force perpendicularization to avoid bugs
+    camera_direction_top = perpendicular_projection(camera_direction_top, camera_direction);
+
+    // Set camera diection buffer values
+    camera_direction_buffer.add(direction);
+    camera_direction_top_buffer.add(directionTop);
 
     // Translation
     position += velocity * Timer::getSimulStep();
@@ -84,9 +95,9 @@ void PlayerObject::rollRight()
 
 void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model) const
 {
-    camera_model.direction = direction;
-    camera_model.top = directionTop;
-    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position) - direction * 10.0f;
+    camera_model.direction = camera_direction;
+    camera_model.top = camera_direction_top;
+    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position) - camera_direction * 10.0f;
 }
 
 void PlayerObject::updatePlayerShip(Navion &ship) const

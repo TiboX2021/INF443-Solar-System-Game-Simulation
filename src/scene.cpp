@@ -59,7 +59,7 @@ void scene_structure::initialize()
     //************************************
 
     //un_vaisseau.initialize();
-    un_vaisseau.create_star_destroyer();
+    un_vaisseau.create_millennium_falcon();
 
 
     galaxy.initialize();

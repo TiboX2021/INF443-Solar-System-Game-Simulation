@@ -165,13 +165,25 @@ void Navion::draw(environment_structure const& environment) {
 
 	// On ajoute ensuite le feu des réacteurs par l'appel à la classe
 	// à noter : si le vaisseau n'a pas de réacteur, la liste est vide et rien n'est affiché
-	feu_sa_mere.display_reacteur(position_reacteur, direction_reacteur, environment);
+	// TODO : faire bouger le feu en même temsp que le vaisseau
+	vec3 xyz = hierarchie["Corps"].transform_local.translation;
+	rotation_transform dir = hierarchie["Corps"].transform_local.rotation;
+	std::vector<vec3> positions;
+	std::vector<rotation_transform> directions; 
+	for (int k = 0; k < position_reacteur.size(); k++) {
+		positions.push_back(xyz + position_reacteur[k]);
+		directions.push_back(direction_reacteur[k] * dir);
+	}
+	feu_sa_mere.display_reacteur( position_reacteur , direction_reacteur, environment);
+
 
 }
 
 
 
 void Navion::set_position(vec3 const& position) {
+	// Pour faire bouger le vaisseau, on se sert de la hierarchie
+	// Pour chaque vaisseau, la hierarchie est basée sur le mesh_drawable nommé Corps : c'est lui seul qu'on déplace
 	hierarchie["Corps"].transform_local.translation = position;
 }
 
@@ -827,7 +839,7 @@ void Navion::create_star_destroyer(float const& scale) {
 
 
 	// Pour les flammes des reacteurs, on utilise la classe reacteur : il suffit d'ajouter les positions et directions à la liste
-	feu_sa_mere.initialize();
+	feu_sa_mere.initialize(0.8);
 
 	rotation_transform angle1 = rotation_transform::from_axis_angle({ 0,1,0 }, -Pi / 2);
 	position_reacteur.push_back(scale * vec3(-3, 0, 0));
@@ -863,12 +875,12 @@ void Navion::create_star_destroyer(float const& scale) {
 
 	// On ajoute ensuite trois disques pour que les réacteurs ressemblent à qqch :
 	mesh_drawable disque_feu;
-	disque_feu.initialize_data_on_gpu(mesh_primitive_disc(0.4, { -0.01,0,0 }, {1,0,0}));
+	disque_feu.initialize_data_on_gpu(mesh_primitive_disc(0.39, { -0.01,0,0 }, {1,0,0}));
 
-	// TODO : revoir la couleur
-	disque_feu.material.color = { 0.5,0.5,1 };
+
+	disque_feu.material.color = { 0.5,0.7,1 };
 	disque_feu.material.phong.ambient = 1;
-	disque_feu.material.phong.diffuse = 1;
+	disque_feu.material.phong.diffuse = 0;
 	disque_feu.material.phong.specular = 0;
 
 	hierarchie.add(disque_feu, "Disque1", "Reacteur1");

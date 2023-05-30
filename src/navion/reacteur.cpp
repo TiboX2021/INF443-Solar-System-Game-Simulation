@@ -10,9 +10,9 @@ using cgp::mesh_drawable;
 using cgp::numarray;
 using cgp::vec3;
 
-void Reacteur::initialize() {
+void Reacteur::initialize(float const &scale ) {
 	
-	feu = mesh_primitive_quadrangle({ -0.5f,0,0 }, { 0.5f,0,0 }, { 0.5f,0,1 }, { -0.5f,0,1 });
+	feu = mesh_primitive_quadrangle(scale * vec3( - 0.5f, 0, 0 ), scale * vec3(0.5f,0,0), scale * vec3(0.5f,0,1), scale * vec3(-0.5f,0,1));
 	feu_reacteur.initialize_data_on_gpu(feu);
 	feu_reacteur.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/blue-flame-png-hd--1920.png");
 	feu_reacteur.material.phong = { 0.4f, 0.6f,0,1 };

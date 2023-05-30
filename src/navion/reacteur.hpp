@@ -12,7 +12,7 @@ using cgp::vec3;
 class Reacteur 
 {
 public :
-	void initialize();
+	void initialize(float const &scale = 1.0);
 	void display_reacteur(std::vector<vec3> const &positions, std::vector<rotation_transform> const& directions, environment_structure const& environment);
 
 protected :

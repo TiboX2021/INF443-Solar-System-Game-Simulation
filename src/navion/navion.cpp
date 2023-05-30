@@ -147,6 +147,18 @@ void Navion::draw(environment_structure const &environment)
 
     // On ajoute ensuite le feu des r�acteurs par l'appel � la classe
     // � noter : si le vaisseau n'a pas de r�acteur, la liste est vide et rien n'est affich�
+
+    // comme le vaisseau va se deplacer, on doit actualiser les positions et les directions des reacteurs 
+    vec3 xyz = hierarchie["Corps"].transform_local.translation;
+    rotation_transform dir = hierarchie["Corps"].transform_local.rotation;
+    std::vector<vec3> positions;
+    std::vector<rotation_transform> directions;
+    for (int k = 0; k < position_reacteur.size(); k++)
+    {
+        positions.push_back(xyz + position_reacteur[k]);
+        directions.push_back(direction_reacteur[k] * dir);
+    }
+
     feu_sa_mere.display_reacteur(position_reacteur, direction_reacteur, environment);
 }
 
@@ -333,6 +345,7 @@ void Navion::create_millennium_falcon(float const &scale)
     mesh_drawable corps;
     mesh_drawable tunnel_interne; // A faire
     mesh_drawable bords;          // A faire
+    mesh_drawable reacteur;
 
     mesh_drawable aile_droite;
     mesh_drawable aile_gauche;
@@ -344,6 +357,11 @@ void Navion::create_millennium_falcon(float const &scale)
     aile_gauche.initialize_data_on_gpu(create_truc_sur_le_falcon(scale, true));
 
     tunnel_interne.initialize_data_on_gpu(cgp::mesh_primitive_cone(0.35, 2.5, {0, 0, -2.5}));
+
+
+    reacteur.initialize_data_on_gpu(mesh_primitive_quadrangle(
+        scale *2 * vec3(cos(5 *Pi/6), sin(5 *Pi/6), 0.09), scale * 2 * vec3(-1, 0, 0.09), 
+        scale * 2 * vec3(-1,0,-0.09), scale * 2 * vec3(cos(5 * Pi / 6), sin(5 * Pi / 6), -0.09)));
 
     // ******************************************
     // pour le cocpit :
@@ -393,6 +411,9 @@ void Navion::create_millennium_falcon(float const &scale)
                                                               GL_REPEAT,
                                                               GL_REPEAT);
 
+    reacteur.texture.load_and_initialize_texture_2d_on_gpu(project::path + "assets/navion/grille_falcon.jpg");
+
+
     centre.material.phong.specular = 0.0;
     corps.material.phong.specular = 0.0;
     aile_droite.material.phong.specular = 0.0;
@@ -400,6 +421,9 @@ void Navion::create_millennium_falcon(float const &scale)
     corps_cocpit.material.phong.specular = 0.0;
     cocpit.material.phong.specular = 0.0;
     vitre_cocpit.material.phong.specular = 0.9;
+
+    
+
 
     // Add the elements in the hierarchy
     //   The syntax is hierarchy.add(mesh_drawable, "name of the parent element", [optional: local translation in the hierarchy])
@@ -414,6 +438,14 @@ void Navion::create_millennium_falcon(float const &scale)
     hierarchie.add(aile_droite, "Aile_droite", "Centre", {scale * 1.5, scale * 0.2, 0});
     hierarchie.add(aile_gauche, "Aile_gauche", "Centre", {scale * 1.5, -0.2 * scale, 0});
     hierarchie["Aile_gauche"].transform_local.rotation = rotation_transform::from_axis_angle({1, 0, 0}, Pi);
+
+
+    hierarchie.add(reacteur, "Reacteur1", "Corps", scale* vec3(-0.001, 0, 0));
+    hierarchie.add(reacteur, "Reacteur2", "Corps", scale* vec3(-0.001, 0, 0));
+    hierarchie["Reacteur2"].transform_local.rotation = rotation_transform::from_axis_angle({ 0,0,1 }, Pi / 6);
+
+
+
 
     // **************************************
     //        re le cocpit
@@ -792,12 +824,11 @@ void Navion::create_star_destroyer(float const &scale)
 
     // On ajoute ensuite trois disques pour que les r�acteurs ressemblent � qqch :
     mesh_drawable disque_feu;
-    disque_feu.initialize_data_on_gpu(mesh_primitive_disc(0.4, {-0.01, 0, 0}, {1, 0, 0}));
+    disque_feu.initialize_data_on_gpu(mesh_primitive_disc(0.39, {-0.01, 0, 0}, {1, 0, 0}));
 
-    // TODO : revoir la couleur
-    disque_feu.material.color = {0.5, 0.5, 1};
+    disque_feu.material.color = {0.5, 0.7, 1};
     disque_feu.material.phong.ambient = 1;
-    disque_feu.material.phong.diffuse = 1;
+    disque_feu.material.phong.diffuse = 0;
     disque_feu.material.phong.specular = 0;
 
     hierarchie.add(disque_feu, "Disque1", "Reacteur1");

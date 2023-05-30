@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cgp/cgp.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "environment.hpp"
 #include "reacteur.hpp"
 #include <vector>
@@ -16,13 +17,14 @@ public:
     void initialize();
     void draw(environment_structure const &environment);
     void set_position(vec3 const &position);
-    void set_direction(vec3 const &direction);
+    void set_orientation(rotation_transform const &orientation);
+    void update_hierachy();
     void set_angle_aile(float const angle);
     void create_millennium_falcon(float const &scale = 1);
     void create_vaisseau_vador(float const &scale = 1);
     void create_star_destroyer(float const &scale = 1);
 
-public: // DEBUG : pour l'instant la mise à jour des orientations n'est pas faite
+protected:
     cgp::hierarchy_mesh_drawable hierarchie;
 
 private:

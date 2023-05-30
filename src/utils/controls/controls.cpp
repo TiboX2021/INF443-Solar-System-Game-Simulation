@@ -59,10 +59,11 @@ void Controls::handlePlayerKeys()
     }
 }
 
-void Controls::updateCamera(custom_camera_controller &camera)
+void Controls::updateCamera(custom_camera_controller &camera, cgp::mat4 &camera_matrix_view)
 {
     // Update camera orientation according to the player
     player.updatePlayerCamera(camera.camera_model);
+    camera.idle_frame(camera_matrix_view);
 }
 
 void Controls::updatePlayer()

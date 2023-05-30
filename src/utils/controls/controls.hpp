@@ -43,7 +43,7 @@ public:
     }
 
     // Update the camera position from the player control object
-    void updateCamera(custom_camera_controller &camera);
+    void updateCamera(custom_camera_controller &camera, cgp::mat4 &camera_matrix_view);
 
     // Handle player actions based on current pressed keys
     void handlePlayerKeys();

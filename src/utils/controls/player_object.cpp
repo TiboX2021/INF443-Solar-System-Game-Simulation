@@ -98,25 +98,16 @@ void PlayerObject::rollRight()
 
 void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model) const
 {
-    // TODO : when upating camera, see the top of the ship ? Just a rotation ? This will be better with animations
-    // TODO: assifier ça en une fonction qui donnerait dirrect ce dont on a besoin (+ pour faire le retard de rotation par rapport au vaisseau)
-    // Ajouter une petite rotation
-    auto rotation_axis = cgp::cross(direction, directionTop);
-    auto additional_rotation = cgp::rotation_transform::from_axis_angle(rotation_axis, -0.3f);
-
     camera_model.direction = direction;
     camera_model.top = directionTop;
-    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position) - additional_rotation * direction * 10.0f; // Add camera offset to be able to see the spaceship
+    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position) - direction * 10.0f;
 }
 
 void PlayerObject::updatePlayerShip(Navion &ship) const
 {
-    // TODO : also set orientation
-    // ship.set_direction(direction);
-    // ship.set_position(Object::scaleDownDistanceForDisplay(position));
-    ship.hierarchie["Centre"].transform_local.translation = Object::scaleDownDistanceForDisplay(position);
-    ship.hierarchie["Centre"].transform_local.rotation = orientation();
-    ship.hierarchie.update_local_to_global_coordinates();
+    ship.set_position(Object::scaleDownDistanceForDisplay(position));
+    ship.set_orientation(orientation());
+    ship.update_hierachy();
 }
 
 cgp::rotation_transform PlayerObject::orientation() const

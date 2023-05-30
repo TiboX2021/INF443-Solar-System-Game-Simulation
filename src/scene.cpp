@@ -67,7 +67,7 @@ void scene_structure::display_frame()
     keyboard_control_handler.handlePlayerKeys();
     keyboard_control_handler.updatePlayer();
     keyboard_control_handler.updateShip();
-    keyboard_control_handler.updateCamera(custom_camera);
+    keyboard_control_handler.updateCamera(custom_camera, environment.camera_view);
 
     // BUG : il y a un temps de flottement entre le déplacement de la caméra et celui du joueur...
     // C'est peut-être juste une question d'update les objets dans le bon ordre...

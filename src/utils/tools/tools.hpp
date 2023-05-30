@@ -65,3 +65,9 @@ inline cgp::vec3 perpendicular_projection(const cgp::vec3 &v1, const cgp::vec3 &
 {
     return cgp::normalize(v1 - v2 * cgp::dot(v1, v2));
 }
+
+// Given an incoming vector and a normal, return the reflected vector
+inline cgp::vec3 reflect(const cgp::vec3 &incoming, const cgp::vec3 &normal)
+{
+    return incoming - 2 * cgp::dot(incoming, normal) * normal;
+}

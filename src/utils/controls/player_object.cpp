@@ -7,6 +7,9 @@
 #include <cmath>
 #include <iostream>
 
+// Define global player position
+ReadWriteLock<PlayerCollisionData> global_player_collision_data;
+
 void PlayerObject::step()
 {
     // Roll speed
@@ -41,6 +44,9 @@ void PlayerObject::step()
 
     // Translation
     position += velocity * Timer::getSimulStep();
+
+    // TODO : adjust the scale to the actual size of the player shield
+    global_player_collision_data.write({position, velocity, 1 / PHYSICS_SCALE});
 }
 
 // Translation functions

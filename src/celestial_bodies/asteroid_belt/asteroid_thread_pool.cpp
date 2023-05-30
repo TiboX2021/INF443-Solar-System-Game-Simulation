@@ -1,7 +1,9 @@
 #include "asteroid_thread_pool.hpp"
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
+#include "utils/controls/player_object.hpp"
 #include "utils/physics/object.hpp"
+#include "utils/tools/tools.hpp"
 #include <cmath>
 #include <iostream>
 
@@ -15,6 +17,7 @@ AsteroidThreadPool::AsteroidThreadPool(const AsteroidThreadPool &other)
 
     // Copy the data
     asteroids = other.asteroids;
+    collision_frames_timeout = other.collision_frames_timeout;
     distance_mesh_handlers = other.distance_mesh_handlers;
 }
 
@@ -128,20 +131,64 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
     // Clear forces + update positions to match the main attractor
     for (int i = start; i < end; i++)
     {
-        asteroids[i].resetForces();
-        asteroids[i].setPhysicsPosition(asteroids[i].getPhysicsPosition() + delta_attractor_position);
+        if (!deactivated_asteroids[i])
+        {
+            asteroids[i].resetForces();
+            asteroids[i].setPhysicsPosition(asteroids[i].getPhysicsPosition() + delta_attractor_position);
+        }
     }
 
     // Compute gravitationnal force to the attractor
     for (int i = start; i < end; i++)
     {
-        asteroids[i].computeGravitationnalForce(attractor, orbitFactor * orbitFactor);
+        if (!deactivated_asteroids[i])
+        {
+            asteroids[i].computeGravitationnalForce(attractor, orbitFactor * orbitFactor);
+        }
     }
 
     // Simulate step
     for (int i = start; i < end; i++)
     {
-        asteroids[i].update(step);
+        if (!deactivated_asteroids[i])
+        {
+            asteroids[i].update(step);
+        }
+    }
+
+    // Update collision frames timeout
+    for (int i = start; i < end; i++)
+    {
+        if (collision_frames_timeout[i] > 0)
+            collision_frames_timeout[i]--;
+    }
+
+    // Take collisions into account
+    PlayerCollisionData collision_data = global_player_collision_data.read();
+
+    for (int i = start; i < end; i++)
+    {
+        if (!deactivated_asteroids[i] && collision_frames_timeout[i] == 0)
+        {
+            // First : check collision with the player
+            float distance = cgp::norm(asteroids[i].getPhysicsPosition() - collision_data.position);
+
+            if (distance < collision_data.radius + asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS / PHYSICS_SCALE)
+            {
+                // Compute the new velocity of the asteroid
+                cgp::vec3 normal = cgp::normalize(asteroids[i].getPhysicsPosition() - collision_data.position);
+                cgp::vec3 relative_velocity = asteroids[i].getPhysicsVelocity() - collision_data.velocity;
+
+                // Redirect the asteroid with this velocity in the reflection diection from this velocity
+                cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal);
+
+                // Apply the new velocity
+                asteroids[i].setInitialVelocity(new_velocity);
+
+                // Set the frame timeout
+                collision_frames_timeout[i] = COLLISION_FRAME_TIMEOUT;
+            }
+        }
     }
 }
 
@@ -154,29 +201,36 @@ void AsteroidThreadPool::computeGPUDataForIndexes(int start, int end)
 
     for (int i = start; i < end; i++)
     {
-        // Compute the asteroid size to camera distance ratio. The higher, the lesser poly count is required
-        float ratio = cgp::norm(Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()) - camera_position) / (asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS);
+        if (!deactivated_asteroids[i])
+        {
+            // Compute the asteroid size to camera distance ratio. The higher, the lesser poly count is required
+            float ratio = cgp::norm(Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()) - camera_position) / (asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS);
 
-        int mesh_index;
-        bool is_low_poly_disk = false;
-        if (ratio < 100) // Maybe lower
-        {
-            mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].high_poly;
-        }
-        else if (ratio < 200) // Maybe higher
-        {
-            mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].low_poly;
+            int mesh_index;
+            bool is_low_poly_disk = false;
+            if (ratio < 100) // Maybe lower
+            {
+                mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].high_poly;
+            }
+            else if (ratio < 200) // Maybe higher
+            {
+                mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].low_poly;
+            }
+            else
+            {
+                mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].low_poly_disk;
+                is_low_poly_disk = true;
+            }
+
+            // If this is the low poly disk, compute the rotation to face the camera
+            rotation = is_low_poly_disk ? cgp::rotation_transform::from_vector_transform({0, 0, 1}, cgp::normalize(camera_position - Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()))).matrix() : asteroids[i].getPhysicsRotation().matrix();
+
+            //  Add data to the GPU buffer
+            gpu_data_buffer[i] = {Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()), rotation, mesh_index};
         }
         else
         {
-            mesh_index = distance_mesh_handlers[asteroid_config_data[i].mesh_handler_index].low_poly_disk;
-            is_low_poly_disk = true;
+            gpu_data_buffer[i] = {cgp::vec3(0, 0, 0), cgp::mat3(), -1};
         }
-
-        // If this is the low poly disk, compute the rotation to face the camera
-        rotation = is_low_poly_disk ? cgp::rotation_transform::from_vector_transform({0, 0, 1}, cgp::normalize(camera_position - Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()))).matrix() : asteroids[i].getPhysicsRotation().matrix();
-
-        //  Add data to the GPU buffer
-        gpu_data_buffer[i] = {Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()), rotation, mesh_index};
     }
 }

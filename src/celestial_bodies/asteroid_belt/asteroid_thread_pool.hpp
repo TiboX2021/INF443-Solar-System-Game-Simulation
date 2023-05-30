@@ -49,7 +49,12 @@ public:
         current_attractor_position = Object::scaleDownDistanceForDisplay(this->attractor.load()->getPhysicsPosition());
         last_attractor_position = current_attractor_position;
     };
-    void setAsteroids(std::vector<Object> &asteroids) { this->asteroids = asteroids; };
+    void setAsteroids(std::vector<Object> &asteroids)
+    {
+        this->asteroids = asteroids;
+        this->collision_frames_timeout.resize(asteroids.size());
+        this->deactivated_asteroids.resize(asteroids.size());
+    };
     void setDistanceMeshHandlers(const std::vector<DistanceMeshHandler> &distance_mesh_handlers) { this->distance_mesh_handlers = distance_mesh_handlers; };
     void setAsteroidConfigData(const std::vector<AsteroidConfigData> &asteroid_config_data) { this->asteroid_config_data = asteroid_config_data; };
     void setOrbitFactor(float orbitFactor) { this->orbitFactor = orbitFactor; };
@@ -97,6 +102,8 @@ private:
     std::vector<AsteroidGPUData> current_gpu_data;
 
     std::vector<Object> asteroids; // Asteroid physical objects
+    std::vector<int> collision_frames_timeout;
+    std::vector<bool> deactivated_asteroids; // Keep track of deactivated asteroids to avoid unnecessary computations
 
     // Configuration data for asteroids and meshes. They are initialized and then never changed (read only operations by worke threads)
     std::vector<DistanceMeshHandler> distance_mesh_handlers;

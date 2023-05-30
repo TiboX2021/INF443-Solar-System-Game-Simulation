@@ -217,7 +217,9 @@ void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &pos
     // Iterate with i in order to join GPU data and config data
     for (int i = 0; i < data_from_worker_threads.size(); i++)
     {
-        asteroid_instances_data[data_from_worker_threads[i].mesh_index].addData(data_from_worker_threads[i].position, data_from_worker_threads[i].rotation, asteroids[i].scale);
+        // Remove if mesh was deactivated (= -1)
+        if (data_from_worker_threads[i].mesh_index != -1)
+            asteroid_instances_data[data_from_worker_threads[i].mesh_index].addData(data_from_worker_threads[i].position, data_from_worker_threads[i].rotation, asteroids[i].scale);
     }
 
     // Call instanced drawing function for each dataset

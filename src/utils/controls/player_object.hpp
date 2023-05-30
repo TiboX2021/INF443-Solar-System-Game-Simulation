@@ -4,6 +4,7 @@
 #include "navion/navion.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 #include "utils/physics/object.hpp"
+#include "utils/threads/threads.hpp"
 #include "utils/tools/tools.hpp"
 
 // Max player speed
@@ -30,8 +31,17 @@ const cgp::vec3 PLAYER_BASE_TOP = {0, 0, 1};
 constexpr int DELAY_FRAMES = 15;   // Delay frames for the camera. 1 second
 constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 
-// constexpr int DELAY_FRAMES = 60;   // Delay frames for the camera
-// constexpr float DELAY_RATIO = 0.3; // Ratio of the delayed buffer direction
+constexpr int COLLISION_FRAME_TIMEOUT = 15; // Number of frames to wait before checking for collision again for the same asteroid
+
+struct PlayerCollisionData
+{
+    cgp::vec3 position;
+    cgp::vec3 velocity;
+    float radius;
+};
+
+// Global player position
+extern ReadWriteLock<PlayerCollisionData> global_player_collision_data;
 
 // Strruct to handle gradual otation and translation speeds
 struct GradualCoeff

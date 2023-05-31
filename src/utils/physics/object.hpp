@@ -55,7 +55,7 @@ public:
     void update(double dt, float orbit_factor = ORBIT_FACTOR);
 
     void resetForces();
-    void computeGravitationnalForce(Object *other, double factor = 1.0);
+    void computeGravitationnalForce(Object *other, double factor = 1.0, const cgp::vec3 &offset = {0, 0, 0});
     virtual void updateModels(){}; // Abstract function to update the models based on the physical constants
 
     // Getters

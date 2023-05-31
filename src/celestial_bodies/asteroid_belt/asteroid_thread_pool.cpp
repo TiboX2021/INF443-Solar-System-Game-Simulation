@@ -160,7 +160,7 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
     {
         if (!deactivated_asteroids[i])
         {
-            asteroids[i].computeGravitationnalForce(attractor, orbitFactor * orbitFactor);
+            asteroids[i].computeGravitationnalForce(attractor, orbitFactor * orbitFactor, asteroid_offsets[i]);
         }
     }
 
@@ -204,6 +204,9 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
 
                 // Set the frame timeout
                 collision_frames_timeout[i] = COLLISION_FRAME_TIMEOUT;
+
+                // Remove asteroid offset : it is no longer bound to its artificial orbit
+                asteroid_offsets[i] = {0, 0, 0};
             }
         }
     }
@@ -211,7 +214,6 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
 
 void AsteroidThreadPool::computeGPUDataForIndexes(int start, int end)
 {
-
     // Get camera position for distance computation
     cgp::vec3 camera_position = getCameraPosition();
     cgp::mat3 rotation;

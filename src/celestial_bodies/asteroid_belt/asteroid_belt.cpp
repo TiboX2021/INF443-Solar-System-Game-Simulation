@@ -131,9 +131,9 @@ void AsteroidBelt::initialize()
 
     // Initialize thread pool data
     pool.setAttractor(attractors[0]);
-    pool.setDistanceMeshHandlers(distance_mesh_handlers); // TODO : no need to store them in AsteroidBelt object
-    pool.setAsteroidConfigData(debug_asteroid_config);    // Set asteroid config data
-    pool.setAsteroids(debug_agregated_objects);           // add generated asteroids
+    pool.setDistanceMeshHandlers(distance_mesh_handlers);         // TODO : no need to store them in AsteroidBelt object
+    pool.setAsteroidConfigData(debug_asteroid_config);            // Set asteroid config data
+    pool.setAsteroids(debug_agregated_objects, asteroid_offsets); // add generated asteroids
     pool.setOrbitFactor(orbit_factor);
     pool.allocateBuffers();
 
@@ -148,7 +148,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     double radius_std;
     float scale_min;
     float scale_max;
-    float random_deviation_factor = 1.0f / 30; // Cannot be too big, else the asteroids do not follow a centered circular orbit
+    float random_deviation_factor; // Position offset for the asteroid (fluffy asteroid belt)
 
     // Load presets
     if (preset == BeltPresets::SATURN)
@@ -158,6 +158,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         radius_std = distance / 10;
         scale_min = 0.1;
         scale_max = 1;
+        random_deviation_factor = 1.0f / 20;
     }
     else if (preset == BeltPresets::SUN)
     {
@@ -166,6 +167,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         radius_std = distance / 10;
         scale_min = 0.2;
         scale_max = 1.8;
+        random_deviation_factor = 1.0f / 20;
     }
     else //  if (preset == BeltPresets::KUIPER)
     {
@@ -175,6 +177,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         radius_std = distance / 8;
         scale_min = 1;
         scale_max = 5;
+        random_deviation_factor = 1.0f / 15;
     }
 
     // Generate ateroids with random positions, and bind them to the meshes
@@ -182,7 +185,9 @@ void AsteroidBelt::generateRandomAsteroids(int n)
     {
         // Generate random position with gaussian distribution
         const float random_gaussian_distance = random_gaussian(distance, radius_std);
-        const cgp::vec3 random_position = random_orbit_position(random_gaussian_distance) + random_normalized_axis() * random_gaussian_distance * random_deviation_factor;
+        const cgp::vec3 random_deviation = random_normalized_axis() * distance * random_deviation_factor;
+        const cgp::vec3 random_position = random_orbit_position(random_gaussian_distance) + random_deviation;
+        const cgp::vec3 asteroid_offset = rotation_matrix * cgp::vec3{0, 0, random_deviation.z};
 
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
         Object asteroid(ASTEROID_MASS, rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
@@ -195,6 +200,7 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(scale_min, scale_max)};
 
         asteroids.push_back(asteroid_instance);
+        asteroid_offsets.push_back(asteroid_offset);
     }
 }
 

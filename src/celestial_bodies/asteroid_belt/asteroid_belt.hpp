@@ -117,7 +117,8 @@ private:
 
     // Objects
     std::vector<Asteroid> asteroids; // Asteroid physical objects
-    float orbit_factor;              // Orbit acceleration factor in order to display faster orbits (for visual purposes)
+    std::vector<cgp::vec3> asteroid_offsets;
+    float orbit_factor; // Orbit acceleration factor in order to display faster orbits (for visual purposes)
 
     BeltPresets preset;
 

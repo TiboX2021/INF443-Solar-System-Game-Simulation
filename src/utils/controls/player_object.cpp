@@ -2,6 +2,7 @@
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "utils/camera/custom_camera_model.hpp"
+#include "utils/controls/gui_params.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/tools/tools.hpp"
 #include <cmath>
@@ -111,7 +112,7 @@ void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model, const s
     camera_model.direction = camera_direction;
     camera_model.top = camera_direction_top;
 
-    cgp::vec3 physics_camera_position = position - camera_direction * 10.0f / PHYSICS_SCALE;
+    cgp::vec3 physics_camera_position = position - camera_direction * global_gui_params.camera_distance_atomic / PHYSICS_SCALE;
 
     // Clip the camera (use the physics radius or the display radius ? Here the physics)
     for (auto &object : camera_clip_objects)

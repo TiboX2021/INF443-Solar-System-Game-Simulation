@@ -3,6 +3,7 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include "utils/controls/gui_params.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <GLFW/glfw3.h>
@@ -45,6 +46,10 @@ void scene_structure::initialize()
 
 void scene_structure::display_frame()
 {
+
+    // Update GUI params values
+    global_gui_params.update_values();
+
     /*********************************************/
     /*              TIMER HANDLING               */
     /*********************************************/
@@ -71,9 +76,6 @@ void scene_structure::display_frame()
     keyboard_control_handler.updateShip();
     keyboard_control_handler.updateCamera(custom_camera, environment.camera_view);
 
-    // BUG : il y a un temps de flottement entre le déplacement de la caméra et celui du joueur...
-    // C'est peut-être juste une question d'update les objets dans le bon ordre...
-
     // Set the light to the sun position (center)
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
@@ -88,17 +90,18 @@ void scene_structure::display_frame()
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawObjects(environment, position, rotation, false);
-    keyboard_control_handler.getPlayerShip().draw(environment);
+
+    if (global_gui_params.display_ship_atomic)
+        keyboard_control_handler.getPlayerShip().draw(environment);
 
     display_semiTransparent();
 }
 
 void scene_structure::display_gui()
 {
-    ImGui::Checkbox("Frame", &gui.display_frame);
-    ImGui::Checkbox("Wireframe", &gui.display_wireframe);
-
-    ImGui::SliderFloat("Angle Aile", &gui.angle_aile_vaisseau, 0, 100);
+    ImGui::Checkbox("Show ship", &global_gui_params.display_ship);
+    ImGui::Checkbox("Enable shield", &global_gui_params.enable_shield);
+    ImGui::SliderFloat("Camera distance", &global_gui_params.camera_distance, 1, 20);
 }
 
 void scene_structure::mouse_move_event()

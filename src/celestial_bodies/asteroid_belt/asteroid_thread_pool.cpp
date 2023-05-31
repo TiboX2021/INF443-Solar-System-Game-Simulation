@@ -1,6 +1,7 @@
 #include "asteroid_thread_pool.hpp"
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
+#include "utils/controls/gui_params.hpp"
 #include "utils/controls/player_object.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/tools/tools.hpp"
@@ -181,32 +182,35 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
     }
 
     // Take collisions into account
-    PlayerCollisionData collision_data = global_player_collision_data.read();
-
-    for (int i = start; i < end; i++)
+    if (global_gui_params.enable_shield_atomic)
     {
-        if (!deactivated_asteroids[i] && collision_timeout[i] <= 0)
+        PlayerCollisionData collision_data = global_player_collision_data.read();
+
+        for (int i = start; i < end; i++)
         {
-            // First : check collision with the player
-            float distance = cgp::norm(asteroids[i].getPhysicsPosition() - collision_data.position);
-
-            if (distance < collision_data.radius + asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS / PHYSICS_SCALE)
+            if (!deactivated_asteroids[i] && collision_timeout[i] <= 0)
             {
-                // Compute the new velocity of the asteroid
-                cgp::vec3 normal = cgp::normalize(asteroids[i].getPhysicsPosition() - collision_data.position);
-                cgp::vec3 relative_velocity = asteroids[i].getPhysicsVelocity() - collision_data.velocity;
+                // First : check collision with the player
+                float distance = cgp::norm(asteroids[i].getPhysicsPosition() - collision_data.position);
 
-                // Redirect the asteroid with this velocity in the reflection diection from this velocity
-                cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal) + collision_data.velocity * cgp::dot(normal, normalize_or_zero(collision_data.velocity)) / (orbitFactor * orbitFactor);
+                if (distance < collision_data.radius + asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS / PHYSICS_SCALE)
+                {
+                    // Compute the new velocity of the asteroid
+                    cgp::vec3 normal = cgp::normalize(asteroids[i].getPhysicsPosition() - collision_data.position);
+                    cgp::vec3 relative_velocity = asteroids[i].getPhysicsVelocity() - collision_data.velocity;
 
-                // Apply the new velocity
-                asteroids[i].setInitialVelocity(new_velocity);
+                    // Redirect the asteroid with this velocity in the reflection diection from this velocity
+                    cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal) + collision_data.velocity * cgp::dot(normal, normalize_or_zero(collision_data.velocity)) / (orbitFactor * orbitFactor);
 
-                // Set the frame timeout
-                collision_timeout[i] = COLLISION_FRAME_TIMEOUT;
+                    // Apply the new velocity
+                    asteroids[i].setInitialVelocity(new_velocity);
 
-                // Remove asteroid offset : it is no longer bound to its artificial orbit
-                asteroid_offsets[i] = {0, 0, 0};
+                    // Set the frame timeout
+                    collision_timeout[i] = COLLISION_FRAME_TIMEOUT;
+
+                    // Remove asteroid offset : it is no longer bound to its artificial orbit
+                    asteroid_offsets[i] = {0, 0, 0};
+                }
             }
         }
     }

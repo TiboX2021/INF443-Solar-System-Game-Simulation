@@ -67,14 +67,6 @@ struct MeshInstancesData
     }
 };
 
-// Data for an asteroid
-struct Asteroid
-{
-    Object object; // TODO : store index in object vector instead (it will be coming from the thread pool)
-    int mesh_index;
-    float scale = 1.0f;
-};
-
 class AsteroidBelt : public Drawable
 {
 public:
@@ -93,8 +85,8 @@ public:
     // Draw function
     virtual void draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &rotation, bool show_wireframe = true) override;
 
-    // Simulation
-    void simulateStep(float step = 24.0f * 3600 / 60);
+    // Simulation : NO NEED : done in the pool !
+    // void simulateStep(float step = 24.0f * 3600 / 60);
 
     // Setters & getters useless in this case
     virtual void setPosition(cgp::vec3) override{};
@@ -105,23 +97,19 @@ public:
     void addAttractor(Object *attractor) { this->attractors.push_back(attractor); };
 
 private:
-    void generateRandomAsteroids(int n);
+    std::vector<Asteroid> generateRandomAsteroids(int n, const std::vector<DistanceMeshHandler> &distance_mesh_handlers);
 
     std::vector<Object *> attractors; // Pointer to the attractor object of the simulation
-    cgp::vec3 last_attractor_position;
 
     // Random asteroid models
     std::vector<mesh_drawable> asteroid_mesh_drawables;
     std::vector<MeshInstancesData> asteroid_instances_data; // For each mesh drawable
-    std::vector<DistanceMeshHandler> distance_mesh_handlers;
 
     // Objects
-    std::vector<Asteroid> asteroids; // Asteroid physical objects
-    std::vector<cgp::vec3> asteroid_offsets;
     float orbit_factor; // Orbit acceleration factor in order to display faster orbits (for visual purposes)
 
     BeltPresets preset;
 
-    // test : use a computing thread pool
+    // Use an asteroid thread pool to handle the asteroid display and simulation
     AsteroidThreadPool pool;
 };

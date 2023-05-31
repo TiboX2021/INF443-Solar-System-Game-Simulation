@@ -18,6 +18,16 @@ struct AsteroidGPUData
     cgp::vec3 position;
     cgp::mat3 rotation;
     int mesh_index;
+    float scale;
+};
+
+// Data for an asteroid. Used for initialization, fed into the thread pools at start and then deleted
+struct Asteroid
+{
+    Object object;
+    int mesh_index;
+    float scale = 1.0f;
+    cgp::vec3 asteroid_offset;
 };
 
 struct DistanceMeshHandler
@@ -49,15 +59,10 @@ public:
         current_attractor_position = Object::scaleDownDistanceForDisplay(this->attractor.load()->getPhysicsPosition());
         last_attractor_position = current_attractor_position;
     };
-    void setAsteroids(std::vector<Object> &asteroids, std::vector<cgp::vec3> &asteroids_offsets)
-    {
-        this->asteroids = asteroids;
-        this->collision_frames_timeout.resize(asteroids.size());
-        this->deactivated_asteroids.resize(asteroids.size());
-        this->asteroid_offsets = asteroids_offsets;
-    };
+
+    // Load asteroid data before launching the simulation
+    void loadAsteroids(const std::vector<Asteroid> &asteroids);
     void setDistanceMeshHandlers(const std::vector<DistanceMeshHandler> &distance_mesh_handlers) { this->distance_mesh_handlers = distance_mesh_handlers; };
-    void setAsteroidConfigData(const std::vector<AsteroidConfigData> &asteroid_config_data) { this->asteroid_config_data = asteroid_config_data; };
     void setOrbitFactor(float orbitFactor) { this->orbitFactor = orbitFactor; };
     void allocateBuffers()
     {

@@ -27,6 +27,7 @@ void AsteroidBelt::initialize()
     const int n_base_asteroids = 3;
     std::string asteroid_textures[] = {"assets/asteroids/grey_asteroid.jpg", "assets/asteroids/grey_asteroid_2.png", "assets/asteroids/rocky_asteroid.jpg"};
     cgp::vec3 asteroid_mean_colors[] = {{102.0f / 255, 102.0f / 255, 102.0f / 255}, {84.0f / 255, 84.0f / 255, 84.0f / 255}, {132.0f / 255, 124.0f / 255, 116.0f / 255}};
+    std::vector<DistanceMeshHandler> distance_mesh_handlers;
 
     for (int i = 0; i < n_base_asteroids; i++)
     {
@@ -103,37 +104,18 @@ void AsteroidBelt::initialize()
         break;
     }
 
-    generateRandomAsteroids(n_asteroids);
+    std::vector<Asteroid> asteroids = generateRandomAsteroids(n_asteroids, distance_mesh_handlers);
 
     // Preallocate memory for the instancing
     for (auto &mesh_data : asteroid_instances_data)
     {
         mesh_data.allocate(n_asteroids);
     }
-    last_attractor_position = attractors[0]->getPhysicsPosition();
-
-    // TODO : do this in a better way in order to fully transition to the thread pools
-    // Initialize objects to send to the thread pool
-    std::vector<Object> debug_agregated_objects;
-
-    for (int i = 0; i < asteroids.size(); i++)
-    {
-        debug_agregated_objects.push_back(asteroids[i].object);
-    }
-
-    // Initialize asteroids config data to send to the thread pool
-    std::vector<AsteroidConfigData> debug_asteroid_config(asteroids.size());
-
-    for (int i = 0; i < asteroids.size(); i++)
-    {
-        debug_asteroid_config[i] = {asteroids[i].scale, asteroids[i].mesh_index};
-    }
 
     // Initialize thread pool data
     pool.setAttractor(attractors[0]);
-    pool.setDistanceMeshHandlers(distance_mesh_handlers);         // TODO : no need to store them in AsteroidBelt object
-    pool.setAsteroidConfigData(debug_asteroid_config);            // Set asteroid config data
-    pool.setAsteroids(debug_agregated_objects, asteroid_offsets); // add generated asteroids
+    pool.setDistanceMeshHandlers(distance_mesh_handlers);
+    pool.loadAsteroids(asteroids);
     pool.setOrbitFactor(orbit_factor);
     pool.allocateBuffers();
 
@@ -141,8 +123,10 @@ void AsteroidBelt::initialize()
     pool.start();
 }
 
-void AsteroidBelt::generateRandomAsteroids(int n)
+std::vector<Asteroid> AsteroidBelt::generateRandomAsteroids(int n, const std::vector<DistanceMeshHandler> &distance_mesh_handlers)
 {
+    std::vector<Asteroid> asteroids;
+    ;
     cgp::mat3 rotation_matrix;
     double distance;
     double radius_std;
@@ -197,11 +181,12 @@ void AsteroidBelt::generateRandomAsteroids(int n)
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);
 
-        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(scale_min, scale_max)};
+        Asteroid asteroid_instance = {asteroid, random_mesh_index, random_float(scale_min, scale_max), asteroid_offset};
 
         asteroids.push_back(asteroid_instance);
-        asteroid_offsets.push_back(asteroid_offset);
     }
+
+    return asteroids;
 }
 
 void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &position, cgp::rotation_transform &, bool)
@@ -225,7 +210,7 @@ void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &pos
     {
         // Remove if mesh was deactivated (= -1)
         if (data_from_worker_threads[i].mesh_index != -1)
-            asteroid_instances_data[data_from_worker_threads[i].mesh_index].addData(data_from_worker_threads[i].position, data_from_worker_threads[i].rotation, asteroids[i].scale);
+            asteroid_instances_data[data_from_worker_threads[i].mesh_index].addData(data_from_worker_threads[i].position, data_from_worker_threads[i].rotation, data_from_worker_threads[i].scale);
     }
 
     // Call instanced drawing function for each dataset
@@ -233,34 +218,4 @@ void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &pos
     {
         draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.scales, mesh_data.data_count);
     }
-}
-
-// Simulate gravitationnal attraction to the attractor
-void AsteroidBelt::simulateStep(float step)
-{
-    cgp::vec3 delta_attractor_position = attractors[0]->getPhysicsPosition() - last_attractor_position;
-
-    // Clear forces + update positions to match the main attractor
-    for (auto &asteroid : asteroids)
-    {
-        asteroid.object.resetForces();
-        asteroid.object.setPhysicsPosition(asteroid.object.getPhysicsPosition() + delta_attractor_position);
-    }
-
-    // Compute gravitationnal force to the attractor
-    for (auto &asteroid : asteroids)
-    {
-        for (const auto &attractor : attractors)
-        {
-            asteroid.object.computeGravitationnalForce(attractor, orbit_factor * orbit_factor);
-        }
-    }
-
-    // Simulate step
-    for (auto &asteroid : asteroids)
-    {
-        asteroid.object.update(step);
-    }
-
-    last_attractor_position = attractors[0]->getPhysicsPosition();
 }

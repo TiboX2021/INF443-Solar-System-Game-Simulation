@@ -245,11 +245,34 @@ void AsteroidThreadPool::computeGPUDataForIndexes(int start, int end)
             rotation = is_low_poly_disk ? cgp::rotation_transform::from_vector_transform({0, 0, 1}, cgp::normalize(camera_position - Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()))).matrix() : asteroids[i].getPhysicsRotation().matrix();
 
             //  Add data to the GPU buffer
-            gpu_data_buffer[i] = {Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()), rotation, mesh_index};
+            gpu_data_buffer[i] = {Object::scaleDownDistanceForDisplay(asteroids[i].getPhysicsPosition()), rotation, mesh_index, asteroid_config_data[i].scale};
         }
         else
         {
-            gpu_data_buffer[i] = {cgp::vec3(0, 0, 0), cgp::mat3(), -1};
+            gpu_data_buffer[i] = {cgp::vec3(0, 0, 0), cgp::mat3(), -1, asteroid_config_data[i].scale};
         }
+    }
+}
+
+void AsteroidThreadPool::loadAsteroids(const std::vector<Asteroid> &asteroids)
+{
+    int n_asteroids = asteroids.size();
+
+    // Prepare data vectors
+    this->asteroids.clear(); // Abstract class : cannot be preallocated
+    this->asteroid_config_data.resize(n_asteroids);
+    this->collision_frames_timeout.resize(n_asteroids);
+    this->deactivated_asteroids.resize(n_asteroids);
+    this->asteroid_offsets.resize(n_asteroids);
+
+    // Unpack and load data
+    for (int i = 0; i < n_asteroids; i++)
+    {
+        this->asteroids.push_back(asteroids[i].object);
+        this->asteroid_config_data[i].scale = asteroids[i].scale;
+        this->asteroid_config_data[i].mesh_handler_index = asteroids[i].mesh_index;
+        this->collision_frames_timeout[i] = 0;
+        this->deactivated_asteroids[i] = false;
+        this->asteroid_offsets[i] = asteroids[i].asteroid_offset;
     }
 }

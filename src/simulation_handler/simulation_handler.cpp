@@ -84,12 +84,6 @@ void SimulationHandler::simulateStep(float time_step)
         object->update(time_step * time_step_multiplier);
         object->updateModels();
     }
-
-    // Simulate steps for asteroid belts
-    for (auto &belt : asteroid_belts)
-    {
-        belt.simulateStep();
-    }
 }
 
 void SimulationHandler::initialize()

@@ -7,6 +7,7 @@
 #include "cgp/graphics/input_devices/input_devices.hpp"
 #include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/control_constants.hpp"
+#include "utils/controls/gui_params.hpp"
 #include "utils/controls/player_object.hpp"
 #include <iostream>
 #include <map>
@@ -48,6 +49,22 @@ public:
     {
         // Update key states
         key_states[inputs->keyboard.last_action.key] = inputs->keyboard.last_action.action;
+
+        // Instantly update GUI keys
+        if (inputs->keyboard.last_action.action == KEY_PRESSED)
+        {
+            switch (inputs->keyboard.last_action.key)
+            {
+            case KEY_A:
+                global_gui_params.display_ship = !global_gui_params.display_ship;
+                break;
+            case KEY_Z:
+                global_gui_params.enable_shield = !global_gui_params.enable_shield;
+                break;
+            default:
+                break;
+            }
+        }
     }
 
     // Update the camera position from the player control object

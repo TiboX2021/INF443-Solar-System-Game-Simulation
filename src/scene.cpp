@@ -102,8 +102,8 @@ void scene_structure::display_frame()
 
 void scene_structure::display_gui()
 {
-    ImGui::Checkbox("Show ship", &global_gui_params.display_ship);
-    ImGui::Checkbox("Enable shield", &global_gui_params.enable_shield);
+    ImGui::Checkbox("Show ship (A)", &global_gui_params.display_ship);
+    ImGui::Checkbox("Enable shield (Z)", &global_gui_params.enable_shield);
     ImGui::SliderFloat("Camera distance", &global_gui_params.camera_distance, 1, 20);
 }
 

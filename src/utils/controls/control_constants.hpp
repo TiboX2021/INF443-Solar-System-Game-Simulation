@@ -16,3 +16,10 @@ constexpr int KEY_ARROW_UP = 265;
 constexpr int KEY_ARROW_DOWN = 264;
 constexpr int KEY_ARROW_LEFT = 263;
 constexpr int KEY_ARROW_RIGHT = 262;
+
+// Other keys
+constexpr int KEY_A = 81;
+constexpr int KEY_E = 69;
+constexpr int KEY_R = 82;
+constexpr int KEY_T = 84;
+constexpr int KEY_Y = 89;

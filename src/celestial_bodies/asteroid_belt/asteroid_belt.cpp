@@ -176,7 +176,7 @@ std::vector<Asteroid> AsteroidBelt::generateRandomAsteroids(int n, const std::ve
         // Generate object and its index to bind it to a mesh. How to do this? Linear scan ?
         Object asteroid(ASTEROID_MASS, rotation_matrix * random_position + attractors[0]->getPhysicsPosition(), random_normalized_axis());
         asteroid.setInitialRotationSpeed(SATURN_ROTATION_SPEED * random_float(1, 2));
-        asteroid.setInitialVelocity(orbit_factor * rotation_matrix * Object::computeOrbitalSpeedForPosition(attractors[0]->getMass(), random_position));
+        asteroid.setVelocity(orbit_factor * rotation_matrix * Object::computeOrbitalSpeedForPosition(attractors[0]->getMass(), random_position));
 
         // Assign random mesh index
         int random_mesh_index = random_int(0, distance_mesh_handlers.size() - 1);

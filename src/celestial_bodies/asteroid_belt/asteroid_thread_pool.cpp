@@ -200,13 +200,13 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
                     cgp::vec3 relative_velocity = asteroids[i].getPhysicsVelocity() - collision_data.velocity;
 
                     // Redirect the asteroid with this velocity in the reflection diection from this velocity
-                    cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal) + collision_data.velocity * cgp::dot(normal, normalize_or_zero(collision_data.velocity)) / (orbitFactor * orbitFactor);
+                    cgp::vec3 new_velocity = cgp::norm(asteroids[i].getPhysicsVelocity()) * reflect(cgp::normalize(relative_velocity), normal) + collision_data.velocity * cgp::dot(normal, normalize_or_zero(collision_data.velocity)) / (orbitFactor);
 
                     // Apply the new velocity
-                    asteroids[i].setInitialVelocity(new_velocity);
+                    asteroids[i].setVelocity(new_velocity);
 
                     // Set the frame timeout
-                    collision_timeout[i] = COLLISION_FRAME_TIMEOUT;
+                    collision_timeout[i] = COLLISION_TIMEOUT;
 
                     // Remove asteroid offset : it is no longer bound to its artificial orbit
                     asteroid_offsets[i] = {0, 0, 0};

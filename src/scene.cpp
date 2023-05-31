@@ -32,6 +32,7 @@ void scene_structure::initialize()
     ShaderLoader::addShader("uniform", "uniform/uniform");
     ShaderLoader::addShader("lava", "lava/lava");
     ShaderLoader::addShader("instanced", "instanced/instanced");
+    ShaderLoader::addShader("shield", "shield/shield");
 
     ShaderLoader::initialise();
 
@@ -42,6 +43,8 @@ void scene_structure::initialize()
     keyboard_control_handler.getPlayerShip().create_millennium_falcon(0.2); // Initialize player spaceship
 
     keyboard_control_handler.setCameraClipObjects(simulation_handler.getPhysicalObjects());
+
+    keyboard_control_handler.initialize_shield_mesh();
 }
 
 void scene_structure::display_frame()
@@ -144,6 +147,9 @@ void scene_structure::display_semiTransparent()
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawBillboards(environment, position, rotation, false);
+
+    if (global_gui_params.enable_shield)
+        keyboard_control_handler.draw_shield(environment);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

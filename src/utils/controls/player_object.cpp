@@ -159,3 +159,8 @@ void PlayerObject::decelerateVerticalRotation()
 {
     vertical_rotation_speed.one_step_decelerate();
 }
+
+cgp::vec3 PlayerObject::get_position() const
+{
+    return position;
+}

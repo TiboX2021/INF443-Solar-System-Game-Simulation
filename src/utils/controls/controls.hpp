@@ -1,6 +1,7 @@
 #pragma once
 
 // Include this one first, else errors
+#include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "navion/navion.hpp"
 
 #include "cgp/graphics/input_devices/input_devices.hpp"
@@ -61,10 +62,17 @@ public:
 
     // For display and initialization
     Navion &getPlayerShip();
+    void initialize_shield_mesh();
+
+    // For drawing
+    void draw_shield(environment_structure const &environment);
 
 private:
     std::map<int, int> key_states;
     PlayerObject player;
     Navion navion;                             // Spaceship controlled by the player
     std::vector<Object *> camera_clip_objects; // Objects that will clip the camera
+
+    // Shield mesh drawable
+    cgp::mesh_drawable shield_mesh_drawable;
 };

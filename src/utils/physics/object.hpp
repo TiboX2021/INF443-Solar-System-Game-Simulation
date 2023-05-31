@@ -72,7 +72,7 @@ public:
     void setShouldTranslate(bool should_translate);
     void setShouldRotate(bool should_rotate);
     void setPhysicsPosition(cgp::vec3 position);
-    void setInitialVelocity(cgp::vec3 velocity);
+    void setVelocity(cgp::vec3 velocity);
     void setInitialRotationSpeed(double rotation_speed);
     void setRotationAxis(cgp::vec3 rotation_axis);
     void setPhysicsRadius(float radius);

@@ -31,7 +31,7 @@ const cgp::vec3 PLAYER_BASE_TOP = {0, 0, 1};
 constexpr int DELAY_FRAMES = 12;   // Delay frames for the camera. 1 second
 constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 
-constexpr float COLLISION_FRAME_TIMEOUT = 1; // Time (in seconds) before an asteroid can collide again with the player
+constexpr float COLLISION_TIMEOUT = 3; // Time (in seconds) before an asteroid can collide again with the player
 
 struct PlayerCollisionData
 {
@@ -129,6 +129,7 @@ public:
 
     // Get player orientation (can be used for the camera)
     cgp::rotation_transform orientation() const;
+    cgp::vec3 get_position() const;
 
 private:
     cgp::vec3 position;     // Display position, not the physics one

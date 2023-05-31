@@ -103,7 +103,7 @@ cgp::vec3 Object::computeOrbitalSpeedForPosition(double M, cgp::vec3 position, c
     return orbitalSpeed * cgp::normalize(cgp::cross(rotation_axis, position));
 }
 
-void Object::setInitialVelocity(cgp::vec3 velocity)
+void Object::setVelocity(cgp::vec3 velocity)
 {
     this->velocity = velocity;
 }

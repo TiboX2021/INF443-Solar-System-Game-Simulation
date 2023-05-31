@@ -1,6 +1,9 @@
 #include "controls.hpp"
+#include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
+#include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/control_constants.hpp"
+#include "utils/shaders/shader_loader.hpp"
 #include <iostream>
 
 bool isHeldOrPressed(int key)
@@ -96,4 +99,23 @@ Navion &Controls::getPlayerShip()
 void Controls::updateShip()
 {
     player.updatePlayerShip(navion);
+}
+
+void Controls::initialize_shield_mesh()
+{
+
+    // TODO : initialize. Use custom shader and all. Use a shader that can change colors ? Pass a color to the fragment shader, it applies it...
+    cgp::mesh shield_mesh = cgp::mesh_primitive_sphere(); // Radius = 1 : default for player
+    shield_mesh_drawable.initialize_data_on_gpu(shield_mesh);
+
+    // Custom shield shader
+    shield_mesh_drawable.shader = ShaderLoader::getShader("shield");
+}
+
+void Controls::draw_shield(environment_structure const &environment)
+{
+    // Update mesh position
+    shield_mesh_drawable.model.translation = Object::scaleDownDistanceForDisplay(player.get_position());
+
+    cgp::draw(shield_mesh_drawable, environment);
 }

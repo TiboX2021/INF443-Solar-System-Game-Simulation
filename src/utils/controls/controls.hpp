@@ -9,6 +9,7 @@
 #include "utils/controls/player_object.hpp"
 #include <iostream>
 #include <map>
+#include <vector>
 
 struct KeyEvent
 {
@@ -35,6 +36,12 @@ public:
         key_states[KEY_ARROW_RIGHT] = KEY_RELEASED;
     }
 
+    // Setters
+    void setCameraClipObjects(std::vector<Object *> objects)
+    {
+        camera_clip_objects = objects;
+    }
+
     // Handle keypress event
     void handleKeyEvent(cgp::input_devices *inputs)
     {
@@ -58,5 +65,6 @@ public:
 private:
     std::map<int, int> key_states;
     PlayerObject player;
-    Navion navion; // Spaceship controlled by the player
+    Navion navion;                             // Spaceship controlled by the player
+    std::vector<Object *> camera_clip_objects; // Objects that will clip the camera
 };

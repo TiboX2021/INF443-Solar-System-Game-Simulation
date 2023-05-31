@@ -79,13 +79,13 @@ void Controls::handlePlayerKeys()
 void Controls::updateCamera(custom_camera_controller &camera, cgp::mat4 &camera_matrix_view)
 {
     // Update camera orientation according to the player
-    player.updatePlayerCamera(camera.camera_model);
+    player.updatePlayerCamera(camera.camera_model, camera_clip_objects);
     camera.idle_frame(camera_matrix_view);
 }
 
 void Controls::updatePlayer()
 {
-    player.step();
+    player.step(camera_clip_objects);
 }
 
 Navion &Controls::getPlayerShip()

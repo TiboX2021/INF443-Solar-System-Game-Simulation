@@ -39,6 +39,8 @@ void scene_structure::initialize()
     simulation_handler.initialize();
 
     keyboard_control_handler.getPlayerShip().create_millennium_falcon(0.2); // Initialize player spaceship
+
+    keyboard_control_handler.setCameraClipObjects(simulation_handler.getPhysicalObjects());
 }
 
 void scene_structure::display_frame()

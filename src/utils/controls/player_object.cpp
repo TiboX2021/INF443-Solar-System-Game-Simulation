@@ -10,7 +10,7 @@
 // Define global player position
 ReadWriteLock<PlayerCollisionData> global_player_collision_data;
 
-void PlayerObject::step()
+void PlayerObject::step(const std::vector<Object *> &objects_with_hitbox)
 {
     // Roll speed
     auto roll_rotation_transform_obj = cgp::rotation_transform::from_axis_angle(direction, roll_speed.value * Timer::getSimulStep());
@@ -44,6 +44,9 @@ void PlayerObject::step()
 
     // Translation
     position += velocity * Timer::getSimulStep();
+
+    // Push back the position if it collides with an object
+    check_clip_and_push_back(objects_with_hitbox, position, 1 / PHYSICS_SCALE);
 
     // Renormalize direction vectors (else they will drift)
     direction = cgp::normalize(direction);
@@ -103,11 +106,24 @@ void PlayerObject::rollRight()
     roll_speed.one_step_up();
 }
 
-void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model) const
+void PlayerObject::updatePlayerCamera(custom_camera_model &camera_model, const std::vector<Object *> &camera_clip_objects) const
 {
     camera_model.direction = camera_direction;
     camera_model.top = camera_direction_top;
-    camera_model.camera_position = Object::scaleDownDistanceForDisplay(position) - camera_direction * 10.0f;
+
+    cgp::vec3 physics_camera_position = position - camera_direction * 10.0f / PHYSICS_SCALE;
+
+    // Clip the camera (use the physics radius or the display radius ? Here the physics)
+    for (auto &object : camera_clip_objects)
+    {
+        // Check if the camera is inside the object
+        if (object->isInside(physics_camera_position))
+        {
+            physics_camera_position = circle_intersect_point(object->getPhysicsPosition(), object->getPhysicsRadius() + 0.01 / (PHYSICS_SCALE * DISPLAY_SCALE), position, cgp::normalize(physics_camera_position - position));
+        }
+    }
+
+    camera_model.camera_position = Object::scaleDownDistanceForDisplay(physics_camera_position);
 }
 
 void PlayerObject::updatePlayerShip(Navion &ship) const

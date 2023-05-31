@@ -18,7 +18,7 @@ constexpr float PLAYER_MAX_ROTATION_SPEED = 0.015 * 60 / (3600 * 24); // radians
 constexpr float PLAYER_MAX_ROLL_SPEED = 0.03 * 60 / (3600 * 24);      // radians. This is higher, as rolling does not change the tajectory
 
 // Roll acceleration (takes 0.25 seconds for full roll speed)
-constexpr float PLAYER_ROLL_ACCELERATION = PLAYER_MAX_ROLL_SPEED * 60 / (3600 * 24) / 15; // Player acceleration per frame
+constexpr float PLAYER_ROLL_ACCELERATION = PLAYER_MAX_ROLL_SPEED * 60 / (3600 * 24) / 7; // Player acceleration per frame
 
 // Rotation acceleration (takes 0.5 seconds for full rotation speed)
 constexpr float PLAYER_ROTATION_ACCELERATION = PLAYER_MAX_ROTATION_SPEED * 60 / (3600 * 24) / 15;
@@ -94,7 +94,8 @@ class PlayerObject
 {
 public:
     // Default constructor : the player object is modified using setters.
-    PlayerObject() : direction({1, 0, 0}),
+    PlayerObject() : position({-2e12, 0, 4e11}), // Default position
+                     direction({1, 0, 0}),
                      directionTop({0, 0, 1}),
                      speed({0, PLAYER_MAX_TRANSLATION_SPEED, 0, PLAYER_TRANSLATION_ACCELERATION}),
                      roll_speed({0, PLAYER_MAX_ROLL_SPEED, -PLAYER_MAX_ROLL_SPEED, PLAYER_ROLL_ACCELERATION}),
@@ -103,7 +104,7 @@ public:
                      camera_direction_buffer(DELAY_FRAMES, PLAYER_BASE_DIRECTION),
                      camera_direction_top_buffer(DELAY_FRAMES, PLAYER_BASE_TOP){};
 
-    void step(); // Simulate one step for the player
+    void step(const std::vector<Object *> &objects_with_hitbox = {}); // Simulate one step for the player
 
     // Player ship rotation commands (also do animation)
     void moveUp();
@@ -123,7 +124,7 @@ public:
     void brake();
 
     // Update camera
-    void updatePlayerCamera(custom_camera_model &camera_model) const;
+    void updatePlayerCamera(custom_camera_model &camera_model, const std::vector<Object *> &camera_clip_objects = {}) const;
     void updatePlayerShip(Navion &ship) const;
 
     // Get player orientation (can be used for the camera)

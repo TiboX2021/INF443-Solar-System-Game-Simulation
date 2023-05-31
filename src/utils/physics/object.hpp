@@ -89,6 +89,10 @@ public:
     static double computeOrbitalSpeed(double M, double r);
     static cgp::vec3 computeOrbitalSpeedForPosition(double M, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1});
 
+    // Useful functions
+    // Check if this physics position is inside the object
+    bool isInside(const cgp::vec3 &position, float extra_radius = 0) const;
+
 private:
     // Translation
     double mass;

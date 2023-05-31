@@ -146,3 +146,8 @@ void Object::setPhysicsRadius(float physics_radius)
 {
     this->physics_radius = physics_radius;
 }
+
+bool Object::isInside(const cgp::vec3 &position, float extra_radius) const
+{
+    return cgp::norm(this->physics_position - position) < this->physics_radius + extra_radius;
+}

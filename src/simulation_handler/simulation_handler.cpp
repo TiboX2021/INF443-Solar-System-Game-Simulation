@@ -136,6 +136,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     earth.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, EARTH_SUN_DISTANCE), 0});
     earth.setInitialRotationSpeed(EARTH_ROTATION_SPEED);
     earth.setRotationAxis(EARTH_ROTATION_AXIS);
+    earth.setPhysicsRadius(EARTH_RADIUS * DISPLAY_SCALE); // For player collision
     handler.addObject(earth);
 
     // Add Mars
@@ -144,6 +145,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     mars.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, MARS_SUN_DISTANCE), 0});
     mars.setInitialRotationSpeed(MARS_ROTATION_SPEED);
     mars.setRotationAxis(MARS_ROTATION_AXIS);
+    mars.setPhysicsRadius(MARS_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(mars);
 
     // Add Saturn
@@ -168,6 +170,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     jupiter.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, JUPITER_SUN_DISTANCE), 0});
     jupiter.setInitialRotationSpeed(JUPITER_ROTATION_SPEED);
     jupiter.setRotationAxis(JUPITER_ROTATION_AXIS);
+    jupiter.setPhysicsRadius(JUPITER_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(jupiter);
 
     // Add Uranus
@@ -176,6 +179,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     uranus.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, URANUS_SUN_DISTANCE), 0});
     uranus.setInitialRotationSpeed(URANUS_ROTATION_SPEED);
     uranus.setRotationAxis(URANUS_ROTATION_AXIS);
+    uranus.setPhysicsRadius(URANUS_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(uranus);
 
     // Add Neptune
@@ -184,10 +188,16 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     neptune.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, NEPTUNE_SUN_DISTANCE), 0});
     neptune.setInitialRotationSpeed(NEPTUNE_ROTATION_SPEED);
     neptune.setRotationAxis(NEPTUNE_ROTATION_AXIS);
+    neptune.setPhysicsRadius(NEPTUNE_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(neptune);
 }
 
 void SimulationHandler::addAsteroidBelt(AsteroidBelt asteroid_belt)
 {
     asteroid_belts.push_back(asteroid_belt);
+}
+
+std::vector<Object *> SimulationHandler::getPhysicalObjects() const
+{
+    return physical_objects;
 }

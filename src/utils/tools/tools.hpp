@@ -2,7 +2,9 @@
 
 #include "cgp/core/array/numarray_stack/implementation/numarray_stack.hpp"
 #include "cgp/geometry/vec/vec3/vec3.hpp"
+#include "utils/physics/object.hpp"
 #include <cassert>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -78,4 +80,61 @@ inline cgp::vec3 reflect(const cgp::vec3 &incoming, const cgp::vec3 &normal)
 inline cgp::vec3 normalize_or_zero(const cgp::vec3 &v)
 {
     return cgp::norm(v) > NORMALIZE_FLOAT_MARGIN ? cgp::normalize(v) : cgp::vec3(0, 0, 0);
+}
+
+// Returns the intersection point on the circle surface from the segment [p1, p2]
+inline cgp::vec3 circle_intersect_point(const cgp::vec3 &center, float radius, const cgp::vec3 &point, const cgp::vec3 &direction)
+{
+    // Compute polynomial coeffs
+    float a = cgp::dot(direction, direction);
+    float b = 2 * cgp::dot(direction, point - center);
+    float c = cgp::dot(point - center, point - center) - radius * radius;
+
+    // Compute discriminant
+    float delta = b * b - 4 * a * c;
+
+    // If there is no solution, return the point
+    if (delta < 0)
+    {
+        return point;
+    }
+
+    // Compute solutions
+    float t1 = (-b - sqrt(delta)) / (2 * a);
+    float t2 = (-b + sqrt(delta)) / (2 * a);
+
+    // Return the closest point
+    return point + direction * std::min(t1, t2);
+}
+
+inline bool does_clip_with_one(const std::vector<Object *> &objects, cgp::vec3 position)
+{
+
+    for (Object *object : objects)
+    {
+        if (object->isInside(position))
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+// Check if the position collides with one of the objects. If it does, push it back outside with an extra radius
+inline bool check_clip_and_push_back(const std::vector<Object *> &objects, cgp::vec3 &position, float extra_radius = 0)
+{
+    for (Object *object : objects)
+    {
+        if (object->isInside(position, extra_radius))
+        {
+            // Push back the position
+            cgp::vec3 direction = cgp::normalize(position - object->getPhysicsPosition());
+
+            position = object->getPhysicsPosition() + (object->getPhysicsRadius() + extra_radius) * direction;
+            return true;
+        }
+    }
+
+    return false;
 }

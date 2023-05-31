@@ -108,7 +108,7 @@ private:
     std::vector<AsteroidGPUData> current_gpu_data;
 
     std::vector<Object> asteroids; // Asteroid physical objects
-    std::vector<int> collision_frames_timeout;
+    std::vector<float> collision_timeout;
     std::vector<bool> deactivated_asteroids; // Keep track of deactivated asteroids to avoid unnecessary computations
     std::vector<cgp::vec3> asteroid_offsets; // Asteroid offsets for gravity computation (display a "fluffy" belt while all asteroids are in theory on the same circular orbit)
 

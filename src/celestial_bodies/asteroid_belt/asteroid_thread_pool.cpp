@@ -17,7 +17,7 @@ AsteroidThreadPool::AsteroidThreadPool(const AsteroidThreadPool &other)
 
     // Copy the data
     asteroids = other.asteroids;
-    collision_frames_timeout = other.collision_frames_timeout;
+    collision_timeout = other.collision_timeout;
     distance_mesh_handlers = other.distance_mesh_handlers;
 }
 
@@ -176,8 +176,8 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
     // Update collision frames timeout
     for (int i = start; i < end; i++)
     {
-        if (collision_frames_timeout[i] > 0)
-            collision_frames_timeout[i]--;
+        if (collision_timeout[i] > 0)
+            collision_timeout[i] -= Timer::dt;
     }
 
     // Take collisions into account
@@ -185,7 +185,7 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
 
     for (int i = start; i < end; i++)
     {
-        if (!deactivated_asteroids[i] && collision_frames_timeout[i] == 0)
+        if (!deactivated_asteroids[i] && collision_timeout[i] <= 0)
         {
             // First : check collision with the player
             float distance = cgp::norm(asteroids[i].getPhysicsPosition() - collision_data.position);
@@ -203,7 +203,7 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
                 asteroids[i].setInitialVelocity(new_velocity);
 
                 // Set the frame timeout
-                collision_frames_timeout[i] = COLLISION_FRAME_TIMEOUT;
+                collision_timeout[i] = COLLISION_FRAME_TIMEOUT;
 
                 // Remove asteroid offset : it is no longer bound to its artificial orbit
                 asteroid_offsets[i] = {0, 0, 0};
@@ -261,7 +261,7 @@ void AsteroidThreadPool::loadAsteroids(const std::vector<Asteroid> &asteroids)
     // Prepare data vectors
     this->asteroids.clear(); // Abstract class : cannot be preallocated
     this->asteroid_config_data.resize(n_asteroids);
-    this->collision_frames_timeout.resize(n_asteroids);
+    this->collision_timeout.resize(n_asteroids);
     this->deactivated_asteroids.resize(n_asteroids);
     this->asteroid_offsets.resize(n_asteroids);
 
@@ -271,7 +271,7 @@ void AsteroidThreadPool::loadAsteroids(const std::vector<Asteroid> &asteroids)
         this->asteroids.push_back(asteroids[i].object);
         this->asteroid_config_data[i].scale = asteroids[i].scale;
         this->asteroid_config_data[i].mesh_handler_index = asteroids[i].mesh_index;
-        this->collision_frames_timeout[i] = 0;
+        this->collision_timeout[i] = 0;
         this->deactivated_asteroids[i] = false;
         this->asteroid_offsets[i] = asteroids[i].asteroid_offset;
     }

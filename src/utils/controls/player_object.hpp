@@ -31,7 +31,7 @@ const cgp::vec3 PLAYER_BASE_TOP = {0, 0, 1};
 constexpr int DELAY_FRAMES = 12;   // Delay frames for the camera. 1 second
 constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 
-constexpr int COLLISION_FRAME_TIMEOUT = 60; // Number of frames to wait before checking for collision again for the same asteroid
+constexpr float COLLISION_FRAME_TIMEOUT = 1; // Time (in seconds) before an asteroid can collide again with the player
 
 struct PlayerCollisionData
 {

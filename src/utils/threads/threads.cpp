@@ -1,4 +1,6 @@
 #include "threads.hpp"
+#include "utils/physics/object.hpp"
+#include <iostream>
 
 void ThreadsSync::setThreadCount(int thread_count)
 {
@@ -38,4 +40,48 @@ void ThreadsSync::awaitAll()
     std::unique_lock<std::mutex> lock(sync_mutex);
     cv.wait(lock, [this]
             { return done_count.load() == thread_count; });
+}
+
+// Update animation times and delete data that has reached the end
+void AsteroidCollisionAnimationBuffer::update()
+{
+    // Update times
+    float dt = Timer::dt;
+
+    // Loop and modify deque values
+    std::unique_lock lock(shared_mutex);
+
+    // Loop through the deque and update the times
+    for (int i = 0; i < deque.size(); i++)
+    {
+        // Update time
+        deque[i].w += dt;
+
+        // Delete if time is up
+        if (deque[i].w > animation_time)
+        {
+            // Because all animations have the same order, this will always delete the first element (more efficient)
+            deque.erase(deque.begin() + i);
+            i--;
+        }
+    }
+}
+
+// Convert the content to a float buffer that can be send to the shader
+std::vector<cgp::vec4> AsteroidCollisionAnimationBuffer::toFloatBuffer()
+{
+    std::shared_lock lock(shared_mutex);
+
+    return std::vector<cgp::vec4>(deque.begin(), deque.end());
+}
+
+void AsteroidCollisionAnimationBuffer::add(cgp::vec4 element)
+{
+    std::unique_lock lock(shared_mutex);
+
+    if (deque.size() >= max_size)
+    {
+        deque.erase(deque.begin());
+    }
+    deque.push_back(element);
 }

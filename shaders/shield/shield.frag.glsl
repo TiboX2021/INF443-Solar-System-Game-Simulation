@@ -14,10 +14,11 @@
 // Inputs coming from the vertex shader
 in struct fragment_data
 {
-    vec3 position; // position in the world space
-    vec3 normal;   // normal in the world space
-    vec3 color;    // current color on the fragment
-    vec2 uv;       // current uv-texture on the fragment
+    vec3 local_position; // Vertex local normalized position in relation to the model center
+    vec3 position;       // position in the world space
+    vec3 normal;         // normal in the world space
+    vec3 color;          // current color on the fragment
+    vec2 uv;             // current uv-texture on the fragment
 
 } fragment;
 
@@ -61,6 +62,12 @@ struct material_structure
 };
 
 uniform material_structure material;
+
+layout(std140) uniform collision_points
+{
+    vec4 data[10]; // TODO : max array size (max collisions handled)
+    int size;
+};
 
 void main()
 {
@@ -130,5 +137,6 @@ void main()
     FragColor = vec4(color_shading, material.alpha * color_image_texture.a);
 
     // TODO : custom color with custom alpha
+    // Use some default color, etc.
     FragColor = vec4(0.5, 0.5, 1, 0.2);
 }

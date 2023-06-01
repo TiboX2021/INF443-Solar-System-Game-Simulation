@@ -33,6 +33,9 @@ constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 
 constexpr float COLLISION_TIMEOUT = 3; // Time (in seconds) before an asteroid can collide again with the player
 
+constexpr float SHIELD_COLLISION_ANIMATION_TIME = 1.0f; // Animation time for the shield, in seconds
+constexpr int SHIELD_COLLISION_BUFFER_MAX_SIZE = 10;    // Max animations at the same time
+
 struct PlayerCollisionData
 {
     cgp::vec3 position;
@@ -43,7 +46,10 @@ struct PlayerCollisionData
 // Global player position
 extern ReadWriteLock<PlayerCollisionData> global_player_collision_data;
 
-// Strruct to handle gradual otation and translation speeds
+// Global player collision animation buffer
+extern AsteroidCollisionAnimationBuffer global_player_collision_animation_buffer;
+
+// Struct to handle gradual otation and translation speeds
 struct GradualCoeff
 {
     float value = 0;

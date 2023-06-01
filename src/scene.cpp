@@ -4,6 +4,7 @@
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
 #include "utils/controls/gui_params.hpp"
+#include "utils/controls/player_object.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <GLFW/glfw3.h>
@@ -88,10 +89,14 @@ void scene_structure::display_frame()
 
     simulation_handler.simulateStep(dt);
 
+    // Update the player collision buffer
+    global_player_collision_animation_buffer.update();
+
     // Get camera position and rotation to compute custom meshes for distant objects
     cgp::vec3 position = custom_camera.camera_model.position();
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
+    // This function also restarts the computation threads. Do things on shared data before this, as the computing threads are likely to be stopped at this time
     simulation_handler.drawObjects(environment, position, rotation, false);
 
     if (global_gui_params.display_ship_atomic)

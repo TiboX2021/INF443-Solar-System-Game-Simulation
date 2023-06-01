@@ -1,7 +1,9 @@
 #pragma once
 
+#include "cgp/core/array/numarray_stack/special_types/special_types.hpp"
 #include <atomic>
 #include <condition_variable>
+#include <deque>
 #include <shared_mutex>
 
 // Multithreading utils. Used in the asteroid simulation
@@ -50,4 +52,59 @@ public:
 private:
     std::shared_mutex shared_mutex;
     T value;
+};
+
+// Used to keep track of asteroid collision shield animation
+template <class T>
+class ThreadSafeDeque
+{
+public:
+    ThreadSafeDeque() = default;
+
+    // Add one element
+    virtual void add(T element)
+    {
+        std::unique_lock lock(shared_mutex);
+
+        deque.push_back(element);
+    }
+
+    // Remove the first element
+    void remove()
+    {
+        std::unique_lock lock(shared_mutex);
+        deque.pop_front();
+    }
+
+    // Not used directly,
+    std::deque<T> read_all()
+    {
+        std::shared_lock lock(shared_mutex);
+        return deque;
+    }
+
+protected:
+    std::deque<T> deque;
+    std::shared_mutex shared_mutex;
+};
+
+class AsteroidCollisionAnimationBuffer : public ThreadSafeDeque<cgp::vec4>
+{
+public:
+    AsteroidCollisionAnimationBuffer() = default;
+    AsteroidCollisionAnimationBuffer(int max_size, float animation_time) : ThreadSafeDeque(), animation_time(animation_time), max_size(max_size) {}
+
+    // Convert the content to a float buffer that can be send to the shader
+    std::vector<cgp::vec4> toFloatBuffer();
+
+    // Add element, but remove one if size grows too big
+    void add(cgp::vec4 element) override;
+
+    // Update animation times and delete data that has reached the end
+    void update();
+
+    std::atomic<float> animation_time;
+
+private:
+    int max_size;
 };

@@ -11,6 +11,9 @@
 // Define global player position
 ReadWriteLock<PlayerCollisionData> global_player_collision_data;
 
+// Global player collision animation buffer
+AsteroidCollisionAnimationBuffer global_player_collision_animation_buffer(SHIELD_COLLISION_BUFFER_MAX_SIZE, SHIELD_COLLISION_ANIMATION_TIME);
+
 void PlayerObject::step(const std::vector<Object *> &objects_with_hitbox)
 {
     // Roll speed

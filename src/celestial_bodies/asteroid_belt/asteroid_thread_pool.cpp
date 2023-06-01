@@ -197,6 +197,10 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
                 {
                     // Compute the new velocity of the asteroid
                     cgp::vec3 normal = cgp::normalize(asteroids[i].getPhysicsPosition() - collision_data.position);
+
+                    // Add the collision data to the animation buffer
+                    global_player_collision_animation_buffer.add({normal, 0});
+
                     cgp::vec3 relative_velocity = asteroids[i].getPhysicsVelocity() - collision_data.velocity;
 
                     // Redirect the asteroid with this velocity in the reflection diection from this velocity

@@ -11,10 +11,11 @@ layout(location = 3) in vec2 vertex_uv;       // vertex uv-texture (u,v)
 // Output variables sent to the fragment shader
 out struct fragment_data
 {
-    vec3 position; // vertex position in world space
-    vec3 normal;   // normal position in world space
-    vec3 color;    // vertex color
-    vec2 uv;       // vertex uv
+    vec3 local_position; // Vertex local normalized position in relation to the model center
+    vec3 position;       // vertex position in world space
+    vec3 normal;         // normal position in world space
+    vec3 color;          // vertex color
+    vec2 uv;             // vertex uv
 } fragment;
 
 // Uniform variables expected to receive from the C++ program
@@ -36,6 +37,7 @@ void main()
     vec4 position_projected = projection * view * position;
 
     // Fill the parameters sent to the fragment shader
+    fragment.local_position = normalize(vertex_position);
     fragment.position = position.xyz;
     fragment.normal = normal.xyz;
     fragment.color = vertex_color;

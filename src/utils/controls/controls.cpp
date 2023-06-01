@@ -3,6 +3,7 @@
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/control_constants.hpp"
+#include "utils/controls/player_object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <iostream>
 
@@ -110,6 +111,8 @@ void Controls::initialize_shield_mesh()
 
     // Custom shield shader
     shield_mesh_drawable.shader = ShaderLoader::getShader("shield");
+
+    shield_ubo.initialize(); // Instanciate UBO space on the GPU
 }
 
 void Controls::draw_shield(environment_structure const &environment)
@@ -117,5 +120,7 @@ void Controls::draw_shield(environment_structure const &environment)
     // Update mesh position
     shield_mesh_drawable.model.translation = Object::scaleDownDistanceForDisplay(player.get_position());
 
-    cgp::draw(shield_mesh_drawable, environment);
+    // Draw the mesh and send custom array data via UBO
+    // cgp::draw(shield_mesh_drawable, environment);
+    shield_ubo.draw(shield_mesh_drawable, environment, global_player_collision_animation_buffer.toFloatBuffer());
 }

@@ -140,5 +140,4 @@ namespace cgp
         glDeleteBuffers(1, &rotations_vbo);
         glDeleteBuffers(1, &scales_vbo);
     }
-
 }

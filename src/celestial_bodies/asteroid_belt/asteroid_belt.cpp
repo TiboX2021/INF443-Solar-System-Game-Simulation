@@ -3,8 +3,8 @@
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "utils/display/low_poly.hpp"
-#include "utils/instancing/instancing.hpp"
 #include "utils/noise/perlin.hpp"
+#include "utils/opengl/instancing.hpp"
 #include "utils/physics/constants.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/random/random.hpp"
@@ -121,6 +121,8 @@ void AsteroidBelt::initialize()
 
     // Start pool
     pool.start();
+
+    // Initialize instancing buffers
 }
 
 std::vector<Asteroid> AsteroidBelt::generateRandomAsteroids(int n, const std::vector<DistanceMeshHandler> &distance_mesh_handlers)
@@ -216,6 +218,7 @@ void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &pos
     // Call instanced drawing function for each dataset
     for (const auto &mesh_data : asteroid_instances_data)
     {
+        // Note : no GL_DYNAMIC instancing, as for each mesh the data size can change between each frame
         draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.scales, mesh_data.data_count);
     }
 }

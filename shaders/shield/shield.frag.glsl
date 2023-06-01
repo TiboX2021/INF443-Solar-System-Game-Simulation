@@ -135,6 +135,10 @@ void main()
 
     // Output color, with the alpha component
     FragColor = vec4(color_shading, material.alpha * color_image_texture.a);
+    // TODO : remove all the code before this, it is useless
+
+    // Compute color from collision points
+    // TODO
 
     // TODO : custom color with custom alpha
     // Use some default color, etc.

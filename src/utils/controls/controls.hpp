@@ -9,6 +9,7 @@
 #include "utils/controls/control_constants.hpp"
 #include "utils/controls/gui_params.hpp"
 #include "utils/controls/player_object.hpp"
+#include "utils/opengl/shield_ubo.hpp"
 #include <iostream>
 #include <map>
 #include <vector>
@@ -91,5 +92,6 @@ private:
     std::vector<Object *> camera_clip_objects; // Objects that will clip the camera
 
     // Shield mesh drawable
+    ShieldUBO shield_ubo; // Shield UBO for opengl custom animation drawing
     cgp::mesh_drawable shield_mesh_drawable;
 };

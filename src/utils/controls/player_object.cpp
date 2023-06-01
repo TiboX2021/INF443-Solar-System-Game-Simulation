@@ -3,6 +3,7 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 #include "utils/controls/gui_params.hpp"
+#include "utils/opengl/shield_ubo.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/tools/tools.hpp"
 #include <cmath>

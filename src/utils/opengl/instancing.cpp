@@ -1,10 +1,11 @@
 #include "instancing.hpp"
 #include "cgp/core/containers/matrix_stack/special_types/definition/special_types.hpp"
+#include "cgp/graphics/opengl/uniform/uniform.hpp"
 #include <iostream>
 
 namespace cgp
 {
-    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<mat3> &orientations, const std::vector<float> &scales, int n_instances, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
+    void draw_instanced(mesh_drawable const &drawable, environment_generic_structure const &environment, const std::vector<vec3> &positions, const std::vector<mat3> &orientations, const std::vector<float> &scales, int n_instances, bool do_bump_mapping, uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
     {
         opengl_check;
         // Initial clean check
@@ -58,6 +59,10 @@ namespace cgp
         opengl_check;
 
         // Set any additional texture
+        // Only do bump mapping if this is enabled
+        opengl_uniform(drawable.shader, "do_bump_mapping", do_bump_mapping);
+
+        // Instance of opengl_texture_image_structure
         int texture_count = 1;
         for (auto const &element : drawable.supplementary_texture)
         {

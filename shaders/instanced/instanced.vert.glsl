@@ -16,8 +16,10 @@ out struct fragment_data
 {
     vec3 position; // vertex position in world space
     vec3 normal;   // normal position in world space
-    vec3 color;    // vertex color
-    vec2 uv;       // vertex uv
+    vec3 tangent;  // Tangent and bitangent for bump mapping
+    vec3 bitangent;
+    vec3 color; // vertex color
+    vec2 uv;    // vertex uv
 } fragment;
 
 // Uniform variables expected to receive from the C++ program
@@ -26,6 +28,8 @@ uniform mat4 view;       // View matrix (rigid transform) of the camera
 uniform mat4 projection; // Projection (perspective or orthogonal) matrix of the camera
 
 uniform mat4 modelNormal; // Model without scaling used for the normal. modelNormal = transpose(inverse(model))
+
+uniform bool do_bump_mapping; // True if bump mapping is enabled
 
 void main()
 {
@@ -39,6 +43,24 @@ void main()
 
     // The normal of the vertex in the world space
     vec4 normal = modelNormal * vec4(vertex_normal, 0.0) * mat4(instanced_model_rotation);
+
+    // Compute tangent and bitangent
+    vec3 tangent;
+    vec3 bitangent;
+
+    if (do_bump_mapping)
+    {
+        if (vertex_normal.y == 1.0)
+        {
+            tangent = vec3(1.0, 0.0, 0.0);
+            bitangent = vec3(0.0, 0.0, 1.0);
+        }
+        else
+        {
+            tangent = normalize(cross(normal.xyz, vec3(0.0, 1.0, 0.0)));
+            bitangent = normalize(cross(normal.xyz, tangent));
+        }
+    }
 
     // The projected position of the vertex in the normalized device coordinates:
     vec4 position_projected = projection * view * position;

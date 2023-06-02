@@ -2,6 +2,7 @@
 #include "celestial_bodies/asteroid_belt/asteroid_thread_pool.hpp"
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
+#include "cgp/graphics/opengl/texture/texture.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/opengl/instancing.hpp"
@@ -26,6 +27,7 @@ void AsteroidBelt::initialize()
     // Generate one random mesh per available texture. They will be reused and scaled using instancing
     const int n_base_asteroids = 3;
     std::string asteroid_textures[] = {"assets/asteroids/grey_asteroid.jpg", "assets/asteroids/grey_asteroid_2.png", "assets/asteroids/rocky_asteroid.jpg"};
+    std::string normal_maps[] = {"assets/asteroids/normal_map_grey_asteroid.png", "assets/asteroids/normal_map_grey_asteroid_2.png", "assets/asteroids/normal_map_rocky_asteroid.png"};
     cgp::vec3 asteroid_mean_colors[] = {{102.0f / 255, 102.0f / 255, 102.0f / 255}, {84.0f / 255, 84.0f / 255, 84.0f / 255}, {132.0f / 255, 124.0f / 255, 116.0f / 255}};
     std::vector<DistanceMeshHandler> distance_mesh_handlers;
 
@@ -43,6 +45,13 @@ void AsteroidBelt::initialize()
         high_poly_asteroid_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + asteroid_textures[i],
                                                                                        GL_CLAMP_TO_EDGE,
                                                                                        GL_CLAMP_TO_EDGE);
+        // Add additionnal bump map texture (and get it in the frag shader, to sample it and get the normal)
+        cgp::opengl_texture_image_structure normal_map;
+        normal_map.load_and_initialize_texture_2d_on_gpu(project::path + normal_maps[i],
+                                                         GL_CLAMP_TO_EDGE,
+                                                         GL_CLAMP_TO_EDGE);
+        high_poly_asteroid_mesh_drawable.supplementary_texture["normal_map"] = normal_map;
+
         high_poly_asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
         high_poly_asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
@@ -58,6 +67,8 @@ void AsteroidBelt::initialize()
         low_poly_asteroid_mesh_drawable.texture.load_and_initialize_texture_2d_on_gpu(project::path + asteroid_textures[i],
                                                                                       GL_CLAMP_TO_EDGE,
                                                                                       GL_CLAMP_TO_EDGE);
+        low_poly_asteroid_mesh_drawable.supplementary_texture["normal_map"] = normal_map;
+
         low_poly_asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
         low_poly_asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
@@ -218,7 +229,8 @@ void AsteroidBelt::draw(environment_structure const &environment, cgp::vec3 &pos
     // Call instanced drawing function for each dataset
     for (const auto &mesh_data : asteroid_instances_data)
     {
+        bool is_low_poly = mesh_data.mesh_index % 3 == 2;
         // Note : no GL_DYNAMIC instancing, as for each mesh the data size can change between each frame
-        draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.scales, mesh_data.data_count);
+        draw_instanced(asteroid_mesh_drawables[mesh_data.mesh_index], environment, mesh_data.positions, mesh_data.rotations, mesh_data.scales, mesh_data.data_count, !is_low_poly);
     }
 }

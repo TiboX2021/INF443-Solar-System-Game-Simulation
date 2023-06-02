@@ -84,16 +84,16 @@ void main()
 {
     // Colors
     vec4 standby_color = vec4(0.5, 0.5, 1, 0.2);
+    vec4 animation_standby_color = vec4(0.6, 0.6, 1, 0.4);
     vec4 collision_color = vec4(1, 0.5, 0.5, 1);
 
     // Compute standby animation color
-    // TODO : use ship direction
     float angle = acos(dot(fragment.local_position, ship_direction)); // in [0, PI]
     float space_freq = 4;                                             // Number of waves visible during the animation
     float time_freq = 4;
     float standby_coeff = max(0, PI / 2 - angle) * pow(sin(angle * space_freq - time * time_freq), 2);
 
-    standby_color = (1 - standby_coeff) * standby_color + standby_coeff * vec4(0.4, 0.3, 0.9, 0.6);
+    standby_color = (1 - standby_coeff) * standby_color + standby_coeff * animation_standby_color;
 
     // Constants
     float collision_coeff = 0;    // "Shockwave" coefficient (0 = standby, 1 = collision) for this pixel

@@ -3,6 +3,7 @@
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
 #include "cgp/graphics/opengl/texture/texture.hpp"
+#include "utils/display/display_constants.hpp"
 #include "utils/display/low_poly.hpp"
 #include "utils/noise/perlin.hpp"
 #include "utils/opengl/instancing.hpp"
@@ -53,6 +54,9 @@ void AsteroidBelt::initialize()
         high_poly_asteroid_mesh_drawable.supplementary_texture["normal_map"] = normal_map;
 
         high_poly_asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
+        high_poly_asteroid_mesh_drawable.material.phong.ambient = ASTEROID_PHONG_AMBIENT;
+        high_poly_asteroid_mesh_drawable.material.phong.diffuse = ASTEROID_PHONG_DIFFUSE;
+
         high_poly_asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
         // Generate low poly mesh
@@ -70,6 +74,9 @@ void AsteroidBelt::initialize()
         low_poly_asteroid_mesh_drawable.supplementary_texture["normal_map"] = normal_map;
 
         low_poly_asteroid_mesh_drawable.material.phong.specular = 0; // No shining reflection for the asteroid display
+        low_poly_asteroid_mesh_drawable.material.phong.ambient = ASTEROID_PHONG_AMBIENT;
+        low_poly_asteroid_mesh_drawable.material.phong.diffuse = ASTEROID_PHONG_DIFFUSE;
+
         low_poly_asteroid_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
         // Generate low poly disk
@@ -77,6 +84,9 @@ void AsteroidBelt::initialize()
         cgp::mesh_drawable low_poly_disk_mesh_drawable;
         low_poly_disk_mesh_drawable.initialize_data_on_gpu(low_poly_disk_mesh);
         low_poly_disk_mesh_drawable.material.phong.specular = 0; // No reflection for the low poly display
+        low_poly_asteroid_mesh_drawable.material.phong.ambient = ASTEROID_PHONG_AMBIENT;
+        low_poly_asteroid_mesh_drawable.material.phong.diffuse = ASTEROID_PHONG_DIFFUSE;
+
         low_poly_disk_mesh_drawable.material.color = asteroid_mean_colors[i];
         low_poly_disk_mesh_drawable.shader = ShaderLoader::getShader("instanced");
 
@@ -164,7 +174,7 @@ std::vector<Asteroid> AsteroidBelt::generateRandomAsteroids(int n, const std::ve
         radius_std = distance / 10;
         scale_min = 0.2;
         scale_max = 1.8;
-        random_deviation_factor = 1.0f / 20;
+        random_deviation_factor = 1.0f / 12;
     }
     else //  if (preset == BeltPresets::KUIPER)
     {

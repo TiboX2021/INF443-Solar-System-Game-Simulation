@@ -1,5 +1,6 @@
 #version 330 core
 
+#define PI 3.1415926538
 // Fragment shader - this code is executed for every pixel/fragment that belongs to a displayed shape
 //
 // Compute the color using Phong illumination (ambient, diffuse, specular)
@@ -65,82 +66,58 @@ uniform material_structure material;
 
 layout(std140) uniform collision_points
 {
-    vec4 data[10]; // TODO : max array size (max collisions handled)
+    vec4 data[10]; // Max array size (max collisions handled). Adapt this both here and in the c++ code !
     int size;
 };
 
+uniform float animation_time;
+uniform float time;
+uniform vec3 ship_direction;
+
+// Smooth gaussian transition between standby and collision shield
+float gaussian(float x, float sigma)
+{
+    return exp(-x * x / (2 * sigma * sigma));
+}
+
 void main()
 {
-    // Compute the position of the center of the camera
-    mat3 O = transpose(mat3(view));                        // get the orientation matrix
-    vec3 last_col = vec3(view * vec4(0.0, 0.0, 0.0, 1.0)); // get the last column
-    vec3 camera_position = -O * last_col;
+    // Colors
+    vec4 standby_color = vec4(0.5, 0.5, 1, 0.2);
+    vec4 collision_color = vec4(1, 0.5, 0.5, 1);
 
-    // Renormalize normal
-    vec3 N = normalize(fragment.normal);
+    // Compute standby animation color
+    // TODO : use ship direction
+    float angle = acos(dot(fragment.local_position, ship_direction)); // in [0, PI]
+    float space_freq = 4;                                             // Number of waves visible during the animation
+    float time_freq = 4;
+    float standby_coeff = max(0, PI / 2 - angle) * pow(sin(angle * space_freq - time * time_freq), 2);
 
-    // Inverse the normal if it is viewed from its back (two-sided surface)
-    //  (note: gl_FrontFacing doesn't work on Mac)
-    if (gl_FrontFacing == false)
+    standby_color = (1 - standby_coeff) * standby_color + standby_coeff * vec4(0.4, 0.3, 0.9, 0.6);
+
+    // Constants
+    float collision_coeff = 0;    // "Shockwave" coefficient (0 = standby, 1 = collision) for this pixel
+    float offset_angle = PI / 10; // Width of the shockwave
+
+    // Compute the maximum shockwave coefficient from all collisions in the UBO data
+    for (int i = 0; i < size; i++)
     {
-        N = -N;
+        vec4 one_data = data[i];
+        vec3 collision_direction = one_data.xyz;
+        float current_animation_time = one_data.w;
+
+        // Compute angle between the collision direction and the fragment position
+        float angle = acos(dot(fragment.local_position, collision_direction)); // in [0, PI]
+
+        // Compute the angle, and offset it by the collision direction
+        float new_coeff = gaussian(angle - current_animation_time / animation_time * PI / 2, offset_angle) * (1 - current_animation_time / animation_time);
+
+        if (new_coeff > collision_coeff)
+        {
+            collision_coeff = new_coeff;
+        }
     }
 
-    // Phong coefficient (diffuse, specular)
-    // *************************************** //
-
-    // Unit direction toward the light
-    vec3 L = normalize(light - fragment.position);
-
-    // Diffuse coefficient
-    float diffuse_component = max(dot(N, L), 0.0);
-
-    // Specular coefficient
-    float specular_component = 0.0;
-    if (diffuse_component > 0.0)
-    {
-        vec3 R = reflect(-L, N); // reflection of light vector relative to the normal.
-        vec3 V = normalize(camera_position - fragment.position);
-        specular_component = pow(max(dot(R, V), 0.0), material.phong.specular_exponent);
-    }
-
-    // Texture
-    // *************************************** //
-
-    // Current uv coordinates
-    vec2 uv_image = vec2(fragment.uv.x, fragment.uv.y);
-    if (material.texture_settings.texture_inverse_v)
-    {
-        uv_image.y = 1.0 - uv_image.y;
-    }
-
-    // Get the current texture color
-    vec4 color_image_texture = texture(image_texture, uv_image);
-    if (material.texture_settings.use_texture == false)
-    {
-        color_image_texture = vec4(1.0, 1.0, 1.0, 1.0);
-    }
-
-    // Compute Shading
-    // *************************************** //
-
-    // Compute the base color of the object based on: vertex color, uniform color, and texture
-    vec3 color_object = fragment.color * material.color * color_image_texture.rgb;
-
-    // Compute the final shaded color using Phong model
-    float Ka = material.phong.ambient;
-    float Kd = material.phong.diffuse;
-    float Ks = material.phong.specular;
-    vec3 color_shading = (Ka + Kd * diffuse_component) * color_object + Ks * specular_component * vec3(1.0, 1.0, 1.0);
-
-    // Output color, with the alpha component
-    FragColor = vec4(color_shading, material.alpha * color_image_texture.a);
-    // TODO : remove all the code before this, it is useless
-
-    // Compute color from collision points
-    // TODO
-
-    // TODO : custom color with custom alpha
-    // Use some default color, etc.
-    FragColor = vec4(0.5, 0.5, 1, 0.2);
+    // Mix standby with collision color
+    FragColor = (1 - collision_coeff) * standby_color + collision_coeff * collision_color;
 }

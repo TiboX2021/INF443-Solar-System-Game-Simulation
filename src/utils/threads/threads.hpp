@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cgp/core/array/numarray_stack/special_types/special_types.hpp"
+#include "utils/opengl/shield_ubo.hpp"
 #include <atomic>
 #include <condition_variable>
 #include <deque>
@@ -95,7 +96,7 @@ public:
     AsteroidCollisionAnimationBuffer(int max_size, float animation_time) : ThreadSafeDeque(), animation_time(animation_time), max_size(max_size) {}
 
     // Convert the content to a float buffer that can be send to the shader
-    std::vector<cgp::vec4> toFloatBuffer();
+    collision_points toCollisionPoints(); // Build the data to send to the GPU
 
     // Add element, but remove one if size grows too big
     void add(cgp::vec4 element) override;

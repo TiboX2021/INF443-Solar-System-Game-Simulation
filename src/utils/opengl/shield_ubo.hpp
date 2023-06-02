@@ -21,7 +21,7 @@ public:
     void initialize();
 
     // Draw with ubo
-    void draw(cgp::mesh_drawable const &drawable, cgp::environment_generic_structure const &environment, const std::vector<cgp::vec4> animation_data = {}, cgp::uniform_generic_structure const &additional_uniforms = cgp::uniform_generic_structure(), GLenum draw_mode = GL_TRIANGLES);
+    void draw(cgp::mesh_drawable const &drawable, cgp::environment_generic_structure const &environment, const cgp::vec3 &ship_direction, const collision_points &animation_data = {}, cgp::uniform_generic_structure const &additional_uniforms = cgp::uniform_generic_structure(), GLenum draw_mode = GL_TRIANGLES);
 
 private:
     GLuint ubo;

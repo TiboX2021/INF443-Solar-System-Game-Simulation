@@ -1,4 +1,5 @@
 #include "threads.hpp"
+#include "utils/opengl/shield_ubo.hpp"
 #include "utils/physics/object.hpp"
 #include <iostream>
 
@@ -68,11 +69,17 @@ void AsteroidCollisionAnimationBuffer::update()
 }
 
 // Convert the content to a float buffer that can be send to the shader
-std::vector<cgp::vec4> AsteroidCollisionAnimationBuffer::toFloatBuffer()
+collision_points AsteroidCollisionAnimationBuffer::toCollisionPoints()
 {
     std::shared_lock lock(shared_mutex);
 
-    return std::vector<cgp::vec4>(deque.begin(), deque.end());
+    collision_points points;
+
+    // Fill data
+    std::copy(deque.begin(), deque.end(), points.data);
+    points.size = deque.size();
+
+    return points;
 }
 
 void AsteroidCollisionAnimationBuffer::add(cgp::vec4 element)

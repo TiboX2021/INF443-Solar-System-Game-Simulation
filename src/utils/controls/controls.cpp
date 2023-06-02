@@ -1,6 +1,7 @@
 #include "controls.hpp"
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "cgp/graphics/drawable/mesh_drawable/mesh_drawable.hpp"
+#include "cgp/graphics/opengl/uniform/uniform.hpp"
 #include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/control_constants.hpp"
 #include "utils/controls/player_object.hpp"
@@ -104,15 +105,15 @@ void Controls::updateShip()
 
 void Controls::initialize_shield_mesh()
 {
-
-    // TODO : initialize. Use custom shader and all. Use a shader that can change colors ? Pass a color to the fragment shader, it applies it...
+    // Initialize shield mesh drawable
     cgp::mesh shield_mesh = cgp::mesh_primitive_sphere(); // Radius = 1 : default for player
     shield_mesh_drawable.initialize_data_on_gpu(shield_mesh);
 
     // Custom shield shader
     shield_mesh_drawable.shader = ShaderLoader::getShader("shield");
 
-    shield_ubo.initialize(); // Instanciate UBO space on the GPU
+    // Instanciate UBO space on the GPU
+    shield_ubo.initialize();
 }
 
 void Controls::draw_shield(environment_structure const &environment)
@@ -121,6 +122,5 @@ void Controls::draw_shield(environment_structure const &environment)
     shield_mesh_drawable.model.translation = Object::scaleDownDistanceForDisplay(player.get_position());
 
     // Draw the mesh and send custom array data via UBO
-    // cgp::draw(shield_mesh_drawable, environment);
-    shield_ubo.draw(shield_mesh_drawable, environment, global_player_collision_animation_buffer.toFloatBuffer());
+    shield_ubo.draw(shield_mesh_drawable, environment, player.get_direction(), global_player_collision_animation_buffer.toCollisionPoints());
 }

@@ -168,3 +168,8 @@ cgp::vec3 PlayerObject::get_position() const
 {
     return position;
 }
+
+cgp::vec3 PlayerObject::get_direction() const
+{
+    return direction;
+}

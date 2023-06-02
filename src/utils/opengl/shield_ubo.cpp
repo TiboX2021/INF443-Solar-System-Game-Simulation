@@ -1,4 +1,6 @@
 #include "shield_ubo.hpp"
+#include "cgp/graphics/opengl/uniform/uniform.hpp"
+#include "utils/controls/player_object.hpp"
 
 // Initialize OpenGL data
 void ShieldUBO::initialize()
@@ -14,7 +16,7 @@ void ShieldUBO::initialize()
 }
 
 // Draw the shield with custom animation data sent to the fragment shader as uniforms
-void ShieldUBO::draw(cgp::mesh_drawable const &drawable, cgp::environment_generic_structure const &environment, const std::vector<cgp::vec4> animation_data, cgp::uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
+void ShieldUBO::draw(cgp::mesh_drawable const &drawable, cgp::environment_generic_structure const &environment, const cgp::vec3 &ship_direction, const collision_points &animation_data, cgp::uniform_generic_structure const &additional_uniforms, GLenum draw_mode)
 {
     opengl_check;
     // Initial clean check
@@ -37,21 +39,32 @@ void ShieldUBO::draw(cgp::mesh_drawable const &drawable, cgp::environment_generi
     // ********************************** //
 
     // send the uniform values for the model and material of the mesh_drawable
-    drawable.send_opengl_uniform();
+    drawable.send_opengl_uniform(false);
 
     // send the uniform values for the environment
-    environment.send_opengl_uniform(drawable.shader);
+    environment.send_opengl_uniform(drawable.shader, false);
 
     // [Optionnal] send any additional uniform for this specidic draw call
-    additional_uniforms.send_opengl_uniform(drawable.shader);
+    additional_uniforms.send_opengl_uniform(drawable.shader, false);
 
     // ********************************** //
     //        SEND CUSTOM UBO DATA        //
     // ********************************** //
 
+    // Prepare UBO binding to the shader
+    GLuint block_index = glGetUniformBlockIndex(drawable.shader.id, "collision_points");
+    GLuint bindingPointIndex = 0;
+    glBindBufferBase(GL_UNIFORM_BUFFER, bindingPointIndex, ubo);
+    glUniformBlockBinding(drawable.shader.id, block_index, bindingPointIndex);
+
+    // Overwrite previous data from the UBO
     glBindBuffer(GL_UNIFORM_BUFFER, ubo);
-    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(collision_points), animation_data.data()); // Replace all data
-    glBindBuffer(GL_UNIFORM_BUFFER, 0);                                                     // Unbind buffer
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(collision_points), &animation_data); // Replace all data
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);                                               // Unbind buffer
+
+    // Send total animation time as float uniform
+    opengl_uniform(drawable.shader, "animation_time", SHIELD_COLLISION_ANIMATION_TIME);
+    opengl_uniform(drawable.shader, "ship_direction", ship_direction);
 
     // Set textures
     // ********************************** //

@@ -33,7 +33,7 @@ constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 
 constexpr float COLLISION_TIMEOUT = 3; // Time (in seconds) before an asteroid can collide again with the player
 
-constexpr float SHIELD_COLLISION_ANIMATION_TIME = 1.0f; // Animation time for the shield, in seconds
+constexpr float SHIELD_COLLISION_ANIMATION_TIME = 0.3f; // Animation time for the shield, in seconds
 
 struct PlayerCollisionData
 {
@@ -135,6 +135,7 @@ public:
     // Get player orientation (can be used for the camera)
     cgp::rotation_transform orientation() const;
     cgp::vec3 get_position() const;
+    cgp::vec3 get_direction() const;
 
 private:
     cgp::vec3 position;     // Display position, not the physics one

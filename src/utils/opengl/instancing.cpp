@@ -37,17 +37,17 @@ namespace cgp
 
         // set the Model matrix
         // Note : with instancing, we will not use the default position set in those matrices, only the model meshes
-        opengl_uniform(drawable.shader, "model", model_shader, true);
-        opengl_uniform(drawable.shader, "modelNormal", model_normal_shader, true);
+        opengl_uniform(drawable.shader, "model", model_shader, false);
+        opengl_uniform(drawable.shader, "modelNormal", model_normal_shader, false);
 
         // set the material
-        drawable.material.send_opengl_uniform(drawable.shader);
+        drawable.material.send_opengl_uniform(drawable.shader, false);
 
         // send the uniform values for the environment
-        environment.send_opengl_uniform(drawable.shader);
+        environment.send_opengl_uniform(drawable.shader, false);
 
         // [Optionnal] send any additional uniform for this specidic draw call
-        additional_uniforms.send_opengl_uniform(drawable.shader);
+        additional_uniforms.send_opengl_uniform(drawable.shader, false);
 
         // Set textures
         // ********************************** //

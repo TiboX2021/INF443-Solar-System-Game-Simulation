@@ -78,13 +78,7 @@ void main()
 
     if (do_bump_mapping)
     {
-        vec3 bump_normal = 2 * texture(normal_map, fragment.uv).rgb - 1;
-
-        // Some normal vectors are inside out (mad bump mapping texture map)
-        if (dot(bump_normal, vec3(0, 0, 1)) < 0.0)
-        {
-            bump_normal = -bump_normal;
-        }
+        vec3 bump_normal = texture(normal_map, fragment.uv).rgb; // Do not renormalize, no normal should go inside out
 
         mat3 TBN = mat3(fragment.tangent, fragment.bitangent, N);
 

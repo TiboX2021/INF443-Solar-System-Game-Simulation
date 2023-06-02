@@ -58,7 +58,7 @@ void PlayerObject::step(const std::vector<Object *> &objects_with_hitbox)
     directionTop = cgp::normalize(directionTop);
 
     // TODO : adjust the scale to the actual size of the player shield
-    global_player_collision_data.write({position, velocity, 1 / PHYSICS_SCALE});
+    global_player_collision_data.write({position, velocity, 0.5 / PHYSICS_SCALE});
 }
 
 // Translation functions

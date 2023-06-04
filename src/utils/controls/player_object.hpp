@@ -17,10 +17,10 @@ constexpr float PLAYER_TRANSLATION_ACCELERATION = PLAYER_MAX_TRANSLATION_SPEED *
 constexpr float PLAYER_MAX_ROTATION_SPEED = 0.015 * 60 / (3600 * 24); // radians
 constexpr float PLAYER_MAX_ROLL_SPEED = 0.03 * 60 / (3600 * 24);      // radians. This is higher, as rolling does not change the tajectory
 
-// Roll acceleration (takes 0.25 seconds for full roll speed)
+// Roll acceleration (takes 0.12 seconds for full roll speed)
 constexpr float PLAYER_ROLL_ACCELERATION = PLAYER_MAX_ROLL_SPEED * 60 / (3600 * 24) / 7; // Player acceleration per frame
 
-// Rotation acceleration (takes 0.5 seconds for full rotation speed)
+// Rotation acceleration (takes 0.25 seconds for full rotation speed)
 constexpr float PLAYER_ROTATION_ACCELERATION = PLAYER_MAX_ROTATION_SPEED * 60 / (3600 * 24) / 15;
 
 // Player orientation default (for the playe spaceship)

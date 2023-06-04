@@ -3,6 +3,7 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 #include "utils/controls/gui_params.hpp"
+#include "utils/display/display_constants.hpp"
 #include "utils/opengl/shield_ubo.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/tools/tools.hpp"
@@ -57,8 +58,7 @@ void PlayerObject::step(const std::vector<Object *> &objects_with_hitbox)
     direction = cgp::normalize(direction);
     directionTop = cgp::normalize(directionTop);
 
-    // TODO : adjust the scale to the actual size of the player shield
-    global_player_collision_data.write({position, velocity, 0.5 / PHYSICS_SCALE});
+    global_player_collision_data.write({position, velocity, PLAYER_SHIELD_RADIUS / PHYSICS_SCALE});
 }
 
 // Translation functions

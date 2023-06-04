@@ -5,6 +5,7 @@
 #include "utils/camera/custom_camera_controller.hpp"
 #include "utils/controls/control_constants.hpp"
 #include "utils/controls/player_object.hpp"
+#include "utils/display/display_constants.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <iostream>
 
@@ -106,7 +107,7 @@ void Controls::updateShip()
 void Controls::initialize_shield_mesh()
 {
     // Initialize shield mesh drawable
-    cgp::mesh shield_mesh = cgp::mesh_primitive_sphere(); // Radius = 1 : default for player
+    cgp::mesh shield_mesh = cgp::mesh_primitive_sphere(PLAYER_SHIELD_RADIUS); // Radius = 1 : default for player
     shield_mesh_drawable.initialize_data_on_gpu(shield_mesh);
 
     // Custom shield shader

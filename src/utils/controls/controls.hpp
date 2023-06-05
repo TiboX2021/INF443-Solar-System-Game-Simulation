@@ -32,6 +32,7 @@ public:
         key_states[KEY_Q] = KEY_RELEASED;
         key_states[KEY_S] = KEY_RELEASED;
         key_states[KEY_W] = KEY_RELEASED;
+        key_states[KEY_E] = KEY_RELEASED;
         key_states[KEY_SPACE] = KEY_RELEASED;
         key_states[KEY_ARROW_UP] = KEY_RELEASED;
         key_states[KEY_ARROW_DOWN] = KEY_RELEASED;
@@ -61,6 +62,9 @@ public:
                 break;
             case KEY_Z:
                 global_gui_params.enable_shield = !global_gui_params.enable_shield;
+                break;
+            case KEY_E:
+                global_gui_params.trigger_laser = !global_gui_params.trigger_laser;
                 break;
             default:
                 break;

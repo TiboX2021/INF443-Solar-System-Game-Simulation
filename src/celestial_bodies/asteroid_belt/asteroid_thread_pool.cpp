@@ -226,10 +226,9 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
             {
                 float t;
                 float distance = distance_to_line(asteroids[i].getPhysicsPosition(), collision_data.position, collision_data.direction, t);
-                // TODO : max destroy distance ? Do this when I add a texture.
 
                 // If distance to laser is short enough, deactivate the asteroid
-                if (t > 0 && distance < collision_data.radius + asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS / PHYSICS_SCALE)
+                if (0 < t && t < MAX_DESTRUCTION_DISTANCE && distance < LASER_DESTRUCTION_RADIUS + asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS / PHYSICS_SCALE)
                 {
                     // Deactivate asteroid
                     deactivated_asteroids[i] = true;

@@ -4,6 +4,7 @@
 #include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "navion/navion.hpp"
 #include "utils/camera/custom_camera_model.hpp"
+#include "utils/physics/constants.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/threads/threads.hpp"
 #include "utils/tools/tools.hpp"
@@ -35,6 +36,11 @@ constexpr float DELAY_RATIO = 0.7; // Ratio of the delayed buffer direction
 constexpr float COLLISION_TIMEOUT = 3; // Time (in seconds) before an asteroid can collide again with the player
 
 constexpr float SHIELD_COLLISION_ANIMATION_TIME = 0.3f; // Animation time for the shield, in seconds
+
+constexpr float MAX_DESTRUCTION_DISTANCE = SATURN_SUN_DISTANCE; // Max distance from the player to an asteroid to be destroyed
+
+constexpr float LASER_DESTRUCTION_RADIUS = 0.5 / PHYSICS_SCALE; // Half player radius, as it is
+constexpr float LASER_VISIBLE_RADIUS = 0.1;
 
 struct PlayerCollisionData
 {

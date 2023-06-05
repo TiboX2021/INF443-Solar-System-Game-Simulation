@@ -6,6 +6,7 @@
 #include "utils/controls/control_constants.hpp"
 #include "utils/controls/player_object.hpp"
 #include "utils/display/display_constants.hpp"
+#include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <iostream>
 
@@ -104,7 +105,7 @@ void Controls::updateShip()
     player.updatePlayerShip(navion);
 }
 
-void Controls::initialize_shield_mesh()
+void Controls::initialize_sub_meshes()
 {
     // Initialize shield mesh drawable
     cgp::mesh shield_mesh = cgp::mesh_primitive_sphere(PLAYER_SHIELD_RADIUS); // Radius = 1 : default for player
@@ -115,6 +116,13 @@ void Controls::initialize_shield_mesh()
 
     // Instanciate UBO space on the GPU
     shield_ubo.initialize();
+
+    // Initialize laser mesh
+    cgp::mesh laser_mesh = cgp::mesh_primitive_cylinder(LASER_VISIBLE_RADIUS, {0, 0, 0}, {MAX_DESTRUCTION_DISTANCE * PHYSICS_SCALE, 0, 0});
+    laser_mesh_drawable.initialize_data_on_gpu(laser_mesh);
+    laser_mesh_drawable.material.color = {0, 1, 0};
+
+    laser_mesh_drawable.shader = ShaderLoader::getShader("uniform");
 }
 
 void Controls::draw_shield(environment_structure const &environment)
@@ -124,4 +132,16 @@ void Controls::draw_shield(environment_structure const &environment)
 
     // Draw the mesh and send custom array data via UBO
     shield_ubo.draw(shield_mesh_drawable, environment, player.get_direction(), global_player_collision_animation_buffer.toCollisionPoints());
+}
+
+void Controls::draw_laser(environment_structure const &environment)
+{
+    // Update mesh position
+    laser_mesh_drawable.model.translation = Object::scaleDownDistanceForDisplay(player.get_position());
+
+    // Update mesh orientation
+    laser_mesh_drawable.model.rotation = player.orientation();
+
+    // Draw the mesh and send custom array data via UBO
+    draw(laser_mesh_drawable, environment);
 }

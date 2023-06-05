@@ -84,10 +84,11 @@ public:
 
     // For display and initialization
     Navion &getPlayerShip();
-    void initialize_shield_mesh();
+    void initialize_sub_meshes();
 
     // For drawing
     void draw_shield(environment_structure const &environment);
+    void draw_laser(environment_structure const &environment);
 
 private:
     std::map<int, int> key_states;
@@ -98,4 +99,5 @@ private:
     // Shield mesh drawable
     ShieldUBO shield_ubo; // Shield UBO for opengl custom animation drawing
     cgp::mesh_drawable shield_mesh_drawable;
+    cgp::mesh_drawable laser_mesh_drawable;
 };

@@ -45,7 +45,7 @@ void scene_structure::initialize()
 
     keyboard_control_handler.setCameraClipObjects(simulation_handler.getPhysicalObjects());
 
-    keyboard_control_handler.initialize_shield_mesh();
+    keyboard_control_handler.initialize_sub_meshes();
 }
 
 void scene_structure::display_frame()
@@ -101,6 +101,9 @@ void scene_structure::display_frame()
 
     if (global_gui_params.display_ship_atomic)
         keyboard_control_handler.getPlayerShip().draw(environment);
+
+    if (global_gui_params.trigger_laser)
+        keyboard_control_handler.draw_laser(environment);
 
     display_semiTransparent();
 }

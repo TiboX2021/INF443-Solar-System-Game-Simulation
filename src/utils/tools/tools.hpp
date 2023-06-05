@@ -138,3 +138,16 @@ inline bool check_clip_and_push_back(const std::vector<Object *> &objects, cgp::
 
     return false;
 }
+
+// Compute the distance between a position and a line, given by a point and a direction vector
+inline float distance_to_line(const cgp::vec3 &position, const cgp::vec3 &line_point, const cgp::vec3 &line_direction)
+{
+    return cgp::norm(cgp::cross(position - line_point, line_direction));
+}
+
+// Same, but compute the float t so that position = line_point + t * line_direction, and return this t
+inline float distance_to_line(const cgp::vec3 &position, const cgp::vec3 &line_point, const cgp::vec3 &line_direction, float &t)
+{
+    t = cgp::dot(position - line_point, line_direction) / cgp::dot(line_direction, line_direction);
+    return cgp::norm(cgp::cross(position - line_point, line_direction));
+}

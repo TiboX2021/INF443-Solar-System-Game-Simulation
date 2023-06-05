@@ -58,7 +58,7 @@ void PlayerObject::step(const std::vector<Object *> &objects_with_hitbox)
     direction = cgp::normalize(direction);
     directionTop = cgp::normalize(directionTop);
 
-    global_player_collision_data.write({position, velocity, PLAYER_SHIELD_RADIUS / PHYSICS_SCALE});
+    global_player_collision_data.write({position, velocity, direction, PLAYER_SHIELD_RADIUS / PHYSICS_SCALE});
 }
 
 // Translation functions

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
+#include "cgp/geometry/vec/vec3/vec3.hpp"
 #include "navion/navion.hpp"
 #include "utils/camera/custom_camera_model.hpp"
 #include "utils/physics/object.hpp"
@@ -39,6 +40,7 @@ struct PlayerCollisionData
 {
     cgp::vec3 position;
     cgp::vec3 velocity;
+    cgp::vec3 direction;
     float radius;
 };
 

@@ -181,14 +181,18 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
             collision_timeout[i] -= Timer::dt;
     }
 
-    // Take collisions into account
-    if (global_gui_params.enable_shield_atomic)
+    // Take collisions into account if shield or laser are activated
+    bool check_shield = global_gui_params.enable_shield_atomic;
+    bool check_laser = global_gui_params.trigger_laser_atomic;
+
+    if (check_shield || check_laser)
     {
         PlayerCollisionData collision_data = global_player_collision_data.read();
 
         for (int i = start; i < end; i++)
         {
-            if (!deactivated_asteroids[i] && collision_timeout[i] <= 0)
+            // First : check collision with shield
+            if (check_shield && !deactivated_asteroids[i] && collision_timeout[i] <= 0)
             {
                 // First : check collision with the player
                 float distance = cgp::norm(asteroids[i].getPhysicsPosition() - collision_data.position);
@@ -214,6 +218,21 @@ void AsteroidThreadPool::simulateStepForIndexes(float step, int start, int end)
 
                     // Remove asteroid offset : it is no longer bound to its artificial orbit
                     asteroid_offsets[i] = {0, 0, 0};
+                }
+            }
+
+            // Second : check collision with laser
+            if (check_laser && !deactivated_asteroids[i])
+            {
+                float t;
+                float distance = distance_to_line(asteroids[i].getPhysicsPosition(), collision_data.position, collision_data.direction, t);
+                // TODO : max destroy distance ? Do this when I add a texture.
+
+                // If distance to laser is short enough, deactivate the asteroid
+                if (t > 0 && distance < collision_data.radius + asteroid_config_data[i].scale * ASTEROID_DISPLAY_RADIUS / PHYSICS_SCALE)
+                {
+                    // Deactivate asteroid
+                    deactivated_asteroids[i] = true;
                 }
             }
         }

@@ -50,7 +50,7 @@ void AsteroidCollisionAnimationBuffer::update()
     float dt = Timer::dt;
 
     // Loop and modify deque values
-    std::unique_lock lock(shared_mutex);
+    std::unique_lock<std::shared_mutex> lock(shared_mutex);
 
     // Loop through the deque and update the times
     for (int i = 0; i < deque.size(); i++)
@@ -71,7 +71,7 @@ void AsteroidCollisionAnimationBuffer::update()
 // Convert the content to a float buffer that can be send to the shader
 collision_points AsteroidCollisionAnimationBuffer::toCollisionPoints()
 {
-    std::shared_lock lock(shared_mutex);
+    std::shared_lock<std::shared_mutex> lock(shared_mutex);
 
     collision_points points;
 
@@ -84,7 +84,7 @@ collision_points AsteroidCollisionAnimationBuffer::toCollisionPoints()
 
 void AsteroidCollisionAnimationBuffer::add(cgp::vec4 element)
 {
-    std::unique_lock lock(shared_mutex);
+    std::unique_lock<std::shared_mutex> lock(shared_mutex);
 
     if (deque.size() >= max_size)
     {

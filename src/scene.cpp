@@ -8,7 +8,6 @@
 #include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <GLFW/glfw3.h>
-#include <bits/types/timer_t.h>
 #include <cmath>
 #include <iostream>
 #include <math.h>

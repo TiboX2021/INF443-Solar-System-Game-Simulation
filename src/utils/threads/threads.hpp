@@ -40,13 +40,13 @@ class ReadWriteLock
 public:
     T read()
     {
-        std::shared_lock lock(shared_mutex);
+        std::shared_lock<std::shared_mutex> lock(shared_mutex);
         return value;
     }
 
     void write(T new_value)
     {
-        std::unique_lock lock(shared_mutex);
+        std::unique_lock<std::shared_mutex> lock(shared_mutex);
         value = new_value;
     }
 
@@ -65,7 +65,7 @@ public:
     // Add one element
     virtual void add(T element)
     {
-        std::unique_lock lock(shared_mutex);
+        std::unique_lock<std::shared_mutex> lock(shared_mutex);
 
         deque.push_back(element);
     }
@@ -73,14 +73,14 @@ public:
     // Remove the first element
     void remove()
     {
-        std::unique_lock lock(shared_mutex);
+        std::unique_lock<std::shared_mutex> lock(shared_mutex);
         deque.pop_front();
     }
 
     // Not used directly,
     std::deque<T> read_all()
     {
-        std::shared_lock lock(shared_mutex);
+        std::shared_lock<std::shared_mutex> lock(shared_mutex);
         return deque;
     }
 

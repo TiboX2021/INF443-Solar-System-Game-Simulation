@@ -2,6 +2,7 @@
 
 #include <cmath>
 
+constexpr float M_PI = 3.1415926535897932;
 #define EARTH_ROTATION_AXIS   \
     {                         \
         0, 0.397949, 0.917408 \

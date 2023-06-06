@@ -84,12 +84,6 @@ void SimulationHandler::simulateStep(float time_step)
         object->update(time_step * time_step_multiplier);
         object->updateModels();
     }
-
-    // Simulate steps for asteroid belts
-    for (auto &belt : asteroid_belts)
-    {
-        belt.simulateStep();
-    }
 }
 
 void SimulationHandler::initialize()
@@ -117,6 +111,7 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     sun.setShouldRotate(false);
     sun.setShouldTranslate(false);
     sun.setShader("lava");
+    sun.setPhysicsRadius(SUN_RADIUS / 10 * DISPLAY_SCALE); // For asteroid collisions
     handler.addObject(sun);
 
     Object *sun_ptr = handler.physical_objects.back();
@@ -132,25 +127,28 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     // Add Earth
     Planet earth(EARTH_MASS, EARTH_RADIUS, {EARTH_SUN_DISTANCE, 0, 0}, "assets/planets/earth.jpg", NO_PERLIN_NOISE);
     earth.setLowPolyColor({32.0f / 255, 60.0f / 255, 74.0f / 255});
-    earth.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, EARTH_SUN_DISTANCE), 0});
+    earth.setVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, EARTH_SUN_DISTANCE), 0});
     earth.setInitialRotationSpeed(EARTH_ROTATION_SPEED);
     earth.setRotationAxis(EARTH_ROTATION_AXIS);
+    earth.setPhysicsRadius(EARTH_RADIUS * DISPLAY_SCALE); // For player collision
     handler.addObject(earth);
 
     // Add Mars
     Planet mars(MARS_MASS, MARS_RADIUS, {MARS_SUN_DISTANCE, 0, 0}, "assets/planets/mars.jpg", NO_PERLIN_NOISE);
     mars.setLowPolyColor({181.0 / 255, 99.0 / 255, 73.0 / 255});
-    mars.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, MARS_SUN_DISTANCE), 0});
+    mars.setVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, MARS_SUN_DISTANCE), 0});
     mars.setInitialRotationSpeed(MARS_ROTATION_SPEED);
     mars.setRotationAxis(MARS_ROTATION_AXIS);
+    mars.setPhysicsRadius(MARS_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(mars);
 
     // Add Saturn
     Planet saturn(SATURN_MASS, SATURN_RADIUS, {SATURN_SUN_DISTANCE, 0, 0}, "assets/planets/saturn.jpg", NO_PERLIN_NOISE);
     saturn.setLowPolyColor({207.0f / 255, 171.0f / 255, 134.0f / 255});
-    saturn.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
+    saturn.setVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, SATURN_SUN_DISTANCE), 0});
     saturn.setInitialRotationSpeed(SATURN_ROTATION_SPEED);
     saturn.setRotationAxis(SATURN_ROTATION_AXIS);
+    saturn.setPhysicsRadius(SATURN_RADIUS * DISPLAY_SCALE); // For asteroid collisions
     handler.addObject(saturn);
 
     Object *saturn_ptr = handler.physical_objects.back();
@@ -163,29 +161,37 @@ void SimulationHandler::generateSolarSystem(SimulationHandler &handler)
     // Add jupiter
     Planet jupiter(JUPITER_MASS, JUPITER_RADIUS, {JUPITER_SUN_DISTANCE, 0, 0}, "assets/planets/jupiter.jpg", NO_PERLIN_NOISE);
     jupiter.setLowPolyColor({161.0 / 255, 150.0 / 255, 132.0 / 255});
-    jupiter.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, JUPITER_SUN_DISTANCE), 0});
+    jupiter.setVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, JUPITER_SUN_DISTANCE), 0});
     jupiter.setInitialRotationSpeed(JUPITER_ROTATION_SPEED);
     jupiter.setRotationAxis(JUPITER_ROTATION_AXIS);
+    jupiter.setPhysicsRadius(JUPITER_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(jupiter);
 
     // Add Uranus
     Planet uranus(URANUS_MASS, URANUS_RADIUS, {URANUS_SUN_DISTANCE, 0, 0}, "assets/planets/uranus.jpg", NO_PERLIN_NOISE);
     uranus.setLowPolyColor({155.0 / 255, 202.0 / 255, 209.0 / 255});
-    uranus.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, URANUS_SUN_DISTANCE), 0});
+    uranus.setVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, URANUS_SUN_DISTANCE), 0});
     uranus.setInitialRotationSpeed(URANUS_ROTATION_SPEED);
     uranus.setRotationAxis(URANUS_ROTATION_AXIS);
+    uranus.setPhysicsRadius(URANUS_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(uranus);
 
     // Add Neptune
     Planet neptune(NEPTUNE_MASS, NEPTUNE_RADIUS, {NEPTUNE_SUN_DISTANCE, 0, 0}, "assets/planets/neptune.jpg", NO_PERLIN_NOISE);
     neptune.setLowPolyColor({54.0 / 255, 79.0 / 255, 167.0 / 255});
-    neptune.setInitialVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, NEPTUNE_SUN_DISTANCE), 0});
+    neptune.setVelocity({0, Object::computeOrbitalSpeed(SUN_MASS, NEPTUNE_SUN_DISTANCE), 0});
     neptune.setInitialRotationSpeed(NEPTUNE_ROTATION_SPEED);
     neptune.setRotationAxis(NEPTUNE_ROTATION_AXIS);
+    neptune.setPhysicsRadius(NEPTUNE_RADIUS * DISPLAY_SCALE); // For player collisions
     handler.addObject(neptune);
 }
 
 void SimulationHandler::addAsteroidBelt(AsteroidBelt asteroid_belt)
 {
     asteroid_belts.push_back(asteroid_belt);
+}
+
+std::vector<Object *> SimulationHandler::getPhysicalObjects() const
+{
+    return physical_objects;
 }

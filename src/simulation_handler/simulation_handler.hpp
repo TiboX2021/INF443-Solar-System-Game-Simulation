@@ -28,6 +28,9 @@ public:
     // Public static generators
     static void generateSolarSystem(SimulationHandler &handler);
 
+    // Get physics object (for camera intersection detection)
+    std::vector<Object *> getPhysicalObjects() const;
+
 protected:
     // Drawable objects
     // Store all drawable instances here

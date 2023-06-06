@@ -26,16 +26,6 @@ uniform mat4 modelNormal; // Model without scaling used for the normal. modelNor
 
 void main()
 {
-
-    // float theta = 3.1415 / 9;
-    // // Matrice de rotation
-    // mat4 R = transpose(
-    //     mat4(cos(theta), -sin(theta), 0.0, 0.0,
-    //          sin(theta), cos(theta), 0.0, 0.0,
-    //          0.0, 0.0, 1.0, 0.0,
-    //          0.0, 0.0, 0.0, 1.0));
-    // TODO : ça pourrait être intéressant pour les étoiles
-
     // -------------------------------------------- //
     //         Compute the normal vector            //
     // -------------------------------------------- //

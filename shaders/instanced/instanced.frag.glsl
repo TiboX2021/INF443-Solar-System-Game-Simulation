@@ -16,8 +16,10 @@ in struct fragment_data
 {
     vec3 position; // position in the world space
     vec3 normal;   // normal in the world space
-    vec3 color;    // current color on the fragment
-    vec2 uv;       // current uv-texture on the fragment
+    vec3 tangent;  // Tangent and bitangent for bump mapping
+    vec3 bitangent;
+    vec3 color; // current color on the fragment
+    vec2 uv;    // current uv-texture on the fragment
 
 } fragment;
 
@@ -28,6 +30,7 @@ layout(location = 0) out vec4 FragColor;
 // ***************************************************** //
 
 uniform sampler2D image_texture; // Texture image identifiant
+uniform sampler2D normal_map;    // Bump mapping normal map
 
 uniform mat4 view; // View matrix (rigid transform) of the camera - to compute the camera position
 
@@ -61,6 +64,7 @@ struct material_structure
 };
 
 uniform material_structure material;
+uniform bool do_bump_mapping; // True if bump mapping is enabled
 
 void main()
 {
@@ -71,6 +75,15 @@ void main()
 
     // Renormalize normal
     vec3 N = normalize(fragment.normal);
+
+    if (do_bump_mapping)
+    {
+        vec3 bump_normal = texture(normal_map, fragment.uv).rgb; // Do not renormalize, no normal should go inside out
+
+        mat3 TBN = mat3(fragment.tangent, fragment.bitangent, N);
+
+        N = normalize(TBN * bump_normal); // Replace normal by bump mapping mapped normal
+    }
 
     // Inverse the normal if it is viewed from its back (two-sided surface)
     //  (note: gl_FrontFacing doesn't work on Mac)

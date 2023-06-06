@@ -1,5 +1,6 @@
 #include "navion.hpp"
 #include "cgp/core/base/basic_types/basic_types.hpp"
+#include "cgp/geometry/transform/rotation_transform/rotation_transform.hpp"
 #include "cgp/graphics/drawable/hierarchy_mesh_drawable/hierarchy_mesh_drawable.hpp"
 #include "cgp/graphics/drawable/triangles_drawable/triangles_drawable.hpp"
 #include "environment.hpp"
@@ -152,12 +153,17 @@ void Navion::draw(environment_structure const &environment)
 
 void Navion::set_position(vec3 const &position)
 {
-    hierarchie["global_frame"].transform_local.translation = position;
+    hierarchie["Centre"].transform_local.translation = position;
 }
 
-void Navion::set_direction(vec3 const &direction)
+void Navion::set_orientation(rotation_transform const &orientation)
 {
-    //******************** A FAIRE ***********************
+    hierarchie["Centre"].transform_local.rotation = orientation;
+}
+
+void Navion::update_hierachy()
+{
+    hierarchie.update_local_to_global_coordinates();
 }
 
 void Navion::set_angle_aile(float const angle)

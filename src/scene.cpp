@@ -3,6 +3,8 @@
 #include "cgp/geometry/shape/mesh/primitive/mesh_primitive.hpp"
 #include "simulation_handler/simulation_handler.hpp"
 #include "third_party/src/imgui/imgui.h"
+#include "utils/controls/gui_params.hpp"
+#include "utils/controls/player_object.hpp"
 #include "utils/physics/object.hpp"
 #include "utils/shaders/shader_loader.hpp"
 #include <GLFW/glfw3.h>
@@ -31,6 +33,7 @@ void scene_structure::initialize()
     ShaderLoader::addShader("uniform", "uniform/uniform");
     ShaderLoader::addShader("lava", "lava/lava");
     ShaderLoader::addShader("instanced", "instanced/instanced");
+    ShaderLoader::addShader("shield", "shield/shield");
 
     ShaderLoader::initialise();
 
@@ -38,12 +41,23 @@ void scene_structure::initialize()
     SimulationHandler::generateSolarSystem(simulation_handler);
     simulation_handler.initialize();
 
-    // TODO : change ship scale
-    keyboard_control_handler.getPlayerShip().create_millennium_falcon(); // Initialize player spaceship
+    keyboard_control_handler.getPlayerShip().create_millennium_falcon(0.2); // Initialize player spaceship
+
+    keyboard_control_handler.setCameraClipObjects(simulation_handler.getPhysicalObjects());
+
+    keyboard_control_handler.initialize_sub_meshes();
 }
 
 void scene_structure::display_frame()
 {
+
+    // Update GUI params values
+    global_gui_params.update_values();
+
+    /*********************************************/
+    /*              TIMER HANDLING               */
+    /*********************************************/
+
     // Update timer (ALWAYS FIRST)
     float dt = timer.update(); // Update timer
     // IMPORTANT : regulate timer : the first frames are slow, and a time step too large can mess up the simulation orbit
@@ -53,39 +67,53 @@ void scene_structure::display_frame()
     Timer::dt = dt;
     Timer::time = timer.t;
 
+    // Send timer time as uniform to the shader
+    environment.uniform_generic.uniform_float["time"] = timer.t;
+
+    /*********************************************/
+    /*          INPUTS & PLAYER HANDLING         */
+    /*********************************************/
+
     // Handle keyboard & other controls
     keyboard_control_handler.handlePlayerKeys();
     keyboard_control_handler.updatePlayer();
-    keyboard_control_handler.updateCamera(custom_camera);
-
-    // BUG : cannot do this, error in hierarchy
-    // keyboard_control_handler.updateShip();
-
-    // Send timer time as uniform to the shader
-    environment.uniform_generic.uniform_float["time"] = timer.t;
+    keyboard_control_handler.updateShip();
+    keyboard_control_handler.updateCamera(custom_camera, environment.camera_view);
 
     // Set the light to the sun position (center)
     environment.light = vec3{0, 0, 0}; // camera_control.camera_model.position();
 
+    /*********************************************/
+    /*            SIMULATION & DRAWING           */
+    /*********************************************/
+
     simulation_handler.simulateStep(dt);
+
+    // Update the player collision buffer
+    global_player_collision_animation_buffer.update();
 
     // Get camera position and rotation to compute custom meshes for distant objects
     cgp::vec3 position = custom_camera.camera_model.position();
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
+    // This function also restarts the computation threads. Do things on shared data before this, as the computing threads are likely to be stopped at this time
     simulation_handler.drawObjects(environment, position, rotation, false);
 
-    keyboard_control_handler.getPlayerShip().draw(environment);
+    if (global_gui_params.display_ship_atomic)
+        keyboard_control_handler.getPlayerShip().draw(environment);
+
+    if (global_gui_params.trigger_laser)
+        keyboard_control_handler.draw_laser(environment);
 
     display_semiTransparent();
 }
 
 void scene_structure::display_gui()
 {
-    ImGui::Checkbox("Frame", &gui.display_frame);
-    ImGui::Checkbox("Wireframe", &gui.display_wireframe);
-
-    ImGui::SliderFloat("Angle Aile", &gui.angle_aile_vaisseau, 0, 100);
+    ImGui::Checkbox("Show ship (A)", &global_gui_params.display_ship);
+    ImGui::Checkbox("Enable shield (Z)", &global_gui_params.enable_shield);
+    ImGui::Checkbox("Trigger laser (E)", &global_gui_params.trigger_laser);
+    ImGui::SliderFloat("Camera distance", &global_gui_params.camera_distance, 1, 20);
 }
 
 void scene_structure::mouse_move_event()
@@ -128,6 +156,9 @@ void scene_structure::display_semiTransparent()
     cgp::rotation_transform rotation = custom_camera.camera_model.orientation();
 
     simulation_handler.drawBillboards(environment, position, rotation, false);
+
+    if (global_gui_params.enable_shield)
+        keyboard_control_handler.draw_shield(environment);
 
     // Don't forget to re-activate the depth-buffer write
     glDepthMask(true);

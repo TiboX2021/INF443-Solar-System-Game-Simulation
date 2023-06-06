@@ -28,6 +28,7 @@ Planet::Planet(double mass, double radius, vec3 position, std::string texture_pa
 
     // Initialize display planet data
     this->radius = scaleRadiusForDisplay(radius);
+    this->setPhysicsRadius(radius);
     this->position = scaleDownDistanceForDisplay(position);
     this->texture_path = texture_path;
     this->parameters = parameters;

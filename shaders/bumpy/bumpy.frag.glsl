@@ -28,6 +28,7 @@ layout(location = 0) out vec4 FragColor;
 // ***************************************************** //
 
 uniform sampler2D image_texture; // Texture image identifiant
+uniform sampler2D normal_map;    // Bump mapping normal map
 
 uniform mat4 view; // View matrix (rigid transform) of the camera - to compute the camera position
 
@@ -62,6 +63,32 @@ struct material_structure
 
 uniform material_structure material;
 
+vec3 computePerpendicularVector(vec3 v)
+{
+
+    float threshold = 0.577; // Arbitrary
+    vec3 result;
+
+    if (abs(v.x) < threshold)
+    {
+        result = vec3(1, 0, 0);
+    }
+    else if (abs(v.y) < threshold)
+    {
+        result = vec3(0, 1, 0);
+    }
+    else if (abs(v.z) < threshold)
+    {
+        result = vec3(0, 0, 1);
+    }
+    else
+    {
+        result = vec3(1, 0, 0);
+    }
+
+    return normalize(cross(v, result));
+}
+
 void main()
 {
     // Compute the position of the center of the camera
@@ -71,6 +98,20 @@ void main()
 
     // Renormalize normal
     vec3 N = normalize(fragment.normal);
+    // TODO : use the normal map instead. I have to map it to the normal first.
+    vec3 bump_normal = 2 * texture(normal_map, fragment.uv).rgb - 1;
+
+    // Compute matrix
+    vec3 v1 = computePerpendicularVector(N);
+    vec3 v2 = normalize(cross(N, v1));
+
+    mat3 TBN = mat3(v1, v2, N);
+    N = normalize(TBN * bump_normal);
+
+    N = bump_normal;
+
+    // TODO : compute the things
+    // TODO : compute tangent and bitangent here, but I might be better off doing that in the vertex shader
 
     // Inverse the normal if it is viewed from its back (two-sided surface)
     //  (note: gl_FrontFacing doesn't work on Mac)

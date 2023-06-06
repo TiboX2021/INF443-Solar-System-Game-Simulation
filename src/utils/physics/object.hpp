@@ -52,10 +52,10 @@ class Object
 public:
     Object(double mass, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1}, bool should_translate = true, bool should_rotate = true);
 
-    void update(double dt);
+    void update(double dt, float orbit_factor = ORBIT_FACTOR);
 
     void resetForces();
-    void computeGravitationnalForce(Object *other, double factor = 1.0);
+    void computeGravitationnalForce(Object *other, double factor = 1.0, const cgp::vec3 &offset = {0, 0, 0});
     virtual void updateModels(){}; // Abstract function to update the models based on the physical constants
 
     // Getters
@@ -66,14 +66,16 @@ public:
     bool getShouldTranslate() const;
     bool getShouldRotate() const;
     double getMass() const;
+    float getPhysicsRadius() const;
 
     // Setters
     void setShouldTranslate(bool should_translate);
     void setShouldRotate(bool should_rotate);
     void setPhysicsPosition(cgp::vec3 position);
-    void setInitialVelocity(cgp::vec3 velocity);
+    void setVelocity(cgp::vec3 velocity);
     void setInitialRotationSpeed(double rotation_speed);
     void setRotationAxis(cgp::vec3 rotation_axis);
+    void setPhysicsRadius(float radius);
 
     // STATIC MEMBERS
     // Scale a value to the physics scale (distance and mass)
@@ -86,6 +88,10 @@ public:
 
     static double computeOrbitalSpeed(double M, double r);
     static cgp::vec3 computeOrbitalSpeedForPosition(double M, cgp::vec3 position, cgp::vec3 rotation_axis = {0, 0, 1});
+
+    // Useful functions
+    // Check if this physics position is inside the object
+    bool isInside(const cgp::vec3 &position, float extra_radius = 0) const;
 
 private:
     // Translation
@@ -103,4 +109,7 @@ private:
     // Immobile object or not
     bool should_translate;
     bool should_rotate;
+
+    // Size
+    float physics_radius;
 };

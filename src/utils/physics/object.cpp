@@ -37,20 +37,20 @@ void Object::resetForces()
 /**
  * Compute gravitational force from another object
  */
-void Object::computeGravitationnalForce(Object *other, double factor)
+void Object::computeGravitationnalForce(Object *other, double factor, const cgp::vec3 &offset)
 {
-    cgp::vec3 distance = other->physics_position - this->physics_position;
+    cgp::vec3 distance = other->physics_position - this->physics_position + offset;
     forces += GRAVITATIONAL_CONSTANT * this->mass * other->mass / cgp::dot(distance, distance) * cgp::normalize(distance) * factor;
 }
 
 /** Update position */
-void Object::update(double dt)
+void Object::update(double dt, float orbit_factor)
 {
     if (should_translate)
     {
         this->acceleration = this->forces / this->mass;
-        this->velocity += this->acceleration * dt * ORBIT_FACTOR;
-        this->physics_position += this->velocity * dt * ORBIT_FACTOR;
+        this->velocity += this->acceleration * dt * orbit_factor;
+        this->physics_position += this->velocity * dt * orbit_factor;
     }
 
     if (should_rotate)
@@ -103,7 +103,7 @@ cgp::vec3 Object::computeOrbitalSpeedForPosition(double M, cgp::vec3 position, c
     return orbitalSpeed * cgp::normalize(cgp::cross(rotation_axis, position));
 }
 
-void Object::setInitialVelocity(cgp::vec3 velocity)
+void Object::setVelocity(cgp::vec3 velocity)
 {
     this->velocity = velocity;
 }
@@ -135,4 +135,19 @@ double Object::getMass() const
 cgp::vec3 Object::getPhysicsVelocity() const
 {
     return this->velocity;
+}
+
+float Object::getPhysicsRadius() const
+{
+    return this->physics_radius;
+}
+
+void Object::setPhysicsRadius(float physics_radius)
+{
+    this->physics_radius = physics_radius;
+}
+
+bool Object::isInside(const cgp::vec3 &position, float extra_radius) const
+{
+    return cgp::norm(this->physics_position - position) < this->physics_radius + extra_radius;
 }
